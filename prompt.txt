@@ -1,0 +1,58 @@
+Think and tell,
+Check the current codebase it is a basic WhatsApp/ Instagram Message based chatbot System where it essentially has 2 options
+Form Builder and Query Builder.
+How Form Builder works currently:
+Each question has a validation (for example email valdation, Phone Number Validation, Date Validation, Name Validation etc).if the question's validation fail that same question will be asked again and it tells that the validation has been failed with a reason of why it failed. After all the questions have been filled it will be saved to a CSV.
+If user asks the same Form Again it checks the csv if there are already existing form and tells the user that "You have already Filled up a form for "user name" do you want to create a new one. if yes new from will be prompted to user.
+
+Query Builder:
+When Query Builder is triggered, it can have different category of question, if user presses a category it will prompt what all questions are there in that category. If user presses a question in that category a answer will be given (all of these are pre made and a ask another question will be prompted and with situation solved button.
+
+Session:
+This whole system can have a Session time till which user has time to respond, if the session expires the bot will tell that the session has been expired.
+
+The above is the current System,now below is how i want the new Configurable multiple People needed chatbot builder.
+I want to create a Front end Builder with the following Features.
+Customer Can Decide at which message what type of action should be triggered for example:
+
+-> If "admission" is the message then if user has created a form with admission as the trigger message then admission's form will be given to user with validation, if user finishes it then the form will be saved in the SQL.
+
+->If trigger can also has 2 Different option in which user can decide what action they need for example, If user decides to put "help" then it will show the following message:
+	Do you want to Apply for Admission or Have Questions with a quick reply buttons(which has the trigger message). If user replies with that trigger message, That Action will be given to the user.
+->trigger may not need to be restricted to only 1 message for example apply and application both can give the application form action.
+
+-> a trigger can also be created for any kind of message except the existing trigger message. Example :
+
+If the Existing Triggers are "help" and "question" and user decides to send a message that is not in the trigger list example "abracadabra" this can be a new trigger which can trigger.
+
+So there are 3 types of Trigger: message(message), messages (multiple messages), any message(except existing trigger messages as it can overlap).
+
+There are 3 Different type of Triggers:
+Replier,Form Application, Query Builder.
+
+Replier (Fully should be created with the help of frontend):
+Replier has the ability to reply with a specific message with buttons. The primary use of this is to reply with quick action triggers for example in the quick action, There can be 
+Triggers for next action eg: when user presses help it replies with
+Do you want to -
+--> Apply for Application (Triggers "Application" Trigger)
+--> Have Some Questions (Triggers "Query" Trigger)
+
+Form Builder (Fully should be created with the help of frontend): 
+This is a trigger, when user types "Application" (a trigger triggers), a new Application action will take place wit the questions with validation decided by the user will be entered.
+All the Data Submitted by the user will be stored in DB so that  Customer who built the form can view who all have applied with their response with xlsx export.
+
+How to build a form (Fully should be created with the help of frontend):
+user can create as many Questions for a form as they want and each can have a validation.
+Validation can be different types (email, password, date, Name, Phone number etc.)
+User should have the ability to include Past Question's answer to new Question (Eg, Question 1 is What is your name, ans is Nithish then Question 2 can be "What is Nithish's Phone Number")
+Once all the questions are done user should put submit it with Finish Button.
+
+All the Responses should be stored in SQL and user should have the ablity to view it when needed.
+
+
+Query Builder(Fully should be created with the help of frontend):
+Similar to Form builder this is a trigger, When userr types "Query" (a trigger triggers), and a new Query response will be given.
+Already existing System is perfect but need to have a frontend builder for it.
+
+
+Tell me what you have understood based on the above prompt

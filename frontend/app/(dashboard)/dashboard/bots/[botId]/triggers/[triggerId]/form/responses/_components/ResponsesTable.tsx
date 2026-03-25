@@ -1,0 +1,183 @@
+'use client'
+
+import { useState } from 'react'
+import { Download, ChevronLeft, ChevronRight } from 'lucide-react'
+import Button from '@/components/ui/Button'
+import type { FormResponseWithAnswers } from '@/types/database'
+
+interface Question {
+  id: string
+  question_text: string
+  order_index: number
+}
+
+interface ResponsesTableProps {
+  responses: FormResponseWithAnswers[]
+  questions: Question[]
+  total: number
+  page: number
+  triggerId: string
+  formTitle: string
+}
+
+export default function ResponsesTable({
+  responses,
+  questions,
+  total,
+  page,
+  triggerId,
+  formTitle,
+}: ResponsesTableProps) {
+  const [exporting, setExporting] = useState(false)
+  const totalPages = Math.max(1, Math.ceil(total / 50))
+  const sorted = [...questions].sort((a, b) => a.order_index - b.order_index)
+
+  async function handleExport() {
+    setExporting(true)
+    try {
+      const res = await fetch(`/api/forms/${triggerId}/export`)
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${formTitle.replace(/[^a-z0-9]/gi, '_')}_responses.xlsx`
+      a.click()
+      URL.revokeObjectURL(url)
+    } finally {
+      setExporting(false)
+    }
+  }
+
+  function goPage(p: number) {
+    const url = new URL(window.location.href)
+    url.searchParams.set('page', String(p))
+    window.location.href = url.toString()
+  }
+
+  if (responses.length === 0) {
+    return (
+      <div className="border-4 border-[#121212] border-dashed p-16 text-center">
+        <p className="font-black uppercase tracking-tighter text-[#121212]/30 text-xl">
+          No responses yet
+        </p>
+        <p className="text-sm font-medium text-[#121212]/40 mt-2">
+          Responses will appear here once users submit this form.
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Header row */}
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-bold uppercase tracking-widest text-[#121212]/50">
+          {total} response{total !== 1 ? 's' : ''}
+        </p>
+        <Button variant="blue" onClick={handleExport} disabled={exporting}>
+          <Download className="w-3.5 h-3.5" strokeWidth={2.5} />
+          {exporting ? 'Exporting…' : 'Export XLSX'}
+        </Button>
+      </div>
+
+      {/* Table */}
+      <div className="border-4 border-[#121212] overflow-x-auto shadow-[4px_4px_0px_0px_#121212]">
+        <table className="w-full text-sm border-collapse min-w-max">
+          <thead>
+            <tr className="border-b-4 border-[#121212] bg-[#121212] text-white">
+              <th className="px-4 py-3 text-left font-black uppercase tracking-widest text-xs whitespace-nowrap">
+                Date
+              </th>
+              <th className="px-4 py-3 text-left font-black uppercase tracking-widest text-xs whitespace-nowrap">
+                Platform
+              </th>
+              <th className="px-4 py-3 text-left font-black uppercase tracking-widest text-xs whitespace-nowrap">
+                Status
+              </th>
+              {sorted.map((q, i) => (
+                <th
+                  key={q.id}
+                  className="px-4 py-3 text-left font-black uppercase tracking-widest text-xs max-w-[200px]"
+                >
+                  Q{i + 1}: {q.question_text.length > 40 ? q.question_text.slice(0, 40) + '…' : q.question_text}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {responses.map((r, idx) => {
+              const answerMap: Record<string, string> = {}
+              for (const a of (r.form_response_answers ?? [])) {
+                answerMap[a.question_id] = a.answer_text
+              }
+              return (
+                <tr
+                  key={r.id}
+                  className={`border-b-2 border-[#121212]/10 ${idx % 2 === 0 ? 'bg-white' : 'bg-[#F0F0F0]'}`}
+                >
+                  <td className="px-4 py-3 font-medium text-[#121212]/70 whitespace-nowrap">
+                    {new Date(r.created_at).toLocaleString()}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <span
+                      className={`text-xs font-bold uppercase tracking-widest px-2 py-0.5 border-2 border-[#121212] ${
+                        r.platform === 'whatsapp'
+                          ? 'bg-[#F0C020] text-[#121212]'
+                          : 'bg-[#D02020] text-white'
+                      }`}
+                    >
+                      {r.platform === 'whatsapp' ? 'WA' : 'IG'}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <span
+                      className={`text-xs font-bold uppercase tracking-widest px-2 py-0.5 border-2 border-[#121212] ${
+                        r.is_complete
+                          ? 'bg-[#1040C0] text-white'
+                          : 'bg-[#F0F0F0] text-[#121212]/60'
+                      }`}
+                    >
+                      {r.is_complete ? 'Complete' : 'Incomplete'}
+                    </span>
+                  </td>
+                  {sorted.map(q => (
+                    <td key={q.id} className="px-4 py-3 font-medium text-[#121212] max-w-[200px]">
+                      <span className="block truncate">{answerMap[q.id] ?? '—'}</span>
+                    </td>
+                  ))}
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between">
+          <Button
+            variant="outline"
+            onClick={() => goPage(page - 1)}
+            disabled={page <= 1}
+            className="text-xs"
+          >
+            <ChevronLeft className="w-3.5 h-3.5" strokeWidth={2.5} />
+            Previous
+          </Button>
+          <span className="text-xs font-bold uppercase tracking-widest text-[#121212]/50">
+            Page {page} of {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            onClick={() => goPage(page + 1)}
+            disabled={page >= totalPages}
+            className="text-xs"
+          >
+            Next
+            <ChevronRight className="w-3.5 h-3.5" strokeWidth={2.5} />
+          </Button>
+        </div>
+      )}
+    </div>
+  )
+}
