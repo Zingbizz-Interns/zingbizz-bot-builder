@@ -10,6 +10,7 @@ const bodyParser = require('body-parser');
 const { registerSessionCallbacks } = require('./services/messageHandler');
 const webhookRouter = require('./routes/webhook');
 const whatsappWebhookRouter = require('./routes/whatsapp.webhook');
+const authRouter = require('./routes/auth');
 
 const { port } = require('./config/env');
 
@@ -26,6 +27,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // ─── Routes ───────────────────────────────────────────────────────────────────
 app.use('/webhook', webhookRouter);
 app.use('/webhook/whatsapp', whatsappWebhookRouter);
+app.use('/auth/instagram', authRouter);
 
 // Health check
 app.get('/', (req, res) => {

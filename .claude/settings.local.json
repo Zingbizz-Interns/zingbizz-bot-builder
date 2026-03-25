@@ -40,7 +40,8 @@
       "Bash(node --check src/services/tenantResolver.js)",
       "Bash(node --check src/routes/webhook.js)",
       "Bash(find \"/c/instagram_bot/frontend/app/\\(dashboard\\)/dashboard/bots/[botId]/\" -type f -o -type d)",
-      "Bash(find D:\\\\instagram_bot\\\\frontend\\\\app\\\\\\(dashboard\\)\\\\dashboard\\\\bots\\\\[botId]:*)"
+      "Bash(find D:\\\\instagram_bot\\\\frontend\\\\app\\\\\\(dashboard\\)\\\\dashboard\\\\bots\\\\[botId]:*)",
+      "Bash(find /c/instagram_bot/frontend -path \"*/app/\\(auth\\)/*\" -name \"page.tsx\")"
     ]
   }
 }
