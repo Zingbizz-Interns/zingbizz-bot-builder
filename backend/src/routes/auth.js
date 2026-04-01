@@ -30,6 +30,12 @@ router.get('/', (req, res) => {
   const { botId } = req.query;
   if (!botId) return res.status(400).json({ error: 'botId is required' });
 
+  console.log('[auth] ENV CHECK:');
+  console.log('  META_APP_ID                  =', process.env.META_APP_ID);
+  console.log('  META_APP_SECRET              =', process.env.META_APP_SECRET ? '✓ set' : '✗ MISSING');
+  console.log('  INSTAGRAM_OAUTH_REDIRECT_URI =', process.env.INSTAGRAM_OAUTH_REDIRECT_URI);
+  console.log('  FRONTEND_URL                 =', process.env.FRONTEND_URL);
+
   const stateToken = crypto.randomBytes(16).toString('hex');
   pendingOAuth.set(stateToken, { botId, expiresAt: Date.now() + STATE_TTL_MS });
 
@@ -41,7 +47,9 @@ router.get('/', (req, res) => {
     state: stateToken,
   });
 
-  res.redirect(`https://www.facebook.com/v18.0/dialog/oauth?${params}`);
+  const finalUrl = `https://www.facebook.com/v18.0/dialog/oauth?${params}`;
+  console.log('[auth] Redirecting to:', finalUrl);
+  res.redirect(finalUrl);
 });
 
 // ---------------------------------------------------------------------------

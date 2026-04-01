@@ -1,5 +1,5 @@
 # MVP.md — Build Plan & Phases
-asdasfasd
+asdasfasdasdasd
 ## MVP Feature Set
 
 Everything listed below is in scope for this MVP build. Nothing is deferred.
