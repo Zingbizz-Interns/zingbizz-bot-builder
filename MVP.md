@@ -12,7 +12,7 @@ All UI must follow `design.xml` (Bauhaus). Key rules:
 - Reusable: `Button.tsx`, `Card.tsx`, `cn()` from `lib/utils.ts`
 
 ### Included
-- Customer auth (signup / login)
+- Customer auth (signup / login)asdasd
 - Multi-platform credentials per customer (WhatsApp + Instagram, independent)
 - Platform-specific credential validation via Meta test API
 - Multiple bots per customer
