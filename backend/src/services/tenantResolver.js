@@ -319,18 +319,6 @@ async function resolveBot(platform, identifier) {
 
 async function resolveVerifyToken(platform, verifyToken) {
   try {
-    // Check app-level verify token first (used by OAuth-connected accounts and
-    // the webhook URL registered in Meta App Dashboard)
-    const appToken = platform === 'whatsapp'
-      ? process.env.WHATSAPP_VERIFY_TOKEN
-      : process.env.VERIFY_TOKEN;
-
-    if (appToken && verifyToken === appToken) {
-      return true;
-    }
-
-    // Fall back to per-tenant DB lookup (supports manually-connected accounts
-    // that provided their own verify_token in the old form)
     const { data, error } = await supabase
       .from('platform_configs')
       .select('id')
