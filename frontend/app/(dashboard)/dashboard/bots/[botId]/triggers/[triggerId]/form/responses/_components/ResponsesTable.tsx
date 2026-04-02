@@ -115,7 +115,7 @@ export default function ResponsesTable({
                   key={r.id}
                   className={`border-b-2 border-[#121212]/10 ${idx % 2 === 0 ? 'bg-white' : 'bg-[#F0F0F0]'}`}
                 >
-                  <td className="px-4 py-3 font-medium text-[#121212]/70 whitespace-nowrap">
+                  <td className="px-4 py-3 font-medium text-[#121212]/70 whitespace-nowrap" suppressHydrationWarning>
                     {new Date(r.created_at).toLocaleString()}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">

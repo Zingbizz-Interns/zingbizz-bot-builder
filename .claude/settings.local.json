@@ -42,7 +42,9 @@
       "Bash(find \"/c/instagram_bot/frontend/app/\\(dashboard\\)/dashboard/bots/[botId]/\" -type f -o -type d)",
       "Bash(find D:\\\\instagram_bot\\\\frontend\\\\app\\\\\\(dashboard\\)\\\\dashboard\\\\bots\\\\[botId]:*)",
       "Bash(find /c/instagram_bot/frontend -path \"*/app/\\(auth\\)/*\" -name \"page.tsx\")",
-      "Bash(grep -i \"platform\" /c/zingbizz-bot-builder/database/migrations/*.sql)"
+      "Bash(grep -i \"platform\" /c/zingbizz-bot-builder/database/migrations/*.sql)",
+      "Bash(grep -E \"\\\\.\\(js|ts\\)$\")",
+      "Bash(grep -n \"contacts\" /c/soorya/zingbizz-bot-builder/database/migrations/*.sql)"
     ]
   }
 }

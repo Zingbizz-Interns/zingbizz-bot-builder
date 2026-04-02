@@ -153,6 +153,14 @@ function countVisibleQuestions(questions, formAnswers) {
 async function saveFormResponse(form, session, senderId, platform) {
   try {
     const now = new Date().toISOString();
+    const formAnswers = session.formAnswers || {};
+    const answerCount = Object.keys(formAnswers).length;
+
+    console.log(`[actionExecutor] saveFormResponse: formId=${form.id} sender=${senderId} platform=${platform} answerCount=${answerCount}`);
+
+    if (answerCount === 0) {
+      console.warn('[actionExecutor] saveFormResponse: formAnswers is empty — no answers will be saved');
+    }
 
     // Insert form_response
     const { data: responseData, error: responseError } = await supabase
@@ -169,14 +177,14 @@ async function saveFormResponse(form, session, senderId, platform) {
       .single();
 
     if (responseError) {
-      console.error('[actionExecutor] form_responses insert error:', responseError.message);
+      console.error('[actionExecutor] form_responses insert error:', responseError.message, responseError.details);
       return;
     }
 
     const responseId = responseData.id;
 
     // Insert all answers
-    const answers = Object.entries(session.formAnswers).map(([questionId, answerText]) => ({
+    const answers = Object.entries(formAnswers).map(([questionId, answerText]) => ({
       response_id: responseId,
       question_id: questionId,
       answer_text: answerText || '',
@@ -188,11 +196,13 @@ async function saveFormResponse(form, session, senderId, platform) {
         .insert(answers);
 
       if (answersError) {
-        console.error('[actionExecutor] form_response_answers insert error:', answersError.message);
+        console.error('[actionExecutor] form_response_answers insert error:', answersError.message, answersError.details, 'answers:', JSON.stringify(answers));
+      } else {
+        console.log(`[actionExecutor] Saved ${answers.length} answers for responseId=${responseId}`);
       }
+    } else {
+      console.warn(`[actionExecutor] No answers to save for responseId=${responseId}`);
     }
-
-    console.log(`[actionExecutor] Form response saved: responseId=${responseId}`);
   } catch (err) {
     console.error('[actionExecutor] saveFormResponse error:', err.message);
   }

@@ -24,22 +24,33 @@ export async function GET(
   const questions = [...(form.form_questions as { id: string; question_text: string; order_index: number }[])]
     .sort((a, b) => a.order_index - b.order_index)
 
-  // Get all responses with answers
+  // Get all responses
   const { data: responses } = await supabase
     .from('form_responses')
-    .select('*, form_response_answers(*)')
+    .select('*')
     .eq('form_id', form.id)
     .order('created_at', { ascending: false })
 
   if (!responses) return new Response('No data', { status: 404 })
 
+  // Fetch answers separately (more reliable than nested PostgREST query)
+  const responseIds = responses.map(r => r.id)
+  const { data: allAnswers } = responseIds.length > 0
+    ? await supabase.from('form_response_answers').select('*').in('response_id', responseIds)
+    : { data: [] }
+
+  const answersMap: Record<string, { question_id: string; answer_text: string }[]> = {}
+  for (const a of allAnswers ?? []) {
+    if (!answersMap[a.response_id]) answersMap[a.response_id] = []
+    answersMap[a.response_id].push(a)
+  }
+
   // Build rows
   const header = ['Date', 'Platform', 'Status', ...questions.map(q => q.question_text)]
 
   const rows = responses.map(r => {
-    const answers = (r.form_response_answers ?? []) as { question_id: string; answer_text: string }[]
     const answerMap: Record<string, string> = {}
-    for (const a of answers) answerMap[a.question_id] = a.answer_text
+    for (const a of answersMap[r.id] ?? []) answerMap[a.question_id] = a.answer_text
 
     return [
       new Date(r.created_at).toLocaleString(),
