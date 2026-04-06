@@ -132,7 +132,7 @@ export async function GET(req: NextRequest) {
     // Non-fatal — subscription may already exist or app-level webhook may handle it
 
     // ── Step 5: Save to platform_configs ─────────────────────────
-    // page_id = Facebook Page ID (matches entry.id in webhook payload for routing)
+    // page_id = Instagram Business Account ID (matches entry.id in webhook payload for routing)
     const supabase = await createClient()
 
     const { error: dbError } = await supabase
@@ -141,8 +141,8 @@ export async function GET(req: NextRequest) {
         {
           bot_id:            botId,
           platform:          'instagram',
-          page_id:           facebookPageId,   // Facebook Page ID — used for webhook routing
-          access_token:      pageAccessToken,  // Page access token — used for sending messages
+          page_id:           instagramAccountId, // IG account ID — matches entry.id in webhooks
+          access_token:      pageAccessToken,    // Page access token — used for sending messages
           verify_token:      '',               // Not needed — webhook is app-level in Meta
           phone_number_id:   null,
           waba_id:           null,
@@ -160,7 +160,7 @@ export async function GET(req: NextRequest) {
 
     revalidatePath(`/dashboard/bots/${botId}/platforms`)
 
-    const displayName = instagramUsername ?? instagramAccountId ?? facebookPageId
+    const displayName = instagramUsername ?? instagramAccountId ?? 'Instagram'
     return NextResponse.redirect(
       `${redirectBase}?ig_connected=${encodeURIComponent(displayName)}`
     )
