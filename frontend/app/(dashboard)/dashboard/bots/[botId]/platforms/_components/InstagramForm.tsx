@@ -11,6 +11,7 @@ import {
 } from '@/lib/actions/platforms'
 import Button from '@/components/ui/Button'
 import SessionConfig from './SessionConfig'
+import InstagramSetupGuide from './InstagramSetupGuide'
 import type { PlatformConfig } from '@/types/database'
 import { useCanEdit } from '@/lib/context/botPermission'
 
@@ -142,6 +143,9 @@ export default function InstagramForm({ botId, existing }: InstagramFormProps) {
           </p>
         </div>
       )}
+
+      {/* ── Setup guide (shown when not yet connected) ───────── */}
+      {!existing && <InstagramSetupGuide />}
 
       {/* ── Primary: Connect with Instagram button ───────────── */}
       {!existing && (
