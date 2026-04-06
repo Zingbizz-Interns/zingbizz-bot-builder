@@ -30,7 +30,7 @@ export async function getInstagramOAuthUrl(botId: string): Promise<string> {
     enable_fb_login: '1',
   })
 
-  return `https://www.instagram.com/oauth/authorize?${params.toString()}`
+  return `https://www.facebook.com/v18.0/dialog/oauth?${params.toString()}`
 }
 
 // ─── Validate credentials against Meta Graph API ─────────────

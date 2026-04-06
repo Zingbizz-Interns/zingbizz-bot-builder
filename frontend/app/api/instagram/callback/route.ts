@@ -1,14 +1,15 @@
 // app/api/instagram/callback/route.ts
-// Handles Instagram OAuth callback — exchanges code for token, saves to platform_configs.
+// Handles Instagram OAuth callback via Facebook OAuth dialog.
+// Flow: code → FB user token → Instagram Business Account ID → save to platform_configs.
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import crypto from 'crypto'
 
-const APP_ID     = process.env.NEXT_PUBLIC_INSTAGRAM_APP_ID!
-const APP_SECRET = process.env.INSTAGRAM_APP_SECRET!
-const APP_URL    = process.env.NEXT_PUBLIC_APP_URL!
+const APP_ID      = process.env.NEXT_PUBLIC_INSTAGRAM_APP_ID!
+const APP_SECRET  = process.env.INSTAGRAM_APP_SECRET!
+const APP_URL     = process.env.NEXT_PUBLIC_APP_URL!
 const REDIRECT_URI = `${APP_URL}/api/instagram/callback`
 
 export async function GET(req: NextRequest) {
@@ -17,7 +18,7 @@ export async function GET(req: NextRequest) {
   const state = searchParams.get('state')
   const error = searchParams.get('error')
 
-  // ── Instagram denied / cancelled ─────────────────────────────
+  // ── User denied / cancelled ───────────────────────────────────
   if (error) {
     const desc = searchParams.get('error_description') ?? error
     return NextResponse.redirect(`${APP_URL}/dashboard?ig_error=${encodeURIComponent(desc)}`)
@@ -40,8 +41,8 @@ export async function GET(req: NextRequest) {
   const redirectBase = `${APP_URL}/dashboard/bots/${botId}/platforms`
 
   try {
-    // ── Step 1: Exchange code → short-lived user access token ────
-    const tokenRes = await fetch('https://api.instagram.com/oauth/access_token', {
+    // ── Step 1: Exchange code → Facebook user access token ────────
+    const tokenRes = await fetch('https://graph.facebook.com/v18.0/oauth/access_token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
@@ -54,41 +55,67 @@ export async function GET(req: NextRequest) {
     })
     const tokenData = await tokenRes.json()
 
-    if (tokenData.error_type || tokenData.error) {
-      const msg = tokenData.error_message ?? tokenData.error ?? 'token_exchange_failed'
+    if (tokenData.error) {
+      const msg = tokenData.error.message ?? 'token_exchange_failed'
       return NextResponse.redirect(`${redirectBase}?ig_error=${encodeURIComponent(msg)}`)
     }
 
-    const shortLivedToken: string = tokenData.access_token
-    const instagramUserId: string = String(tokenData.user_id)
+    const userAccessToken: string = tokenData.access_token
 
-    // ── Step 2: Exchange short-lived → long-lived token (60 days) ─
-    const longTokenRes = await fetch(
-      `https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_id=${APP_ID}&client_secret=${APP_SECRET}&access_token=${shortLivedToken}`,
+    // ── Step 2: Get Instagram Business Account linked to the user ─
+    // First get the Facebook Pages the user manages
+    const pagesRes = await fetch(
+      `https://graph.facebook.com/v18.0/me/accounts?access_token=${userAccessToken}`,
       { cache: 'no-store' }
     )
-    const longTokenData = await longTokenRes.json()
+    const pagesData = await pagesRes.json()
 
-    if (longTokenData.error) {
-      return NextResponse.redirect(`${redirectBase}?ig_error=${encodeURIComponent(longTokenData.error.message ?? 'long_token_exchange_failed')}`)
+    if (pagesData.error) {
+      return NextResponse.redirect(`${redirectBase}?ig_error=${encodeURIComponent(pagesData.error.message ?? 'failed_to_fetch_pages')}`)
     }
 
-    const accessToken: string = longTokenData.access_token
+    const pages: Array<{ id: string; name: string; access_token: string }> = pagesData.data ?? []
 
-    // ── Step 3: Fetch account name for display ───────────────────
-    let accountName = instagramUserId
-    try {
-      const profileRes = await fetch(
-        `https://graph.instagram.com/v18.0/${instagramUserId}?fields=name,username&access_token=${accessToken}`,
+    if (pages.length === 0) {
+      return NextResponse.redirect(`${redirectBase}?ig_error=${encodeURIComponent('No Facebook Pages found. Connect a Facebook Page to your Instagram Business account first.')}`)
+    }
+
+    // Find the first page that has an Instagram Business Account connected
+    let instagramAccountId: string | null = null
+    let instagramUsername: string | null = null
+    let pageAccessToken: string = pages[0].access_token
+
+    for (const page of pages) {
+      const igRes = await fetch(
+        `https://graph.facebook.com/v18.0/${page.id}?fields=instagram_business_account&access_token=${page.access_token}`,
         { cache: 'no-store' }
       )
-      const profile = await profileRes.json()
-      accountName = profile.username ?? profile.name ?? instagramUserId
-    } catch {
-      // non-fatal — name is cosmetic only
+      const igData = await igRes.json()
+
+      if (igData.instagram_business_account?.id) {
+        instagramAccountId = igData.instagram_business_account.id
+        pageAccessToken = page.access_token
+
+        // Fetch username
+        try {
+          const profileRes = await fetch(
+            `https://graph.facebook.com/v18.0/${instagramAccountId}?fields=username,name&access_token=${page.access_token}`,
+            { cache: 'no-store' }
+          )
+          const profile = await profileRes.json()
+          instagramUsername = profile.username ?? profile.name ?? instagramAccountId
+        } catch {
+          instagramUsername = instagramAccountId
+        }
+        break
+      }
     }
 
-    // ── Step 4: Save to platform_configs ─────────────────────────
+    if (!instagramAccountId) {
+      return NextResponse.redirect(`${redirectBase}?ig_error=${encodeURIComponent('No Instagram Business Account found linked to your Facebook Page.')}`)
+    }
+
+    // ── Step 3: Save to platform_configs ─────────────────────────
     const supabase = await createClient()
     const verifyToken = crypto.randomBytes(16).toString('hex')
 
@@ -98,8 +125,8 @@ export async function GET(req: NextRequest) {
         {
           bot_id:            botId,
           platform:          'instagram',
-          page_id:           instagramUserId,
-          access_token:      accessToken,
+          page_id:           instagramAccountId,
+          access_token:      pageAccessToken,
           verify_token:      verifyToken,
           phone_number_id:   null,
           waba_id:           null,
@@ -118,7 +145,7 @@ export async function GET(req: NextRequest) {
     revalidatePath(`/dashboard/bots/${botId}/platforms`)
 
     return NextResponse.redirect(
-      `${redirectBase}?ig_connected=${encodeURIComponent(accountName)}`
+      `${redirectBase}?ig_connected=${encodeURIComponent(instagramUsername ?? instagramAccountId)}`
     )
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'unexpected_error'
