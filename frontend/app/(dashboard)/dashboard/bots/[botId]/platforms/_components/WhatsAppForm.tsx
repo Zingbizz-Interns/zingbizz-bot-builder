@@ -5,6 +5,7 @@ import { CheckCircle, XCircle, Wifi } from 'lucide-react'
 import { validateCredentials, savePlatformConfig, deletePlatformConfig } from '@/lib/actions/platforms'
 import Button from '@/components/ui/Button'
 import SessionConfig from './SessionConfig'
+import WhatsAppSetupGuide from './WhatsAppSetupGuide'
 import type { PlatformConfig } from '@/types/database'
 import { useCanEdit } from '@/lib/context/botPermission'
 
