@@ -1,15 +1,15 @@
 // app/api/instagram/callback/route.ts
 // Handles Instagram OAuth callback via Facebook OAuth dialog.
-// Flow: code → FB user token → Instagram Business Account ID → save to platform_configs.
+// Flow: code → FB user token → find FB Page + linked IG account
+//       → auto-subscribe page to webhooks → save to platform_configs
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-import crypto from 'crypto'
 
-const APP_ID      = process.env.NEXT_PUBLIC_INSTAGRAM_APP_ID!
-const APP_SECRET  = process.env.INSTAGRAM_APP_SECRET!
-const APP_URL     = process.env.NEXT_PUBLIC_APP_URL!
+const APP_ID       = process.env.NEXT_PUBLIC_INSTAGRAM_APP_ID!
+const APP_SECRET   = process.env.INSTAGRAM_APP_SECRET!
+const APP_URL      = process.env.NEXT_PUBLIC_APP_URL!
 const REDIRECT_URI = `${APP_URL}/api/instagram/callback`
 
 export async function GET(req: NextRequest) {
@@ -62,8 +62,7 @@ export async function GET(req: NextRequest) {
 
     const userAccessToken: string = tokenData.access_token
 
-    // ── Step 2: Get Instagram Business Account linked to the user ─
-    // First get the Facebook Pages the user manages
+    // ── Step 2: Get Facebook Pages the user manages ───────────────
     const pagesRes = await fetch(
       `https://graph.facebook.com/v18.0/me/accounts?access_token=${userAccessToken}`,
       { cache: 'no-store' }
@@ -80,10 +79,11 @@ export async function GET(req: NextRequest) {
       return NextResponse.redirect(`${redirectBase}?ig_error=${encodeURIComponent('No Facebook Pages found. Connect a Facebook Page to your Instagram Business account first.')}`)
     }
 
-    // Find the first page that has an Instagram Business Account connected
-    let instagramAccountId: string | null = null
-    let instagramUsername: string | null = null
-    let pageAccessToken: string = pages[0].access_token
+    // ── Step 3: Find page with a linked Instagram Business Account ─
+    let facebookPageId: string | null      = null
+    let pageAccessToken: string | null     = null
+    let instagramAccountId: string | null  = null
+    let instagramUsername: string | null   = null
 
     for (const page of pages) {
       const igRes = await fetch(
@@ -93,31 +93,47 @@ export async function GET(req: NextRequest) {
       const igData = await igRes.json()
 
       if (igData.instagram_business_account?.id) {
+        facebookPageId     = page.id           // used for webhook routing (entry.id)
+        pageAccessToken    = page.access_token  // used for sending messages
         instagramAccountId = igData.instagram_business_account.id
-        pageAccessToken = page.access_token
 
-        // Fetch username
+        // Fetch @username for display
         try {
           const profileRes = await fetch(
             `https://graph.facebook.com/v18.0/${instagramAccountId}?fields=username,name&access_token=${page.access_token}`,
             { cache: 'no-store' }
           )
           const profile = await profileRes.json()
-          instagramUsername = profile.username ?? profile.name ?? instagramAccountId
+          instagramUsername = profile.username ?? profile.name ?? null
         } catch {
-          instagramUsername = instagramAccountId
+          // non-fatal
         }
         break
       }
     }
 
-    if (!instagramAccountId) {
+    if (!facebookPageId || !pageAccessToken) {
       return NextResponse.redirect(`${redirectBase}?ig_error=${encodeURIComponent('No Instagram Business Account found linked to your Facebook Page.')}`)
     }
 
-    // ── Step 3: Save to platform_configs ─────────────────────────
+    // ── Step 4: Auto-subscribe the page to webhooks ───────────────
+    // This makes Meta send Instagram DM events to our backend webhook
+    // without the user ever touching Meta Dev Portal.
+    await fetch(
+      `https://graph.facebook.com/v18.0/${facebookPageId}/subscribed_apps?access_token=${pageAccessToken}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          subscribed_fields: 'messages,messaging_postbacks,messaging_optins',
+        }),
+      }
+    )
+    // Non-fatal — subscription may already exist or app-level webhook may handle it
+
+    // ── Step 5: Save to platform_configs ─────────────────────────
+    // page_id = Facebook Page ID (matches entry.id in webhook payload for routing)
     const supabase = await createClient()
-    const verifyToken = crypto.randomBytes(16).toString('hex')
 
     const { error: dbError } = await supabase
       .from('platform_configs')
@@ -125,9 +141,9 @@ export async function GET(req: NextRequest) {
         {
           bot_id:            botId,
           platform:          'instagram',
-          page_id:           instagramAccountId,
-          access_token:      pageAccessToken,
-          verify_token:      verifyToken,
+          page_id:           facebookPageId,   // Facebook Page ID — used for webhook routing
+          access_token:      pageAccessToken,  // Page access token — used for sending messages
+          verify_token:      '',               // Not needed — webhook is app-level in Meta
           phone_number_id:   null,
           waba_id:           null,
           session_expiry_ms: 600000,
@@ -144,8 +160,9 @@ export async function GET(req: NextRequest) {
 
     revalidatePath(`/dashboard/bots/${botId}/platforms`)
 
+    const displayName = instagramUsername ?? instagramAccountId ?? facebookPageId
     return NextResponse.redirect(
-      `${redirectBase}?ig_connected=${encodeURIComponent(instagramUsername ?? instagramAccountId)}`
+      `${redirectBase}?ig_connected=${encodeURIComponent(displayName)}`
     )
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'unexpected_error'

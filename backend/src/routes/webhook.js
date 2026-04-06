@@ -3,17 +3,17 @@
 
 const express = require('express');
 const router = express.Router();
-const { resolveVerifyToken } = require('../services/tenantResolver');
 const { handleMessage } = require('../services/messageHandler');
 
 // ---------------------------------------------------------------------------
 // GET / — webhook verification
+// The verify token is a single static value set once in Meta App Dev Portal.
 // ---------------------------------------------------------------------------
 
-router.get('/', async (req, res) => {
-  const mode = req.query['hub.mode'];
+router.get('/', (req, res) => {
+  const mode        = req.query['hub.mode'];
   const verifyToken = req.query['hub.verify_token'];
-  const challenge = req.query['hub.challenge'];
+  const challenge   = req.query['hub.challenge'];
 
   console.log('[IG] Webhook verification request received.');
 
@@ -22,17 +22,12 @@ router.get('/', async (req, res) => {
     return res.sendStatus(403);
   }
 
-  try {
-    const valid = await resolveVerifyToken('instagram', verifyToken);
-    if (valid) {
-      console.log('[IG] Webhook verified successfully.');
-      return res.status(200).send(challenge);
-    }
-  } catch (err) {
-    console.error('[IG] resolveVerifyToken error:', err.message);
+  if (verifyToken === process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN) {
+    console.log('[IG] Webhook verified successfully.');
+    return res.status(200).send(challenge);
   }
 
-  console.warn('[IG] Webhook verification failed: token not found.');
+  console.warn('[IG] Webhook verification failed: token mismatch.');
   return res.sendStatus(403);
 });
 
