@@ -38,20 +38,17 @@ router.get('/', (req, res) => {
 // ---------------------------------------------------------------------------
 
 router.post('/', async (req, res) => {
-  // Acknowledge immediately — Meta will retry if it doesn't get 200 fast
-  res.sendStatus(200);
-
   const body = req.body;
 
   if (body.object !== 'instagram' && body.object !== 'page') {
     console.warn(`[IG] Unexpected object type: ${body.object}. Skipping.`);
-    return;
+    return res.sendStatus(200);
   }
 
   const entries = body.entry || [];
   if (entries.length === 0) {
     console.warn('[IG] Webhook payload has no entries.');
-    return;
+    return res.sendStatus(200);
   }
 
   for (const entry of entries) {
@@ -113,6 +110,10 @@ router.post('/', async (req, res) => {
       }
     }
   }
+
+  // Respond AFTER processing — Meta allows up to 20s, processing is <5s.
+  // Vercel serverless kills execution after res.end(), so respond last.
+  res.sendStatus(200);
 });
 
 module.exports = router;
