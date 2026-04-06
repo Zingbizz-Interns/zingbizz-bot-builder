@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { getPlatformConfigs } from '@/lib/actions/platforms'
 import WhatsAppForm from './_components/WhatsAppForm'
 import InstagramForm from './_components/InstagramForm'
@@ -49,7 +50,9 @@ export default async function PlatformsPage({ params }: { params: Promise<{ botI
             </span>
           </div>
           <div className="p-6">
-            <InstagramForm botId={botId} existing={igConfig} />
+            <Suspense fallback={null}>
+              <InstagramForm botId={botId} existing={igConfig} />
+            </Suspense>
           </div>
         </div>
       </div>

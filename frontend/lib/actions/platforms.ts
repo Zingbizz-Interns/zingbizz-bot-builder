@@ -3,6 +3,36 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
+// ─── Build Instagram OAuth URL ────────────────────────────────
+export async function getInstagramOAuthUrl(botId: string): Promise<string> {
+  const appId   = process.env.NEXT_PUBLIC_INSTAGRAM_APP_ID!
+  const appUrl  = process.env.NEXT_PUBLIC_APP_URL!
+  const redirectUri = `${appUrl}/api/instagram/callback`
+
+  const state = Buffer.from(
+    JSON.stringify({ botId, ts: Date.now() })
+  ).toString('base64url')
+
+  const scopes = [
+    'instagram_business_basic',
+    'instagram_business_manage_messages',
+    'instagram_business_manage_comments',
+    'instagram_business_content_publish',
+    'instagram_business_manage_insights',
+  ].join(',')
+
+  const params = new URLSearchParams({
+    client_id:      appId,
+    redirect_uri:   redirectUri,
+    scope:          scopes,
+    response_type:  'code',
+    state,
+    enable_fb_login: '1',
+  })
+
+  return `https://www.instagram.com/oauth/authorize?${params.toString()}`
+}
+
 // ─── Validate credentials against Meta Graph API ─────────────
 export async function validateCredentials(
   platform: 'whatsapp' | 'instagram',
