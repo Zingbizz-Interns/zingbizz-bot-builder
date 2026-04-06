@@ -6,6 +6,7 @@ import {
   Copy, Check, AlertTriangle, ExternalLink,
   Building2, Puzzle, Link2, KeyRound, Webhook, ShieldCheck, BookOpen,
 } from 'lucide-react'
+// ChevronDown/Up used in StepCard, ChevronRight used in compact widget
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -345,74 +346,51 @@ function StepCard({ step, defaultOpen = false }: { step: Step; defaultOpen?: boo
   )
 }
 
-// ─── Main component ────────────────────────────────────────────────────────────
+// ─── Standalone steps list (used by the dedicated guide page) ─────────────────
 
-export default function InstagramSetupGuide() {
-  const [open, setOpen] = useState(false)
-
+export function InstagramSetupSteps() {
   return (
-    <div className="border-2 border-[#121212]/20">
-      {/* Header toggle */}
-      <button
-        type="button"
-        onClick={() => setOpen(v => !v)}
-        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#F0F0F0] transition-colors text-left"
-      >
-        <div className="w-7 h-7 shrink-0 flex items-center justify-center bg-[#D02020]/10 border border-[#D02020]/30">
-          <BookOpen className="w-3.5 h-3.5 text-[#D02020]" strokeWidth={2.5} />
-        </div>
-        <div className="flex-1">
-          <p className="text-xs font-black uppercase tracking-widest text-[#121212]">
-            How to set up Instagram
-          </p>
-          <p className="text-[10px] font-medium text-[#121212]/40 mt-0.5">
-            Step-by-step: Meta App → OAuth → Webhooks → Production
-          </p>
-        </div>
-        <div className="flex items-center gap-1.5 shrink-0">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-[#121212]/30">
-            {STEPS.length} steps
-          </span>
-          {open
-            ? <ChevronUp className="w-4 h-4 text-[#121212]/40" />
-            : <ChevronDown className="w-4 h-4 text-[#121212]/40" />
-          }
-        </div>
-      </button>
-
+    <div className="border-4 border-[#121212] shadow-[8px_8px_0px_0px_#121212] bg-white overflow-hidden">
       {/* Steps */}
-      {open && (
-        <div className="border-t-2 border-[#121212]/10">
-          {/* Progress bar */}
-          <div className="px-4 py-3 bg-[#F0F0F0] border-b border-[#121212]/10 flex items-center gap-3">
-            <div className="flex gap-1 flex-1">
-              {STEPS.map((s) => (
-                <div key={s.id} className="flex-1 h-1 bg-[#D02020]/20 rounded-full" />
-              ))}
-            </div>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#121212]/40 shrink-0">
-              Expand each step
-            </span>
-          </div>
+      <div className="divide-y-2 divide-[#121212]/10">
+        {STEPS.map((step) => (
+          <StepCard key={step.id} step={step} defaultOpen />
+        ))}
+      </div>
 
-          {/* Step cards */}
-          <div className="divide-y-2 divide-[#121212]/10">
-            {STEPS.map((step) => (
-              <StepCard key={step.id} step={step} />
-            ))}
-          </div>
-
-          {/* Footer */}
-          <div className="px-4 py-3 bg-[#F0F0F0] border-t-2 border-[#121212]/10 flex items-center justify-between">
-            <p className="text-[10px] font-medium text-[#121212]/40">
-              Based on Meta Instagram Platform docs — v25.0
-            </p>
-            <DocLink href="https://developers.facebook.com/docs/instagram-platform">
-              Full docs
-            </DocLink>
-          </div>
-        </div>
-      )}
+      {/* Footer */}
+      <div className="px-6 py-4 bg-[#F0F0F0] border-t-2 border-[#121212] flex items-center justify-between">
+        <p className="text-[10px] font-medium text-[#121212]/40">
+          Based on Meta Instagram Platform docs — v25.0
+        </p>
+        <DocLink href="https://developers.facebook.com/docs/instagram-platform">
+          Full docs
+        </DocLink>
+      </div>
     </div>
+  )
+}
+
+// ─── Compact widget (used inside InstagramForm when not yet connected) ─────────
+
+export default function InstagramSetupGuide({ botId }: { botId: string }) {
+  return (
+    <a
+      href={`/dashboard/bots/${botId}/platforms/instagram-guide`}
+      className="flex items-center gap-3 px-4 py-3 border-2 border-[#121212]/20 hover:border-[#121212] hover:bg-[#F0F0F0] transition-colors group"
+    >
+      <div className="w-7 h-7 shrink-0 flex items-center justify-center bg-[#D02020]/10 border border-[#D02020]/30">
+        <BookOpen className="w-3.5 h-3.5 text-[#D02020]" strokeWidth={2.5} />
+      </div>
+      <div className="flex-1">
+        <p className="text-xs font-black uppercase tracking-widest text-[#121212]">
+          How to set up Instagram
+        </p>
+        <p className="text-[10px] font-medium text-[#121212]/40 mt-0.5">
+          Step-by-step: Meta App → OAuth → Webhooks → Production
+        </p>
+      </div>
+      <ChevronRight className="w-4 h-4 text-[#121212]/30 group-hover:text-[#121212] transition-colors" />
+    </a>
   )
 }

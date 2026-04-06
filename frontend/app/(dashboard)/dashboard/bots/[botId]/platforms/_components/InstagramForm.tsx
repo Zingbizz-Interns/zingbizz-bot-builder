@@ -145,7 +145,7 @@ export default function InstagramForm({ botId, existing }: InstagramFormProps) {
       )}
 
       {/* ── Setup guide (shown when not yet connected) ───────── */}
-      {!existing && <InstagramSetupGuide />}
+      {!existing && <InstagramSetupGuide botId={botId} />}
 
       {/* ── Primary: Connect with Instagram button ───────────── */}
       {!existing && (
