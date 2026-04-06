@@ -235,7 +235,7 @@ export default function FormBuilder({ trigger, botName, existing }: FormBuilderP
                 <div>
                   <p className="text-xs font-bold uppercase tracking-widest text-[#121212]">Show Progress Indicator</p>
                   <p className="text-xs font-medium text-[#121212]/40 mt-0.5">
-                    Appends "(Question X of Y)" to each message sent to the user.
+                    Appends &quot;(Question X of Y)&quot; to each message sent to the user.
                   </p>
                 </div>
                 <button

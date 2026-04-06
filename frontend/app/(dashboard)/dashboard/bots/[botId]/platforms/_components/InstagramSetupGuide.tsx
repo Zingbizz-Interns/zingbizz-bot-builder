@@ -288,7 +288,7 @@ const STEPS: Step[] = [
           </ul>
         </SubStep>
         <SubStep num={4}>
-          Submit the review. Meta typically responds within <strong>5 business days</strong>. If rejected, they'll explain why — common issues are vague descriptions or non-working screencasts.
+          Submit the review. Meta typically responds within <strong>5 business days</strong>. If rejected, they&apos;ll explain why — common issues are vague descriptions or non-working screencasts.
         </SubStep>
         <Note>
           During review, you can still test end-to-end with any Instagram account added as a tester under App Roles → Roles → Add Testers.
