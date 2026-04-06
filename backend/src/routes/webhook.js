@@ -111,7 +111,7 @@ router.post('/', (req, res) => {
           continue;
         }
 
-        console.log(`[IG] Sender: ${senderId} | Input: ${String(input).slice(0, 80)}`);
+        console.log(`[IG] PageId: ${pageId} | Sender: ${senderId} | Input: ${String(input).slice(0, 80)}`);
 
         try {
           await handleMessage('instagram', senderId, pageId, input);
