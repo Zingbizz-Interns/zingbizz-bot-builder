@@ -33,10 +33,12 @@ router.get('/', (req, res) => {
 
 // ---------------------------------------------------------------------------
 // POST / — incoming events
+// NOTE: We respond 200 first (Meta requires fast ack), then await processing.
+// Using async route keeps the Vercel serverless function alive until done.
 // ---------------------------------------------------------------------------
 
-router.post('/', (req, res) => {
-  // Respond immediately — Meta requires fast 200 response
+router.post('/', async (req, res) => {
+  // Acknowledge immediately — Meta will retry if it doesn't get 200 fast
   res.sendStatus(200);
 
   const body = req.body;
@@ -52,75 +54,65 @@ router.post('/', (req, res) => {
     return;
   }
 
-  // Process entries asynchronously without blocking the response
-  setImmediate(async () => {
-    for (const entry of entries) {
-      const pageId = entry.id; // identifies which bot/page this is for
+  for (const entry of entries) {
+    const pageId = entry.id;
+    const events = [];
 
-      // Collect all messaging events from this entry
-      const events = [];
-
-      if (Array.isArray(entry.messaging) && entry.messaging.length > 0) {
-        events.push(...entry.messaging);
-      } else if (Array.isArray(entry.changes)) {
-        for (const change of entry.changes) {
-          if (change.field === 'messages' && change.value) {
-            // changes format sometimes has value.messages array
-            const msgs = change.value.messages || [];
-            for (const msg of msgs) {
-              // Synthesize an event-like structure
-              events.push({
-                sender: { id: change.value.sender && change.value.sender.id ? change.value.sender.id : msg.from },
-                message: { text: msg.text && msg.text.body },
-              });
-            }
-            // Also handle if change.value is an event directly
-            if (!msgs.length && change.value.sender) {
-              events.push(change.value);
-            }
+    if (Array.isArray(entry.messaging) && entry.messaging.length > 0) {
+      events.push(...entry.messaging);
+    } else if (Array.isArray(entry.changes)) {
+      for (const change of entry.changes) {
+        if (change.field === 'messages' && change.value) {
+          const msgs = change.value.messages || [];
+          for (const msg of msgs) {
+            events.push({
+              sender: { id: change.value.sender?.id ?? msg.from },
+              message: { text: msg.text?.body },
+            });
+          }
+          if (!msgs.length && change.value.sender) {
+            events.push(change.value);
           }
         }
       }
+    }
 
-      for (const event of events) {
-        // Skip echo messages
-        if (event.message && event.message.is_echo) {
-          console.log('[IG] Echo message, skipping.');
-          continue;
-        }
+    for (const event of events) {
+      if (event.message && event.message.is_echo) {
+        console.log('[IG] Echo message, skipping.');
+        continue;
+      }
 
-        const senderId = event.sender && event.sender.id;
+      const senderId = event.sender?.id;
 
-        // Extract input from postback, quick_reply, or text
-        let input = null;
-        if (event.postback && event.postback.payload) {
-          input = event.postback.payload;
-        } else if (event.message && event.message.quick_reply && event.message.quick_reply.payload) {
-          input = event.message.quick_reply.payload;
-        } else if (event.message && event.message.text) {
-          input = event.message.text;
-        }
+      let input = null;
+      if (event.postback?.payload) {
+        input = event.postback.payload;
+      } else if (event.message?.quick_reply?.payload) {
+        input = event.message.quick_reply.payload;
+      } else if (event.message?.text) {
+        input = event.message.text;
+      }
 
-        if (!senderId) {
-          console.warn('[IG] Missing sender ID, skipping.');
-          continue;
-        }
+      if (!senderId) {
+        console.warn('[IG] Missing sender ID, skipping.');
+        continue;
+      }
 
-        if (!input) {
-          console.log('[IG] Non-text/unsupported event, skipping.');
-          continue;
-        }
+      if (!input) {
+        console.log('[IG] Non-text/unsupported event, skipping.');
+        continue;
+      }
 
-        console.log(`[IG] PageId: ${pageId} | Sender: ${senderId} | Input: ${String(input).slice(0, 80)}`);
+      console.log(`[IG] PageId: ${pageId} | Sender: ${senderId} | Input: ${String(input).slice(0, 80)}`);
 
-        try {
-          await handleMessage('instagram', senderId, pageId, input);
-        } catch (err) {
-          console.error(`[IG] handleMessage error for ${senderId}: ${err.message}`);
-        }
+      try {
+        await handleMessage('instagram', senderId, pageId, input);
+      } catch (err) {
+        console.error(`[IG] handleMessage error for ${senderId}: ${err.message}`);
       }
     }
-  });
+  }
 });
 
 module.exports = router;
