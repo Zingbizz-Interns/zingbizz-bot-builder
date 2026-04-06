@@ -40,69 +40,67 @@ router.get('/', async (req, res) => {
 // POST / — incoming events
 // ---------------------------------------------------------------------------
 
-router.post('/', (req, res) => {
-  // Respond immediately — Meta requires fast 200 response
-  res.sendStatus(200);
-
+router.post('/', async (req, res) => {
   const body = req.body;
 
   if (body.object !== 'whatsapp_business_account') {
     console.warn(`[WA] Unexpected object type: ${body.object}. Skipping.`);
-    return;
+    return res.sendStatus(200);
   }
 
   const entries = body.entry || [];
 
-  // Process entries asynchronously without blocking the response
-  setImmediate(async () => {
-    for (const entry of entries) {
-      const changes = entry.changes || [];
+  for (const entry of entries) {
+    const changes = entry.changes || [];
 
-      for (const change of changes) {
-        const value = change.value || {};
-        const messages = value.messages || [];
-        const phoneNumberId = value.metadata && value.metadata.phone_number_id;
+    for (const change of changes) {
+      const value = change.value || {};
+      const messages = value.messages || [];
+      const phoneNumberId = value.metadata && value.metadata.phone_number_id;
 
-        if (!phoneNumberId) {
-          console.warn('[WA] Missing phone_number_id in metadata, skipping change.');
+      if (!phoneNumberId) {
+        console.warn('[WA] Missing phone_number_id in metadata, skipping change.');
+        continue;
+      }
+
+      for (const message of messages) {
+        const senderPhone = message.from;
+        let input = null;
+
+        if (message.type === 'text' && message.text) {
+          input = message.text.body;
+        } else if (message.type === 'interactive' && message.interactive) {
+          if (message.interactive.button_reply) {
+            input = message.interactive.button_reply.id || message.interactive.button_reply.title;
+          } else if (message.interactive.list_reply) {
+            input = message.interactive.list_reply.id || message.interactive.list_reply.title;
+          }
+        }
+
+        if (!senderPhone) {
+          console.warn('[WA] Missing sender phone, skipping.');
           continue;
         }
 
-        for (const message of messages) {
-          const senderPhone = message.from;
-          let input = null;
+        if (!input) {
+          console.log('[WA] Non-text/non-interactive message, skipping.');
+          continue;
+        }
 
-          if (message.type === 'text' && message.text) {
-            input = message.text.body;
-          } else if (message.type === 'interactive' && message.interactive) {
-            if (message.interactive.button_reply) {
-              input = message.interactive.button_reply.id || message.interactive.button_reply.title;
-            } else if (message.interactive.list_reply) {
-              input = message.interactive.list_reply.id || message.interactive.list_reply.title;
-            }
-          }
+        console.log(`[WA] Sender: ${senderPhone} | Input: ${String(input).slice(0, 80)}`);
 
-          if (!senderPhone) {
-            console.warn('[WA] Missing sender phone, skipping.');
-            continue;
-          }
-
-          if (!input) {
-            console.log('[WA] Non-text/non-interactive message, skipping.');
-            continue;
-          }
-
-          console.log(`[WA] Sender: ${senderPhone} | Input: ${String(input).slice(0, 80)}`);
-
-          try {
-            await handleMessage('whatsapp', senderPhone, phoneNumberId, input);
-          } catch (err) {
-            console.error(`[WA] handleMessage error for ${senderPhone}: ${err.message}`);
-          }
+        try {
+          await handleMessage('whatsapp', senderPhone, phoneNumberId, input);
+        } catch (err) {
+          console.error(`[WA] handleMessage error for ${senderPhone}: ${err.message}`);
         }
       }
     }
-  });
+  }
+
+  // Respond AFTER processing — Meta allows up to 20s, processing is <5s.
+  // Vercel serverless kills execution after res.end(), so respond last.
+  res.sendStatus(200);
 });
 
 module.exports = router;
