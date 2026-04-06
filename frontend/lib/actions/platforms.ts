@@ -14,11 +14,10 @@ export async function getInstagramOAuthUrl(botId: string): Promise<string> {
   ).toString('base64url')
 
   const scopes = [
-    'instagram_business_basic',
-    'instagram_business_manage_messages',
-    'instagram_business_manage_comments',
-    'instagram_business_content_publish',
-    'instagram_business_manage_insights',
+    'pages_show_list',           // list Facebook Pages the user manages
+    'pages_read_engagement',     // read page info to find linked IG account
+    'instagram_basic',           // basic Instagram account access
+    'instagram_manage_messages', // send/receive Instagram DMs
   ].join(',')
 
   const params = new URLSearchParams({
