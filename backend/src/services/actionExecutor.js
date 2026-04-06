@@ -54,8 +54,8 @@ const VALIDATORS = {
   email: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
   phone: (v) => /^\d{10}$/.test(v.trim()),
   number: (v) => v !== '' && !isNaN(Number(v)),
-  date: (v) => !isNaN(Date.parse(v)),
-  name: (v) => /^[a-zA-Z\s'.-]{2,}$/.test(v),
+  date: (v) => /^\d{4}-\d{2}-\d{2}$/.test(v) || /^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4}$/.test(v),
+  name: (v) => /^[\p{L}\p{M}\s'.,-]{3,}$/u.test(v),
   none: () => true,
 };
 
@@ -63,8 +63,8 @@ const VALIDATION_ERRORS = {
   email: 'Please enter a valid email address (e.g. name@example.com).',
   phone: 'Please enter a valid 10-digit phone number.',
   number: 'Please enter a valid number.',
-  date: 'Please enter a valid date (e.g. 2000-01-31).',
-  name: 'Please enter a valid name (letters only, at least 2 characters).',
+  date: 'Please enter a valid date (e.g. 2000-01-31 or 31/01/2000).',
+  name: 'Please enter a valid name (at least 3 characters).',
 };
 
 function validateInput(value, validationType) {

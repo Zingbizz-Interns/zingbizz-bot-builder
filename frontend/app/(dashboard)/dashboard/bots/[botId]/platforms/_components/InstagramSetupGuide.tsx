@@ -137,13 +137,13 @@ const STEPS: Step[] = [
           When asked for app type, select <Pill>Business</Pill>. This is mandatory — other types do not support Instagram messaging.
         </SubStep>
         <SubStep num={3}>
-          Fill in <strong>App Name</strong> (e.g. "My Bot") and your <strong>Contact Email</strong>, then click <Pill>Create App</Pill>.
+          Fill in <strong>App Name</strong> (e.g. &quot;My Bot&quot;) and your <strong>Contact Email</strong>, then click <Pill>Create App</Pill>.
         </SubStep>
         <SubStep num={4}>
-          After creation, note your <strong>App ID</strong> and <strong>App Secret</strong> from <Pill>App Settings → Basic</Pill>. You'll need these later.
+          After creation, note your <strong>App ID</strong> and <strong>App Secret</strong> from <Pill>App Settings → Basic</Pill>. You&apos;ll need these later.
         </SubStep>
         <Note>
-          Meta may ask you to verify your business. Complete this step before submitting for production review — it's required.
+          Meta may ask you to verify your business. Complete this step before submitting for production review — it&apos;s required.
         </Note>
       </div>
     ),
@@ -159,7 +159,7 @@ const STEPS: Step[] = [
           In your app dashboard, scroll to the <strong>Add Products</strong> section and find the <strong>Instagram</strong> card. Click <Pill>Set up</Pill>.
         </SubStep>
         <SubStep num={2}>
-          You'll see two options. Choose <Pill>API setup with Instagram Login</Pill> — this is the modern approach using the Instagram Graph API.
+          You&apos;ll see two options. Choose <Pill>API setup with Instagram Login</Pill> — this is the modern approach using the Instagram Graph API.
         </SubStep>
         <SubStep num={3}>
           Instagram will now appear in the left sidebar under <strong>Products</strong>. Click it to open the Instagram settings panel.
@@ -168,7 +168,7 @@ const STEPS: Step[] = [
           Under <strong>API setup with Instagram login</strong>, scroll to <strong>Generate access tokens</strong> → click <Pill>Add account</Pill> → authorize your Instagram Business account in the popup.
         </SubStep>
         <Note>
-          If you don't see your Instagram account in the popup, make sure it's linked to your Facebook Page (Step 1).
+          If you don&apos;t see your Instagram account in the popup, make sure it&apos;s linked to your Facebook Page (Step 1).
         </Note>
       </div>
     ),
@@ -219,7 +219,7 @@ const STEPS: Step[] = [
           Come back to Zingbizz and use <strong>Connect with Instagram</strong> above — this handles the token automatically. Or paste your Account ID and Access Token manually using the manual entry option below.
         </SubStep>
         <Note>
-          Access tokens are valid for 60 days. Zingbizz's OAuth flow exchanges for a long-lived token automatically. If you paste manually, refresh the token before it expires.
+          Access tokens are valid for 60 days. Zingbizz&apos;s OAuth flow exchanges for a long-lived token automatically. If you paste manually, refresh the token before it expires.
         </Note>
       </div>
     ),
@@ -235,7 +235,7 @@ const STEPS: Step[] = [
           In your Meta App, go to <Pill>Products → Instagram → Webhooks</Pill> (or find it under the <strong>Webhooks</strong> product if listed separately).
         </SubStep>
         <SubStep num={2}>
-          Click <Pill>Edit page subscription</Pill> (or <Pill>Add subscriptions</Pill>). You'll see two fields: Callback URL and Verify Token.
+          Click <Pill>Edit page subscription</Pill> (or <Pill>Add subscriptions</Pill>). You&apos;ll see two fields: Callback URL and Verify Token.
         </SubStep>
         <SubStep num={3}>
           Set the <strong>Callback URL</strong> to your Zingbizz backend webhook endpoint — check your backend deployment URL and append <code className="bg-[#F0F0F0] px-1 text-xs font-mono">/webhook</code>.
@@ -252,7 +252,7 @@ const STEPS: Step[] = [
           After verification, enable the <Pill>messages</Pill> subscription field so incoming DMs are forwarded to your bot.
         </SubStep>
         <Note>
-          The webhook endpoint must be publicly accessible HTTPS with a valid SSL certificate. Local dev URLs (localhost) won't work — use a tool like ngrok for local testing.
+          The webhook endpoint must be publicly accessible HTTPS with a valid SSL certificate. Local dev URLs (localhost) won&apos;t work — use a tool like ngrok for local testing.
         </Note>
       </div>
     ),
