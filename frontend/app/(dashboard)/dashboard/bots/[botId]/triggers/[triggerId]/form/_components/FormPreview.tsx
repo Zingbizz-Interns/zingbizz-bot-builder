@@ -21,6 +21,7 @@ interface FormPreviewProps {
   platforms: string[]
   botName: string
   title: string
+  showProgress?: boolean
   questions: QuestionPreview[]
 }
 
@@ -29,7 +30,7 @@ interface HistoryEntry {
   answer: string
 }
 
-export default function FormPreview({ platforms, botName, questions }: FormPreviewProps) {
+export default function FormPreview({ platforms, botName, questions, showProgress = false }: FormPreviewProps) {
   const [history, setHistory] = useState<HistoryEntry[]>([])
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [currentQIdx, setCurrentQIdx] = useState<number | null>(null)
@@ -133,17 +134,19 @@ export default function FormPreview({ platforms, botName, questions }: FormPrevi
         ) : (
           <div className="w-full flex flex-col gap-2">
             {/* Progress bar */}
-            <div className="flex items-center gap-1.5 shrink-0">
-              <div className="flex-1 h-1 bg-black/10 rounded-full overflow-hidden">
-                <div
-                  className={`h-full transition-all rounded-full ${isWA ? 'bg-[#128C7E]' : 'bg-[#0095F6]'}`}
-                  style={{ width: `${isComplete ? 100 : total > 0 ? (answeredCount / total) * 100 : 0}%` }}
-                />
+            {showProgress && (
+              <div className="flex items-center gap-1.5 shrink-0">
+                <div className="flex-1 h-1 bg-black/10 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full transition-all rounded-full ${isWA ? 'bg-[#128C7E]' : 'bg-[#0095F6]'}`}
+                    style={{ width: `${isComplete ? 100 : total > 0 ? (answeredCount / total) * 100 : 0}%` }}
+                  />
+                </div>
+                <span className="text-[9px] font-bold text-gray-500 shrink-0">
+                  {isComplete ? `${total}/${total}` : `${answeredCount}/${total}`}
+                </span>
               </div>
-              <span className="text-[9px] font-bold text-gray-500 shrink-0">
-                {isComplete ? `${total}/${total}` : `${answeredCount}/${total}`}
-              </span>
-            </div>
+            )}
 
             {/* Scrollable chat history */}
             <div ref={scrollRef} className="max-h-[200px] overflow-y-auto flex flex-col gap-1.5">

@@ -18,6 +18,7 @@ export async function saveForm(triggerId: string, botId: string, formData: FormD
 
   const title = (formData.get('title') as string)?.trim() || 'Untitled Form'
   const submitMessage = (formData.get('submit_message') as string)?.trim() || 'Thank you! Your responses have been submitted.'
+  const showProgress = formData.get('show_progress') !== 'false'
   const questionsRaw = JSON.parse((formData.get('questions') as string) || '[]') as {
     localId: string
     order_index: number
@@ -32,7 +33,7 @@ export async function saveForm(triggerId: string, botId: string, formData: FormD
   // 1. Upsert form
   const { data: form, error: formErr } = await supabase
     .from('forms')
-    .upsert({ trigger_id: triggerId, title, submit_message: submitMessage }, { onConflict: 'trigger_id' })
+    .upsert({ trigger_id: triggerId, title, submit_message: submitMessage, show_progress: showProgress }, { onConflict: 'trigger_id' })
     .select()
     .single()
 

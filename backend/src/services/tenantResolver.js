@@ -167,6 +167,7 @@ async function loadTriggers(botId) {
         id: f.id,
         title: f.title,
         submitMessage: f.submit_message || 'Thank you! Your responses have been submitted.',
+        showProgress: f.show_progress !== false,
         questions: rawQuestions.map((q) => {
           const options = (optionsByQuestionId[q.id] || []).sort((a, b) => a.order_index - b.order_index);
           const conditions = (conditionsByQuestionId[q.id] || []);

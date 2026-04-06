@@ -124,10 +124,10 @@ function findNextQIndex(questions, fromIndex, formAnswers) {
 // Ask a question (text or choice)
 // ---------------------------------------------------------------------------
 
-async function askQuestion(platform, senderId, question, qIndex, totalVisible, questions, formAnswers, platformConfig) {
+async function askQuestion(platform, senderId, question, qIndex, totalVisible, questions, formAnswers, platformConfig, showProgress = true) {
   const resolved = resolveTokens(question.questionText, questions, formAnswers);
   const skipNote = question.isRequired ? '' : '\n(or type "skip" to skip)';
-  const progress = `\n\n(Question ${qIndex + 1} of ${totalVisible})`;
+  const progress = showProgress ? `\n\n(Question ${qIndex + 1} of ${totalVisible})` : '';
   const fullText = resolved + skipNote + progress;
 
   if (question.inputType === 'choice' && question.options && question.options.length > 0) {
@@ -278,6 +278,7 @@ async function executeTrigger(trigger, botConfig, session, senderId, platformCon
         formTriggerId: trigger.id,
         formQuestions: form.questions,
         formSubmitMessage: form.submitMessage,
+        formShowProgress: form.showProgress !== false,
         formQIndex: 0,
         formAnswers: {},
       });
@@ -301,7 +302,8 @@ async function executeTrigger(trigger, botConfig, session, senderId, platformCon
         form.questions[firstQIndex],
         0, total,
         form.questions, {},
-        platformConfig
+        platformConfig,
+        form.showProgress !== false
       );
 
     } else if (trigger.action_type === 'query') {
@@ -342,6 +344,7 @@ async function handleFormInput(input, botConfig, session, sessionKey, senderId, 
     const questions = session.formQuestions || [];
     const qIndex = session.formQIndex || 0;
     const formAnswers = session.formAnswers || {};
+    const showProgress = session.formShowProgress !== false;
 
     if (qIndex >= questions.length) {
       // Somehow beyond end — reset
@@ -364,7 +367,7 @@ async function handleFormInput(input, botConfig, session, sessionKey, senderId, 
 
       sessionManager.setSession(sessionKey, { formQIndex: nextIndex, formAnswers });
       const total = countVisibleQuestions(questions, formAnswers);
-      await askQuestion(platform, senderId, questions[nextIndex], nextIndex, total, questions, formAnswers, platformConfig);
+      await askQuestion(platform, senderId, questions[nextIndex], nextIndex, total, questions, formAnswers, platformConfig, showProgress);
       return;
     }
 
@@ -397,7 +400,7 @@ async function handleFormInput(input, botConfig, session, sessionKey, senderId, 
         const buttons = options.map((o, i) => ({ id: `OPT:${i}`, title: o.optionLabel }));
         await sendText(platform, senderId, 'Please choose one of the options below.', platformConfig);
         const total = countVisibleQuestions(questions, formAnswers);
-        await askQuestion(platform, senderId, question, qIndex, total, questions, formAnswers, platformConfig);
+        await askQuestion(platform, senderId, question, qIndex, total, questions, formAnswers, platformConfig, showProgress);
         return;
       }
 
@@ -408,7 +411,7 @@ async function handleFormInput(input, botConfig, session, sessionKey, senderId, 
       if (!valid) {
         await sendText(platform, senderId, error, platformConfig);
         const total = countVisibleQuestions(questions, formAnswers);
-        await askQuestion(platform, senderId, question, qIndex, total, questions, formAnswers, platformConfig);
+        await askQuestion(platform, senderId, question, qIndex, total, questions, formAnswers, platformConfig, showProgress);
         return;
       }
       formAnswers[question.id] = trimmedInput;
@@ -426,7 +429,7 @@ async function handleFormInput(input, botConfig, session, sessionKey, senderId, 
 
     sessionManager.setSession(sessionKey, { formQIndex: nextIndex, formAnswers });
     const total = countVisibleQuestions(questions, formAnswers);
-    await askQuestion(platform, senderId, questions[nextIndex], nextIndex, total, questions, formAnswers, platformConfig);
+    await askQuestion(platform, senderId, questions[nextIndex], nextIndex, total, questions, formAnswers, platformConfig, showProgress);
   } catch (err) {
     console.error(`[actionExecutor] handleFormInput error: ${err.message}`);
   }
@@ -614,9 +617,9 @@ async function handleFormStart(form, platform, senderId, sessionKey, platformCon
     sessionManager.setSession(sessionKey, { mode: 'idle' });
     return;
   }
-  sessionManager.setSession(sessionKey, { formQIndex: firstQIndex, formSubmitMessage: form.submitMessage });
+  sessionManager.setSession(sessionKey, { formQIndex: firstQIndex, formSubmitMessage: form.submitMessage, formShowProgress: form.showProgress !== false });
   const total = countVisibleQuestions(form.questions, {});
-  await askQuestion(platform, senderId, form.questions[firstQIndex], 0, total, form.questions, {}, platformConfig);
+  await askQuestion(platform, senderId, form.questions[firstQIndex], 0, total, form.questions, {}, platformConfig, form.showProgress !== false);
 }
 
 module.exports = { executeTrigger, handleFormInput, handleQueryInput, handleFormStart };

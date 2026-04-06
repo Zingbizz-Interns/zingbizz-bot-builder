@@ -20,6 +20,7 @@ interface FormBuilderProps {
   existing: {
     title: string
     submit_message: string
+    show_progress: boolean
     form_questions: {
       id: string
       order_index: number
@@ -55,6 +56,7 @@ export default function FormBuilder({ trigger, botName, existing }: FormBuilderP
   const router = useRouter()
   const [title, setTitle] = useState(existing?.title ?? '')
   const [submitMessage, setSubmitMessage] = useState(existing?.submit_message ?? 'Thank you! Your responses have been submitted.')
+  const [showProgress, setShowProgress] = useState(existing?.show_progress ?? false)
   const submitMsgRef = useRef<HTMLTextAreaElement>(null)
 
   function insertSubmitToken(token: string) {
@@ -135,6 +137,7 @@ export default function FormBuilder({ trigger, botName, existing }: FormBuilderP
     const fd = new FormData()
     fd.set('title', title)
     fd.set('submit_message', submitMessage)
+    fd.set('show_progress', String(showProgress))
     fd.set('questions', JSON.stringify(
       questions.map((q, i) => ({
         localId: q.localId,
@@ -157,7 +160,7 @@ export default function FormBuilder({ trigger, botName, existing }: FormBuilderP
     return {}
   }
 
-  const { status, triggerSave } = useAutoSave(doSave, [title, submitMessage, questions])
+  const { status, triggerSave } = useAutoSave(doSave, [title, submitMessage, showProgress, questions])
   useUnsavedChanges(status)
 
   const inputClass = 'w-full px-3 py-2.5 border-2 border-[#121212] bg-[#F0F0F0] text-sm font-medium placeholder:text-[#121212]/30 focus:outline-none focus:bg-white transition-colors'
@@ -228,6 +231,26 @@ export default function FormBuilder({ trigger, botName, existing }: FormBuilderP
                   Sent to the user after they answer the last question. Use {'{Q1}'}, {'{Q2}'} etc. to include answers.
                 </p>
               </div>
+              <div className="mt-4 flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#121212]">Show Progress Indicator</p>
+                  <p className="text-xs font-medium text-[#121212]/40 mt-0.5">
+                    Appends "(Question X of Y)" to each message sent to the user.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={showProgress}
+                  disabled={!canEdit}
+                  onClick={() => setShowProgress(prev => !prev)}
+                  className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border-2 border-[#121212] transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${showProgress ? 'bg-[#121212]' : 'bg-[#F0F0F0]'}`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 rounded-full bg-white border border-[#121212] transition-transform ${showProgress ? 'translate-x-5' : 'translate-x-0.5'}`}
+                  />
+                </button>
+              </div>
             </div>
           </div>
 
@@ -285,6 +308,7 @@ export default function FormBuilder({ trigger, botName, existing }: FormBuilderP
             platforms={trigger.platforms as string[]}
             botName={botName}
             title={title}
+            showProgress={showProgress}
             questions={questions.map(q => ({
               localId: q.localId,
               question_text: q.question_text,

@@ -204,6 +204,7 @@ async function handleMessage(platform, senderId, identifier, input) {
             mode: 'form',
             formTriggerId: trigger.id,
             formQuestions: trigger.form.questions,
+            formShowProgress: trigger.form.showProgress !== false,
             formQIndex: 0,
             formAnswers: {},
           });
