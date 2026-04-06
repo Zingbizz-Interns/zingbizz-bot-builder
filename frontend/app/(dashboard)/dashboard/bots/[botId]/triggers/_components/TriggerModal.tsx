@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, KeyboardEvent } from 'react'
-import { X, Plus } from 'lucide-react'
+import { X } from 'lucide-react'
 import { createTrigger, updateTrigger } from '@/lib/actions/triggers'
 import Button from '@/components/ui/Button'
 import type { TriggerWithKeywords } from '@/types/database'

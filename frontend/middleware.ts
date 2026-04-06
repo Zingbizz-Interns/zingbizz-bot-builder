@@ -39,11 +39,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard/bots', request.url))
   }
 
-  // Redirect root to dashboard or login
-  if (pathname === '/') {
-    return NextResponse.redirect(
-      new URL(user ? '/dashboard/bots' : '/login', request.url)
-    )
+  // Redirect root to dashboard if logged in
+  if (pathname === '/' && user) {
+    return NextResponse.redirect(new URL('/dashboard/bots', request.url))
   }
 
   return supabaseResponse

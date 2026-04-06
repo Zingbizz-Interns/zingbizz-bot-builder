@@ -172,7 +172,7 @@ export default function FormPreview({ platforms, botName, questions }: FormPrevi
                       {resolveTokens(currentQ.question_text, history) || 'Question text...'}
                     </p>
                     {!currentQ.is_required && (
-                      <p className="text-[10px] text-gray-400 mt-1 italic">Optional — reply "skip"</p>
+                      <p className="text-[10px] text-gray-400 mt-1 italic">Optional - reply &quot;skip&quot;</p>
                     )}
                   </div>
                 </div>

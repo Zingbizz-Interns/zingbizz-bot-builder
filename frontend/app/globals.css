@@ -14,19 +14,21 @@
   --color-bauhaus-white:  #F0F0F0;
 
   /* Typography */
-  --font-sans: 'Outfit', sans-serif;
+  --font-sans: "Avenir Next", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
   /* Hard offset shadows */
   --shadow-hard-sm:  3px 3px 0px 0px #121212;
   --shadow-hard-md:  6px 6px 0px 0px #121212;
   --shadow-hard-lg:  8px 8px 0px 0px #121212;
+  --shadow-hard-xl:  12px 12px 0px 0px #121212;
+  --shadow-accent-red-xl: 16px 16px 0px 0px #D02020;
 }
 
 /* ─── Base ───────────────────────────────────────────────── */
 body {
-  background: #F0F0F0;
-  color: #121212;
-  font-family: 'Outfit', sans-serif;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
 }
 
 * {
