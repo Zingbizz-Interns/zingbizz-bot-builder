@@ -157,6 +157,7 @@ async function handleMessage(platform, senderId, identifier, input) {
       console.warn(`[messageHandler] No bot config for ${platform}:${identifier}`);
       return;
     }
+    console.log(`[messageHandler] Bot resolved: ${botConfig.botId} | triggers: ${botConfig.triggers.length}`);
 
     // 2. Upsert contact (fire-and-forget)
     upsertContact(botConfig.botId, senderId, platform).catch((err) =>
@@ -238,6 +239,7 @@ async function handleMessage(platform, senderId, identifier, input) {
 
     // 6. Keyword / catch-all matching
     const trigger = matchTrigger(input, platform, botConfig.triggers);
+    console.log(`[messageHandler] Trigger match for "${input}" on ${platform}: ${trigger ? trigger.id + ' (' + trigger.trigger_type + ')' : 'none'}`);
     if (trigger) {
       if (isRateLimited(trigger.id, senderId)) {
         await sendText(platform, senderId, RATE_LIMIT_MESSAGE, platformConfig);
