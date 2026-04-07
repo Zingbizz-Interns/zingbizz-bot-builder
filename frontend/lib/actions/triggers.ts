@@ -56,7 +56,7 @@ export async function createTrigger(botId: string, formData: FormData) {
 
     if ((count ?? 0) >= bot.trigger_limit) {
       return {
-        error: 'This bot has reached its trigger creation limit. Please contact your administrator to increase it.',
+        error: `This bot has reached its trigger creation limit (${count ?? 0} / ${bot.trigger_limit}). Your super admin controls this cap. You can still edit existing triggers, or ask them to raise the limit.`,
       }
     }
   }

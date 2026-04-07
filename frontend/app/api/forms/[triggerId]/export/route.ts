@@ -44,7 +44,7 @@ export async function GET(
     console.warn(
       `[form export] Blocked XLSX export for trigger ${triggerId} (customer ${access.customerId})`
     )
-    return new Response('Excel export is disabled for this account.', { status: 403 })
+    return new Response('Excel export is disabled for this account by your super admin.', { status: 403 })
   }
 
   // Get form with questions

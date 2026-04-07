@@ -1,16 +1,31 @@
 // app/api/instagram/callback/route.ts
 // Handles Instagram OAuth callback via Facebook OAuth dialog.
 // Flow: code → FB user token → find FB Page + linked IG account
-//       → auto-subscribe page to webhooks → save to platform_configs
+//       → auto-subscribe page to webhooks → create approval request
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { getAuthorizedBotAccess } from '@/lib/botAccess'
+import {
+  isMissingPlatformApprovalSchemaError,
+  submitPlatformConnectionRequest,
+  upsertPlatformConfigFromPayload,
+} from '@/lib/platformApproval'
 
 const APP_ID       = process.env.NEXT_PUBLIC_INSTAGRAM_APP_ID!
 const APP_SECRET   = process.env.INSTAGRAM_APP_SECRET!
 const APP_URL      = process.env.NEXT_PUBLIC_APP_URL!
 const REDIRECT_URI = `${APP_URL}/api/instagram/callback`
+
+function revalidatePlatformSurface(botId: string, customerId: string) {
+  revalidatePath('/dashboard/bots')
+  revalidatePath(`/dashboard/bots/${botId}/platforms`)
+  revalidatePath(`/dashboard/bots/${botId}/test`)
+  revalidatePath('/dashboard/super-admin')
+  revalidatePath('/dashboard/super-admin/customers')
+  revalidatePath(`/dashboard/super-admin/customers/${customerId}`)
+  revalidatePath('/dashboard/super-admin/platform-approvals')
+}
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl
@@ -39,6 +54,10 @@ export async function GET(req: NextRequest) {
   }
 
   const redirectBase = `${APP_URL}/dashboard/bots/${botId}/platforms`
+  const access = await getAuthorizedBotAccess(botId)
+  if (!access || !access.canEdit) {
+    return NextResponse.redirect(`${redirectBase}?ig_error=${encodeURIComponent('You do not have permission to connect Instagram for this bot.')}`)
+  }
 
   try {
     // ── Step 1: Exchange code → Facebook user access token ────────
@@ -131,39 +150,55 @@ export async function GET(req: NextRequest) {
     )
     // Non-fatal — subscription may already exist or app-level webhook may handle it
 
-    // ── Step 5: Save to platform_configs ─────────────────────────
-    // page_id = Instagram Business Account ID (matches entry.id in webhook payload for routing)
-    const supabase = await createClient()
-
-    const { error: dbError } = await supabase
-      .from('platform_configs')
-      .upsert(
-        {
-          bot_id:            botId,
-          platform:          'instagram',
-          page_id:           instagramAccountId, // IG account ID — matches entry.id in webhooks
-          access_token:      pageAccessToken,    // Page access token — used for sending messages
-          verify_token:      '',               // Not needed — webhook is app-level in Meta
-          phone_number_id:   null,
-          waba_id:           null,
-          session_expiry_ms: 600000,
-          warning_time_ms:   120000,
-          warning_message:   'Your session will expire soon. Please respond to continue.',
-          is_active:         true,
-        },
-        { onConflict: 'bot_id,platform' }
-      )
-
-    if (dbError) {
-      return NextResponse.redirect(`${redirectBase}?ig_error=${encodeURIComponent(dbError.message)}`)
+    const displayName = instagramUsername ?? instagramAccountId ?? 'Instagram'
+    const payload = {
+      platform: 'instagram' as const,
+      page_id: instagramAccountId,          // IG account ID — matches entry.id in webhooks
+      access_token: pageAccessToken,        // Page access token — used for sending messages
+      verify_token: '',                     // Not needed — webhook is app-level in Meta
+      phone_number_id: null,
+      waba_id: null,
+      session_expiry_ms: 600000,
+      warning_time_ms: 120000,
+      warning_message: 'Your session will expire soon. Please respond to continue.',
+      source: 'instagram_oauth',
+      instagram_username: instagramUsername,
+      facebook_page_id: facebookPageId,
     }
 
-    revalidatePath(`/dashboard/bots/${botId}/platforms`)
+    try {
+      await submitPlatformConnectionRequest({
+        botId,
+        customerId: access.customerId,
+        requestedBy: access.userId,
+        payload,
+      })
 
-    const displayName = instagramUsername ?? instagramAccountId ?? 'Instagram'
-    return NextResponse.redirect(
-      `${redirectBase}?ig_connected=${encodeURIComponent(displayName)}`
-    )
+      revalidatePlatformSurface(botId, access.customerId)
+
+      return NextResponse.redirect(
+        `${redirectBase}?ig_request_submitted=${encodeURIComponent(displayName)}`
+      )
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to create Instagram approval request'
+
+      if (!isMissingPlatformApprovalSchemaError(message)) {
+        return NextResponse.redirect(`${redirectBase}?ig_error=${encodeURIComponent(message)}`)
+      }
+
+      try {
+        await upsertPlatformConfigFromPayload(botId, payload)
+        revalidatePlatformSurface(botId, access.customerId)
+
+        return NextResponse.redirect(
+          `${redirectBase}?ig_connected=${encodeURIComponent(displayName)}`
+        )
+      } catch (directSaveError) {
+        const directMessage =
+          directSaveError instanceof Error ? directSaveError.message : 'Failed to save Instagram configuration'
+        return NextResponse.redirect(`${redirectBase}?ig_error=${encodeURIComponent(directMessage)}`)
+      }
+    }
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'unexpected_error'
     return NextResponse.redirect(`${redirectBase}?ig_error=${encodeURIComponent(msg)}`)

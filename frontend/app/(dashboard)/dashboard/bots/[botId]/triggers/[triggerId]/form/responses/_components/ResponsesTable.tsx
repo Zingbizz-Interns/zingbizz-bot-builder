@@ -113,7 +113,7 @@ export default function ResponsesTable({
 
       {!exportEnabled && (
         <p className="text-xs font-bold uppercase tracking-widest text-[#D02020]">
-          Excel export is disabled for this account.
+          Excel export is disabled for this account by your super admin.
         </p>
       )}
 

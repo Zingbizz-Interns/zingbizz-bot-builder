@@ -2,6 +2,10 @@
 
 import { revalidatePath } from 'next/cache'
 import { createAdminClient } from '@/lib/supabase/admin'
+import {
+  parsePlatformApprovalPayload,
+  upsertPlatformConfigFromPayload,
+} from '@/lib/platformApproval'
 import { requireSuperAdmin } from '@/lib/superAdmin'
 import type {
   Bot,
@@ -76,6 +80,16 @@ function normalizeNullableLimit(value: number | null) {
   if (!Number.isFinite(value)) throw new Error('Limit must be a finite number')
   if (value < 0) throw new Error('Limit cannot be negative')
   return Math.floor(value)
+}
+
+function revalidatePlatformManagementSurfaces(botId: string, customerId: string) {
+  revalidatePath('/dashboard/bots')
+  revalidatePath(`/dashboard/bots/${botId}/platforms`)
+  revalidatePath(`/dashboard/bots/${botId}/test`)
+  revalidatePath('/dashboard/super-admin')
+  revalidatePath('/dashboard/super-admin/customers')
+  revalidatePath(`/dashboard/super-admin/customers/${customerId}`)
+  revalidatePath('/dashboard/super-admin/platform-approvals')
 }
 
 async function writeAdminAuditLog(input: {
@@ -581,8 +595,23 @@ export async function updatePlatformConnectionRequestStatus(input: {
     throw new Error(existingError?.message ?? 'Platform connection request not found')
   }
 
+  if (existing.status !== 'pending' && input.status !== existing.status) {
+    throw new Error('Only pending platform requests can be approved, rejected, or cancelled.')
+  }
+
   const isReviewed = input.status !== 'pending'
   const decisionNote = input.decisionNote?.trim() || null
+
+  let promotedConfigId: string | null = null
+
+  if (input.status === 'approved') {
+    const payload = parsePlatformApprovalPayload(
+      existing.platform,
+      (existing.request_payload as Record<string, unknown> | null) ?? null
+    )
+    const promotedConfig = await upsertPlatformConfigFromPayload(existing.bot_id, payload)
+    promotedConfigId = promotedConfig.id
+  }
 
   const { data, error } = await admin
     .from('platform_connection_requests')
@@ -613,12 +642,10 @@ export async function updatePlatformConnectionRequestStatus(input: {
       customer_id: existing.customer_id,
       platform: existing.platform,
       decision_note: decisionNote,
+      promoted_platform_config_id: promotedConfigId,
     },
   })
 
-  revalidatePath('/dashboard/super-admin')
-  revalidatePath('/dashboard/super-admin/customers')
-  revalidatePath(`/dashboard/super-admin/customers/${existing.customer_id}`)
-  revalidatePath('/dashboard/super-admin/platform-approvals')
+  revalidatePlatformManagementSurfaces(existing.bot_id, existing.customer_id)
   return data as PlatformConnectionRequest
 }

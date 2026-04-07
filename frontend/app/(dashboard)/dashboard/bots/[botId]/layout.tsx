@@ -1,9 +1,11 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { getBotAutomationGuardrailState } from '@/lib/botGuardrails'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 import { BotPermissionProvider } from '@/lib/context/botPermission'
+import BotAutomationStatusBanner from './_components/BotAutomationStatusBanner'
 
 const tabs = [
   { label: 'Platforms',  href: 'platforms' },
@@ -70,6 +72,8 @@ export default async function BotLayout({
     canEdit = permission.can_edit
   }
 
+  const automationState = await getBotAutomationGuardrailState(botId)
+
   return (
     <div className="flex flex-col h-full">
       {/* Bot header */}
@@ -99,6 +103,7 @@ export default async function BotLayout({
 
       <div className="flex-1 overflow-y-auto">
         <BotPermissionProvider canEdit={canEdit}>
+          {automationState?.isBlocked ? <BotAutomationStatusBanner state={automationState} /> : null}
           {children}
         </BotPermissionProvider>
       </div>

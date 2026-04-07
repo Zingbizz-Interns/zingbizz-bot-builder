@@ -1,7 +1,27 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { getAuthorizedBotAccess } from '@/lib/botAccess'
+import {
+  buildPlatformApprovalPayloadFromFormData,
+  isMissingPlatformApprovalSchemaError,
+  submitPlatformConnectionRequest,
+  upsertPlatformConfigFromPayload,
+} from '@/lib/platformApproval'
 import { revalidatePath } from 'next/cache'
+
+function revalidatePlatformSurface(botId: string, customerId?: string) {
+  revalidatePath('/dashboard/bots')
+  revalidatePath(`/dashboard/bots/${botId}/platforms`)
+  revalidatePath(`/dashboard/bots/${botId}/test`)
+
+  if (customerId) {
+    revalidatePath('/dashboard/super-admin')
+    revalidatePath('/dashboard/super-admin/customers')
+    revalidatePath(`/dashboard/super-admin/customers/${customerId}`)
+    revalidatePath('/dashboard/super-admin/platform-approvals')
+  }
+}
 
 // ─── Build Instagram OAuth URL ────────────────────────────────
 export async function getInstagramOAuthUrl(botId: string): Promise<string> {
@@ -59,39 +79,66 @@ export async function validateCredentials(
 
 // ─── Save or update platform config ──────────────────────────
 export async function savePlatformConfig(botId: string, formData: FormData) {
-  const supabase = await createClient()
+  const access = await getAuthorizedBotAccess(botId)
+  if (!access || !access.canEdit) {
+    return { error: 'You do not have permission to manage this platform.' }
+  }
+
   const platform = formData.get('platform') as 'whatsapp' | 'instagram'
+  let payload
 
-  const payload: Record<string, unknown> = {
-    bot_id: botId,
-    platform,
-    access_token: formData.get('access_token'),
-    verify_token: formData.get('verify_token'),
-    session_expiry_ms: Number(formData.get('session_expiry_ms')) || 600000,
-    warning_time_ms: Number(formData.get('warning_time_ms')) || 120000,
-    warning_message: formData.get('warning_message') || 'Your session will expire soon. Please respond to continue.',
-    is_active: true,
+  try {
+    payload = buildPlatformApprovalPayloadFromFormData(platform, formData)
+  } catch (error) {
+    return {
+      error: error instanceof Error ? error.message : 'Failed to prepare platform request',
+    }
   }
 
-  if (platform === 'whatsapp') {
-    payload.phone_number_id = formData.get('phone_number_id')
-    payload.waba_id = formData.get('waba_id')
-    payload.page_id = null
-  } else {
-    payload.page_id = formData.get('page_id')
-    payload.phone_number_id = null
-    payload.waba_id = null
+  try {
+    await submitPlatformConnectionRequest({
+      botId,
+      customerId: access.customerId,
+      requestedBy: access.userId,
+      payload,
+    })
+
+    revalidatePlatformSurface(botId, access.customerId)
+
+    return {
+      success: true,
+      approvalRequired: true,
+      message:
+        platform === 'whatsapp'
+          ? 'WhatsApp approval request submitted. The platform will go live after a super admin approves it.'
+          : 'Instagram approval request submitted. The platform will go live after a super admin approves it.',
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to submit platform request'
+
+    if (!isMissingPlatformApprovalSchemaError(message)) {
+      return { error: message }
+    }
+
+    try {
+      await upsertPlatformConfigFromPayload(botId, payload)
+      revalidatePlatformSurface(botId, access.customerId)
+
+      return {
+        success: true,
+        approvalRequired: false,
+        message:
+          'Approval workflow tables are not available yet, so the platform was connected immediately. Run the super-admin migrations to enable approval gating.',
+      }
+    } catch (directSaveError) {
+      return {
+        error:
+          directSaveError instanceof Error
+            ? directSaveError.message
+            : 'Failed to save platform configuration',
+      }
+    }
   }
-
-  // Upsert — update if exists, insert if not
-  const { error } = await supabase
-    .from('platform_configs')
-    .upsert(payload, { onConflict: 'bot_id,platform' })
-
-  if (error) return { error: error.message }
-
-  revalidatePath(`/dashboard/bots/${botId}/platforms`)
-  return { success: true }
 }
 
 // ─── Delete platform config ───────────────────────────────────
@@ -105,7 +152,7 @@ export async function deletePlatformConfig(botId: string, platform: 'whatsapp' |
 
   if (error) return { error: error.message }
 
-  revalidatePath(`/dashboard/bots/${botId}/platforms`)
+  revalidatePlatformSurface(botId)
   return { success: true }
 }
 

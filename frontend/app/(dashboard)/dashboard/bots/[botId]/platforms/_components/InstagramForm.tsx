@@ -11,22 +11,25 @@ import {
 } from '@/lib/actions/platforms'
 import Button from '@/components/ui/Button'
 import SessionConfig from './SessionConfig'
+import PlatformRequestStatus from './PlatformRequestStatus'
 import InstagramSetupGuide from './InstagramSetupGuide'
-import type { PlatformConfig } from '@/types/database'
+import type { PlatformConfig, PlatformConnectionRequest } from '@/types/database'
 import { useCanEdit } from '@/lib/context/botPermission'
 
 interface InstagramFormProps {
   botId: string
   existing: PlatformConfig | null
+  request: PlatformConnectionRequest | null
 }
 
-export default function InstagramForm({ botId, existing }: InstagramFormProps) {
+export default function InstagramForm({ botId, existing, request }: InstagramFormProps) {
   const canEdit = useCanEdit()
   const searchParams = useSearchParams()
   const router = useRouter()
 
   // OAuth result from redirect query params (set by /api/instagram/callback)
   const igConnected = searchParams.get('ig_connected')
+  const igRequestSubmitted = searchParams.get('ig_request_submitted')
   const igError     = searchParams.get('ig_error')
 
   const [oauthPending, startOAuth] = useTransition()
@@ -40,7 +43,7 @@ export default function InstagramForm({ botId, existing }: InstagramFormProps) {
     existing ? { ok: true, name: 'Connected' } : null
   )
   const [manualError, setManualError] = useState<string | null>(null)
-  const [success, setSuccess]         = useState(false)
+  const [success, setSuccess]         = useState<string | null>(null)
 
   function handleConnectWithInstagram() {
     startOAuth(async () => {
@@ -54,6 +57,7 @@ export default function InstagramForm({ botId, existing }: InstagramFormProps) {
     setValidating(true)
     setValidated(null)
     setManualError(null)
+    setSuccess(null)
 
     const fd = new FormData(e.currentTarget)
     const result = await validateCredentials(
@@ -71,13 +75,14 @@ export default function InstagramForm({ botId, existing }: InstagramFormProps) {
     if (!validated?.ok) { setManualError('Validate credentials first'); return }
     setSaving(true)
     setManualError(null)
+    setSuccess(null)
 
     const fd = new FormData(e.currentTarget)
     fd.set('platform', 'instagram')
     const result = await savePlatformConfig(botId, fd)
 
     if (result.error) { setManualError(result.error); setSaving(false); return }
-    setSuccess(true)
+    setSuccess(result.message ?? 'Instagram request submitted successfully.')
     setSaving(false)
   }
 
@@ -92,20 +97,24 @@ export default function InstagramForm({ botId, existing }: InstagramFormProps) {
   // ── Read-only view for non-editors ───────────────────────────
   if (!canEdit) {
     return (
-      <div className={`flex items-center gap-2 border-2 px-4 py-3 ${existing ? 'border-[#D02020] bg-[#D02020]/10' : 'border-[#121212]/20 bg-[#F0F0F0]'}`}>
-        {existing
-          ? <CheckCircle className="w-4 h-4 text-[#121212]" strokeWidth={2.5} />
-          : <XCircle className="w-4 h-4 text-[#121212]/30" strokeWidth={2.5} />
-        }
-        <span className="text-xs font-bold uppercase tracking-widest text-[#121212]">
-          {existing ? 'Connected' : 'Not connected'}
-        </span>
+      <div className="space-y-4">
+        <PlatformRequestStatus platform="instagram" request={request} hasLiveConfig={Boolean(existing)} />
+        <div className={`flex items-center gap-2 border-2 px-4 py-3 ${existing ? 'border-[#D02020] bg-[#D02020]/10' : 'border-[#121212]/20 bg-[#F0F0F0]'}`}>
+          {existing
+            ? <CheckCircle className="w-4 h-4 text-[#121212]" strokeWidth={2.5} />
+            : <XCircle className="w-4 h-4 text-[#121212]/30" strokeWidth={2.5} />
+          }
+          <span className="text-xs font-bold uppercase tracking-widest text-[#121212]">
+            {existing ? 'Connected' : 'Not connected'}
+          </span>
+        </div>
       </div>
     )
   }
 
   return (
     <div className="space-y-4">
+      <PlatformRequestStatus platform="instagram" request={request} hasLiveConfig={Boolean(existing)} />
 
       {/* ── Connected banner ──────────────────────────────────── */}
       {existing && (
@@ -131,6 +140,15 @@ export default function InstagramForm({ botId, existing }: InstagramFormProps) {
           <CheckCircle className="w-4 h-4 text-[#121212] shrink-0" strokeWidth={2.5} />
           <span className="text-xs font-bold uppercase tracking-widest text-[#121212]">
             Connected as @{igConnected}
+          </span>
+        </div>
+      )}
+
+      {igRequestSubmitted && (
+        <div className="flex items-center gap-2 border-2 border-[#F0C020] bg-[#F0C020]/12 px-3 py-2.5">
+          <CheckCircle className="w-4 h-4 text-[#121212] shrink-0" strokeWidth={2.5} />
+          <span className="text-xs font-bold uppercase tracking-widest text-[#121212]">
+            Approval request submitted for @{igRequestSubmitted}
           </span>
         </div>
       )}
@@ -238,7 +256,7 @@ export default function InstagramForm({ botId, existing }: InstagramFormProps) {
 
           {success && (
             <div className="border-2 border-[#F0C020] bg-[#F0C020]/10 px-3 py-2">
-              <p className="text-sm font-bold uppercase tracking-widest text-[#121212]">Saved successfully</p>
+              <p className="text-sm font-bold uppercase tracking-widest text-[#121212]">{success}</p>
             </div>
           )}
 
@@ -258,7 +276,7 @@ export default function InstagramForm({ botId, existing }: InstagramFormProps) {
             </Button>
 
             <Button type="submit" variant="red" disabled={saving || !validated?.ok} className="flex-1">
-              {saving ? 'Saving...' : existing ? 'Update' : 'Save'}
+              {saving ? 'Submitting...' : existing ? 'Submit Update for Approval' : 'Submit for Approval'}
             </Button>
           </div>
         </form>

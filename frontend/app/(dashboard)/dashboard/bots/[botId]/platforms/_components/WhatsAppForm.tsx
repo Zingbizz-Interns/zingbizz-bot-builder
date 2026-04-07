@@ -5,16 +5,18 @@ import { CheckCircle, XCircle, Wifi } from 'lucide-react'
 import { validateCredentials, savePlatformConfig, deletePlatformConfig } from '@/lib/actions/platforms'
 import Button from '@/components/ui/Button'
 import SessionConfig from './SessionConfig'
+import PlatformRequestStatus from './PlatformRequestStatus'
 import WhatsAppSetupGuide from './WhatsAppSetupGuide'
-import type { PlatformConfig } from '@/types/database'
+import type { PlatformConfig, PlatformConnectionRequest } from '@/types/database'
 import { useCanEdit } from '@/lib/context/botPermission'
 
 interface WhatsAppFormProps {
   botId: string
   existing: PlatformConfig | null
+  request: PlatformConnectionRequest | null
 }
 
-export default function WhatsAppForm({ botId, existing }: WhatsAppFormProps) {
+export default function WhatsAppForm({ botId, existing, request }: WhatsAppFormProps) {
   const canEdit = useCanEdit()
   const [validating, setValidating] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -23,13 +25,14 @@ export default function WhatsAppForm({ botId, existing }: WhatsAppFormProps) {
     existing ? { ok: true, name: 'Connected' } : null
   )
   const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
+  const [success, setSuccess] = useState<string | null>(null)
 
   async function handleValidate(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setValidating(true)
     setValidated(null)
     setError(null)
+    setSuccess(null)
 
     const fd = new FormData(e.currentTarget)
     const result = await validateCredentials(
@@ -47,13 +50,14 @@ export default function WhatsAppForm({ botId, existing }: WhatsAppFormProps) {
     if (!validated?.ok) { setError('Validate credentials first'); return }
     setSaving(true)
     setError(null)
+    setSuccess(null)
 
     const fd = new FormData(e.currentTarget)
     fd.set('platform', 'whatsapp')
     const result = await savePlatformConfig(botId, fd)
 
     if (result.error) { setError(result.error); setSaving(false); return }
-    setSuccess(true)
+    setSuccess(result.message ?? 'WhatsApp request submitted successfully.')
     setSaving(false)
   }
 
@@ -65,20 +69,25 @@ export default function WhatsAppForm({ botId, existing }: WhatsAppFormProps) {
 
   if (!canEdit) {
     return (
-      <div className={`flex items-center gap-2 border-2 px-4 py-3 ${existing ? 'border-[#F0C020] bg-[#F0C020]/10' : 'border-[#121212]/20 bg-[#F0F0F0]'}`}>
-        {existing
-          ? <CheckCircle className="w-4 h-4 text-[#121212]" strokeWidth={2.5} />
-          : <XCircle className="w-4 h-4 text-[#121212]/30" strokeWidth={2.5} />
-        }
-        <span className="text-xs font-bold uppercase tracking-widest text-[#121212]">
-          {existing ? 'Connected' : 'Not connected'}
-        </span>
+      <div className="space-y-4">
+        <PlatformRequestStatus platform="whatsapp" request={request} hasLiveConfig={Boolean(existing)} />
+        <div className={`flex items-center gap-2 border-2 px-4 py-3 ${existing ? 'border-[#F0C020] bg-[#F0C020]/10' : 'border-[#121212]/20 bg-[#F0F0F0]'}`}>
+          {existing
+            ? <CheckCircle className="w-4 h-4 text-[#121212]" strokeWidth={2.5} />
+            : <XCircle className="w-4 h-4 text-[#121212]/30" strokeWidth={2.5} />
+          }
+          <span className="text-xs font-bold uppercase tracking-widest text-[#121212]">
+            {existing ? 'Connected' : 'Not connected'}
+          </span>
+        </div>
       </div>
     )
   }
 
   return (
     <div className="space-y-4">
+      <PlatformRequestStatus platform="whatsapp" request={request} hasLiveConfig={Boolean(existing)} />
+
       {/* ── Setup guide (shown when not yet connected) ───────── */}
       {!existing && <WhatsAppSetupGuide botId={botId} />}
 
@@ -178,7 +187,7 @@ export default function WhatsAppForm({ botId, existing }: WhatsAppFormProps) {
 
       {success && (
         <div className="border-2 border-[#F0C020] bg-[#F0C020]/10 px-3 py-2">
-          <p className="text-sm font-bold uppercase tracking-widest text-[#121212]">Saved successfully</p>
+          <p className="text-sm font-bold uppercase tracking-widest text-[#121212]">{success}</p>
         </div>
       )}
 
@@ -199,7 +208,7 @@ export default function WhatsAppForm({ botId, existing }: WhatsAppFormProps) {
         </Button>
 
         <Button type="submit" variant="yellow" disabled={saving || !validated?.ok} className="flex-1">
-          {saving ? 'Saving...' : existing ? 'Update' : 'Save'}
+          {saving ? 'Submitting...' : existing ? 'Submit Update for Approval' : 'Submit for Approval'}
         </Button>
       </div>
     </form>

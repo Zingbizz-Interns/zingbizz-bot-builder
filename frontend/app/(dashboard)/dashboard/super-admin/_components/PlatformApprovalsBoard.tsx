@@ -358,7 +358,7 @@ export default function PlatformApprovalsBoard({
                         <Button
                           variant="outline"
                           type="button"
-                          disabled={requestState?.saving || request.status === 'cancelled'}
+                          disabled={requestState?.saving || request.status !== 'pending'}
                           onClick={() => handleDecision(request.id, 'cancelled')}
                         >
                           <Ban className="h-4 w-4" strokeWidth={2.5} />

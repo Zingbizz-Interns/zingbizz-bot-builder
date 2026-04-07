@@ -14,10 +14,10 @@
 | Phase 2 | Limits, Flags, and Approval Data Model | IN_PROGRESS | 1 / 4 subtasks |
 | Phase 3 | Runtime Enforcement Engine | IN_PROGRESS | 4 / 4 subtasks |
 | Phase 4 | Super Admin Dashboard | IN_PROGRESS | 4 / 4 subtasks |
-| Phase 5 | Customer-Facing Guardrails | NOT_STARTED | 0 / 4 subtasks |
-| Phase 6 | Approval Activation, QA, and Rollout | NOT_STARTED | 0 / 4 subtasks |
+| Phase 5 | Customer-Facing Guardrails | IN_PROGRESS | 4 / 4 subtasks |
+| Phase 6 | Approval Activation, QA, and Rollout | IN_PROGRESS | 3 / 4 subtasks |
 
-**Overall:** 11 / 24 subtasks completed
+**Overall:** 18 / 24 subtasks completed
 
 ---
 
@@ -85,13 +85,14 @@
 
 | ID | Subtask | Status | Notes |
 |----|---------|--------|-------|
-| 5.1 | Show trigger-limit feedback in bot builder UI | NOT_STARTED | Prefer toast + inline fallback if no toast system exists yet |
-| 5.2 | Show blocked / over-quota automation state to owners | NOT_STARTED | Needed so users understand why triggers stopped working |
-| 5.3 | Show platform request pending/approved/rejected states | NOT_STARTED | WA + IG forms must stop looking “saved” before approval |
-| 5.4 | Hide or disable export actions when feature is off | NOT_STARTED | Must align with backend enforcement to avoid false affordances |
+| 5.1 | Show trigger-limit feedback in bot builder UI | COMPLETED | Trigger creation now returns limit-aware copy with current count/limit, super-admin ownership of the cap, and a reminder that existing triggers remain editable |
+| 5.2 | Show blocked / over-quota automation state to owners | COMPLETED | Added a persistent automation banner to the shared bot layout, backed by `frontend/lib/botGuardrails.ts`, so paused or over-quota accounts are clearly explained on bot pages |
+| 5.3 | Show platform request pending/approved/rejected states | COMPLETED | Added shared platform request status UI plus request-aware header badges on the WhatsApp and Instagram setup cards |
+| 5.4 | Hide or disable export actions when feature is off | COMPLETED | Export button remains disabled and now explicitly tells owners that XLSX export is controlled by their super admin in both the page UI and API response |
 
-**Phase 5 Status:** NOT_STARTED
+**Phase 5 Status:** IN_PROGRESS
 **Validation:** See `phase_5.md`
+**⚠️ Action required:** Run the super-admin migrations if they are not applied yet, seed realistic request/control data, and validate the blocked automation banner, request-state rendering, trigger-cap messaging, and export-disabled wording in the browser
 
 ---
 
@@ -99,13 +100,14 @@
 
 | ID | Subtask | Status | Notes |
 |----|---------|--------|-------|
-| 6.1 | Safely activate approved platform requests | NOT_STARTED | Promote approved request data into runtime-active platform config |
-| 6.2 | Invalidate cache and revalidate affected pages | NOT_STARTED | `tenantResolver` cache and dashboard pages must refresh immediately |
+| 6.1 | Safely activate approved platform requests | COMPLETED | Manual platform saves and Instagram OAuth now create approval requests first, and super-admin approval promotes the stored payload into `platform_configs` with one active row per bot/platform |
+| 6.2 | Invalidate cache and revalidate affected pages | COMPLETED | Approval/save flows now revalidate owner + admin pages, and `tenantResolver` cache entries self-refresh when the active platform config row changes |
 | 6.3 | Execute end-to-end QA matrix | NOT_STARTED | Covers owner, sub-account, super-admin, WA, IG, limits, exports |
-| 6.4 | Prepare rollout, backfill, and rollback steps | NOT_STARTED | Required because this changes account access and bot runtime behavior |
+| 6.4 | Prepare rollout, backfill, and rollback steps | COMPLETED | Added `.planning/Super Admin Controls/rollout_runbook.md` with migration order, safe defaults, initial admin seed SQL, backfill verification, rollout steps, and rollback playbooks |
 
-**Phase 6 Status:** NOT_STARTED
+**Phase 6 Status:** IN_PROGRESS
 **Validation:** See `phase_6.md`
+**⚠️ Action required:** Run the super-admin migrations if needed, then execute the Phase 6 QA matrix and prepare rollout / rollback notes before marking the phase complete
 
 ---
 
@@ -118,6 +120,9 @@
 | 2026-04-07 | Phase 2 data-model code added: customer controls, bot trigger-limit fields, platform connection request migration, and shared super-admin loaders/mutators. Awaiting SQL run. | Codex |
 | 2026-04-07 | Phase 3 enforcement code added: runtime automation gate, form submission cap guard, trigger creation limit enforcement, and server-side Excel export gating with matching UI state. Awaiting migration-backed QA. | Codex |
 | 2026-04-07 | Phase 4 dashboard code added: customer list and detail pages, platform approval queue, shared super-admin navigation, and review-note approval actions. Awaiting browser-level QA with seeded data. | Codex |
+| 2026-04-07 | Phase 5 customer guardrails added: persistent bot automation banner, request-aware platform status cards, clearer trigger-limit messaging, and super-admin wording for disabled Excel export. Awaiting end-to-end browser QA. | Codex |
+| 2026-04-07 | Phase 6 activation code added: platform submissions now create approval requests, super-admin approvals promote request payloads into runtime config, and `tenantResolver` cache now refreshes when active config rows change. QA matrix and rollout notes still pending. | Codex |
+| 2026-04-07 | Added rollout runbook for super-admin controls covering migration order, safe defaults, backfill checks, initial admin seed, smoke checks, and rollback options. | Codex |
 
 ---
 

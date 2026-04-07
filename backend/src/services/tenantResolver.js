@@ -4,7 +4,7 @@
 
 const supabase = require('./supabase');
 
-// Cache: botId -> { config, expiresAt }
+// Cache: botId -> { config, expiresAt, platformConfigId, platformConfigUpdatedAt }
 const botCache = new Map();
 const CACHE_TTL_MS = 60 * 1000;
 
@@ -12,18 +12,30 @@ const CACHE_TTL_MS = 60 * 1000;
 // Internal helpers
 // ---------------------------------------------------------------------------
 
-function fromCache(botId) {
+function fromCache(botId, platformConfigId, platformConfigUpdatedAt) {
   const entry = botCache.get(botId);
   if (!entry) return null;
   if (Date.now() > entry.expiresAt) {
     botCache.delete(botId);
     return null;
   }
+  if (
+    entry.platformConfigId !== platformConfigId ||
+    entry.platformConfigUpdatedAt !== platformConfigUpdatedAt
+  ) {
+    botCache.delete(botId);
+    return null;
+  }
   return entry.config;
 }
 
-function toCache(botId, config) {
-  botCache.set(botId, { config, expiresAt: Date.now() + CACHE_TTL_MS });
+function toCache(botId, config, platformConfigId, platformConfigUpdatedAt) {
+  botCache.set(botId, {
+    config,
+    expiresAt: Date.now() + CACHE_TTL_MS,
+    platformConfigId,
+    platformConfigUpdatedAt,
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -258,7 +270,7 @@ async function resolveBot(platform, identifier) {
     const botId = pc.bot_id;
 
     // Check cache
-    const cached = fromCache(botId);
+    const cached = fromCache(botId, pc.id, pc.updated_at || null);
     if (cached) return cached;
 
     // Load bot row
@@ -310,7 +322,7 @@ async function resolveBot(platform, identifier) {
       businessHours: bhRes.data || null,
     };
 
-    toCache(botId, config);
+    toCache(botId, config, pc.id, pc.updated_at || null);
     return config;
   } catch (err) {
     console.error(`[tenantResolver] resolveBot error: ${err.message}`);
