@@ -7,6 +7,22 @@ const { sendText } = require('./messageSender');
 const { executeTrigger, handleFormInput, handleQueryInput } = require('./actionExecutor');
 const { track } = require('./analytics');
 const { upsertContact } = require('./contactManager');
+const conversationStore = require('./conversationStore');
+
+// ---------------------------------------------------------------------------
+// Escalation keywords — customers asking for a human agent
+// Configurable per bot in Phase 5; hardcoded defaults for now.
+// ---------------------------------------------------------------------------
+
+const DEFAULT_ESCALATION_KEYWORDS = [
+  'human', 'agent', 'person', 'speak to', 'talk to',
+  'real person', 'support', 'help me',
+];
+
+function matchesEscalationKeyword(input, keywords) {
+  const norm = input.trim().toLowerCase();
+  return keywords.some((k) => norm.includes(k.toLowerCase()));
+}
 
 // ---------------------------------------------------------------------------
 // Business hours helper
@@ -159,6 +175,27 @@ async function handleMessage(platform, senderId, identifier, input) {
     }
     console.log(`[messageHandler] Bot resolved: ${botConfig.botId} | triggers: ${botConfig.triggers.length}`);
 
+    // 1.5 — Get or create conversation + store incoming customer message
+    // WhatsApp only: Instagram conversation storage is out of scope for Phase 1.
+    let conversation = null;
+    if (platform === 'whatsapp') {
+      conversation = await conversationStore.getOrCreateConversation(botConfig.botId, senderId, platform);
+      if (conversation) {
+        await Promise.all([
+          conversationStore.storeMessage(conversation.id, botConfig.botId, 'customer', input),
+          conversationStore.updateLastCustomerMessage(conversation.id),
+        ]);
+      }
+    }
+
+    // 2.1 — Agent-active intercept: message is already stored above.
+    // When an agent has taken over, skip all bot logic — Supabase Realtime
+    // will push the new message INSERT to the agent's inbox automatically.
+    if (platform === 'whatsapp' && conversation && conversation.status === 'agent') {
+      console.log(`[messageHandler] Agent-active conversation ${conversation.id} — skipping bot routing for ${senderId}`);
+      return;
+    }
+
     // 2. Upsert contact (fire-and-forget)
     upsertContact(botConfig.botId, senderId, platform).catch((err) =>
       console.error(`[messageHandler] contact upsert error: ${err.message}`)
@@ -171,6 +208,8 @@ async function handleMessage(platform, senderId, identifier, input) {
         accessToken: botConfig.accessToken,
         phoneNumberId: botConfig.phoneNumberId,
         pageId: botConfig.pageId,
+        conversationId: conversation?.id ?? null,
+        botId: botConfig.botId,
       };
       await sendText(platform, senderId, botConfig.businessHours.outside_hours_message, platformConfig);
       return;
@@ -182,12 +221,29 @@ async function handleMessage(platform, senderId, identifier, input) {
     const session = sessionManager.getSession(sessionKey);
 
     // platformConfig: what messageSender needs
+    // conversationId and botId are included so messageSender can persist bot replies.
     const platformConfig = {
       platform: botConfig.platform,
       accessToken: botConfig.accessToken,
       phoneNumberId: botConfig.phoneNumberId,
       pageId: botConfig.pageId,
+      conversationId: conversation?.id ?? null,
+      botId: botConfig.botId,
     };
+
+    // 1.9 — Escalation keyword detection (WhatsApp only)
+    // Must run before trigger matching so explicit escalation requests are
+    // always caught, even if a trigger keyword happens to match first.
+    if (platform === 'whatsapp' && conversation) {
+      const escalationKeywords = botConfig.escalationKeywords || DEFAULT_ESCALATION_KEYWORDS;
+      if (matchesEscalationKeyword(input, escalationKeywords)) {
+        await conversationStore.markNeedsAttention(conversation.id);
+        const ackMsg = 'Our team has been notified and will reply shortly.';
+        await sendText(platform, senderId, ackMsg, platformConfig);
+        console.log(`[messageHandler] Escalation keyword detected for ${senderId} — marked needs_attention`);
+        return;
+      }
+    }
 
     // 4. Route by session mode
     if (session && session.mode === 'form') {
@@ -253,6 +309,13 @@ async function handleMessage(platform, senderId, identifier, input) {
 
     // 7. Fallback
     await sendText(platform, senderId, botConfig.fallbackMessage, platformConfig);
+
+    // 1.8 — Mark conversation as needing attention when bot falls back (WhatsApp only)
+    if (platform === 'whatsapp' && conversation) {
+      await conversationStore.markNeedsAttention(conversation.id);
+      await conversationStore.incrementFallbackCount(conversation.id);
+      console.log(`[messageHandler] Fallback fired for ${senderId} — marked needs_attention`);
+    }
   } catch (err) {
     console.error(`[messageHandler] handleMessage error (${platform}:${senderId}): ${err.message}`);
   }

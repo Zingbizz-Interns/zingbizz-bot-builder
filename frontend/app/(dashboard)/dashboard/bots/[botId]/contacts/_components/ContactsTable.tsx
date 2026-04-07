@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { X, ExternalLink } from 'lucide-react'
 import type { Contact, JourneyEvent } from '@/lib/actions/contacts'
 import { getSenderJourney } from '@/lib/actions/contacts'
@@ -161,7 +162,7 @@ export default function ContactsTable({ botId, contacts }: ContactsTableProps) {
               <th className="px-4 py-3 text-left text-xs font-black uppercase tracking-widest">First Seen</th>
               <th className="px-4 py-3 text-left text-xs font-black uppercase tracking-widest">Last Seen</th>
               <th className="px-4 py-3 text-right text-xs font-black uppercase tracking-widest">Messages</th>
-              <th className="px-4 py-3 text-center text-xs font-black uppercase tracking-widest">Journey</th>
+              <th className="px-4 py-3 text-center text-xs font-black uppercase tracking-widest">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -193,14 +194,23 @@ export default function ContactsTable({ botId, contacts }: ContactsTableProps) {
                 <td className="px-4 py-3 text-right">
                   <span className="font-black text-sm text-[#121212]">{c.message_count}</span>
                 </td>
-                <td className="px-4 py-3 text-center">
-                  <button
-                    onClick={() => setSelected(c)}
-                    className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-widest text-[#1040C0] border-2 border-[#1040C0] px-2 py-1 hover:bg-[#1040C0] hover:text-white transition-colors"
-                  >
-                    <ExternalLink className="w-3 h-3" strokeWidth={2.5} />
-                    View
-                  </button>
+                <td className="px-4 py-3">
+                  <div className="flex items-center justify-center gap-2">
+                    <Link
+                      href={`/dashboard/bots/${botId}/live-chat?sender=${encodeURIComponent(c.sender_id)}`}
+                      className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-widest text-[#107040] border-2 border-[#107040] px-2 py-1 hover:bg-[#107040] hover:text-white transition-colors"
+                    >
+                      <ExternalLink className="w-3 h-3" strokeWidth={2.5} />
+                      View Chat
+                    </Link>
+                    <button
+                      onClick={() => setSelected(c)}
+                      className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-widest text-[#1040C0] border-2 border-[#1040C0] px-2 py-1 hover:bg-[#1040C0] hover:text-white transition-colors"
+                    >
+                      <ExternalLink className="w-3 h-3" strokeWidth={2.5} />
+                      Journey
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

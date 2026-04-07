@@ -31,6 +31,9 @@ export interface Bot {
   customer_id: string
   name: string
   fallback_message: string
+  escalation_keywords: string[] | null
+  takeover_message: string | null
+  takeover_message_enabled: boolean
   is_active: boolean
   created_at: string
   updated_at: string
@@ -179,6 +182,25 @@ export interface AnalyticsEvent {
   platform: Platform | null
   sender_id: string | null
   created_at: string
+}
+
+export interface CannedResponse {
+  id: string
+  bot_id: string
+  title: string
+  content: string
+  shortcut: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface ConversationNote {
+  id: string
+  conversation_id: string
+  agent_id: string
+  content: string
+  created_at: string
+  author_name?: string
 }
 
 // ─── Joined / Extended types (for UI use) ────────────────────

@@ -20,7 +20,7 @@ export default async function ResponsesPage({ params, searchParams }: PageProps)
   // Load form with questions
   const { data: form } = await supabase
     .from('forms')
-    .select('id, title, form_questions(id, question_text, order_index)')
+    .select('id, title, form_questions(id, question_text, order_index, validation_type)')
     .eq('trigger_id', triggerId)
     .single()
 
@@ -35,7 +35,12 @@ export default async function ResponsesPage({ params, searchParams }: PageProps)
 
   const { responses, total } = await getFormResponses(form.id, page)
 
-  const questions = form.form_questions as { id: string; question_text: string; order_index: number }[]
+  const questions = form.form_questions as {
+    id: string
+    question_text: string
+    order_index: number
+    validation_type: string
+  }[]
 
   return (
     <div className="p-8">
@@ -69,6 +74,7 @@ export default async function ResponsesPage({ params, searchParams }: PageProps)
       </div>
 
       <ResponsesTable
+        botId={botId}
         responses={responses}
         questions={questions}
         total={total}

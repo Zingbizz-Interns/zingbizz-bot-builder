@@ -2,6 +2,26 @@
 // Sends messages to WhatsApp or Instagram via the Meta Graph API.
 
 const axios = require('axios');
+const conversationStore = require('./conversationStore');
+
+// ---------------------------------------------------------------------------
+// persistBotReply
+// Stores a sent bot message in the DB and updates last_reply_at.
+// Only runs when platformConfig carries a conversationId (WhatsApp, Phase 1+).
+// ---------------------------------------------------------------------------
+
+async function persistBotReply(platformConfig, content, messageType = 'text') {
+  const { conversationId, botId } = platformConfig;
+  if (!conversationId || !botId) return;
+  try {
+    await Promise.all([
+      conversationStore.storeMessage(conversationId, botId, 'bot', content, messageType),
+      conversationStore.updateLastReply(conversationId),
+    ]);
+  } catch (err) {
+    console.error(`[messageSender] persistBotReply error: ${err.message}`);
+  }
+}
 
 const WA_BASE = 'https://graph.facebook.com/v18.0';
 
@@ -61,6 +81,7 @@ async function sendText(platform, recipientId, text, platformConfig) {
         platformConfig.accessToken
       );
       console.log(`[WA] sendText -> ${recipientId}: ${text.slice(0, 60)}`);
+      await persistBotReply(platformConfig, text, 'text');
     } else {
       await igPost(
         '/me/messages',
@@ -125,6 +146,7 @@ async function sendWAButtons(recipientId, text, buttons, platformConfig) {
     };
     await waPost(`/${platformConfig.phoneNumberId}/messages`, payload, platformConfig.accessToken);
     console.log(`[WA] sendButtons (interactive) -> ${recipientId}: ${count} buttons`);
+    await persistBotReply(platformConfig, text, 'interactive');
     return;
   }
 
@@ -153,6 +175,7 @@ async function sendWAButtons(recipientId, text, buttons, platformConfig) {
     };
     await waPost(`/${platformConfig.phoneNumberId}/messages`, payload, platformConfig.accessToken);
     console.log(`[WA] sendButtons (list) -> ${recipientId}: ${count} items`);
+    await persistBotReply(platformConfig, text, 'interactive');
     return;
   }
 

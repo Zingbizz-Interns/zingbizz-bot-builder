@@ -9,6 +9,12 @@ const config = {
   port: process.env.PORT || 3000,
   supabaseUrl: process.env.SUPABASE_URL,
   supabaseServiceKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+  appUrl: process.env.APP_URL,
+  smtpHost: process.env.SMTP_HOST,
+  smtpPort: process.env.SMTP_PORT,
+  smtpUser: process.env.SMTP_USER,
+  smtpPass: process.env.SMTP_PASS,
+  smtpFromEmail: process.env.SMTP_FROM_EMAIL,
 };
 
 const required = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'];

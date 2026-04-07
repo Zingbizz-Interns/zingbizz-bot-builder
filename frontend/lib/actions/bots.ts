@@ -67,6 +67,62 @@ export async function updateBot(botId: string, formData: FormData) {
   return { success: true }
 }
 
+export async function getBotLiveChatSettings(botId: string) {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('bots')
+    .select('id, escalation_keywords, takeover_message, takeover_message_enabled')
+    .eq('id', botId)
+    .single()
+
+  if (error || !data) return null
+
+  return {
+    escalation_keywords: data.escalation_keywords ?? [
+      'human',
+      'agent',
+      'person',
+      'support',
+      'speak to',
+      'talk to',
+      'real person',
+      'help me',
+    ],
+    takeover_message:
+      data.takeover_message ?? "You're now connected with our team. We'll be right with you.",
+    takeover_message_enabled: data.takeover_message_enabled ?? true,
+  }
+}
+
+export async function saveBotLiveChatSettings(
+  botId: string,
+  settings: {
+    escalationKeywords: string[]
+    takeoverMessage: string
+    takeoverMessageEnabled: boolean
+  }
+) {
+  const supabase = await createClient()
+  const keywords = settings.escalationKeywords
+    .map((keyword) => keyword.trim())
+    .filter(Boolean)
+
+  const { error } = await supabase
+    .from('bots')
+    .update({
+      escalation_keywords: keywords.length ? keywords : null,
+      takeover_message: settings.takeoverMessage.trim(),
+      takeover_message_enabled: settings.takeoverMessageEnabled,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', botId)
+
+  if (error) return { error: error.message }
+
+  revalidatePath(`/dashboard/bots/${botId}/settings`)
+  return { success: true }
+}
+
 export async function deleteBot(botId: string) {
   const supabase = await createClient()
   const { error } = await supabase.from('bots').delete().eq('id', botId)

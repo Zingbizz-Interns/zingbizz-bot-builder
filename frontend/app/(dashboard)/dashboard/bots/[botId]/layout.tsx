@@ -12,6 +12,7 @@ const tabs = [
   { label: 'Test',       href: 'test' },
   { label: 'Analytics',  href: 'analytics' },
   { label: 'Contacts',   href: 'contacts' },
+  { label: 'Live Chat',  href: 'live-chat' },
   { label: 'Settings',   href: 'settings' },
 ]
 

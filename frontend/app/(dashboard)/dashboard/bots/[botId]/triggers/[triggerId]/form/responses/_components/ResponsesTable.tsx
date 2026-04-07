@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Download, ChevronLeft, ChevronRight } from 'lucide-react'
+import Link from 'next/link'
+import { Download, ChevronLeft, ChevronRight, MessageSquare } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import type { FormResponseWithAnswers } from '@/types/database'
 
@@ -9,9 +10,11 @@ interface Question {
   id: string
   question_text: string
   order_index: number
+  validation_type: string
 }
 
 interface ResponsesTableProps {
+  botId: string
   responses: FormResponseWithAnswers[]
   questions: Question[]
   total: number
@@ -21,6 +24,7 @@ interface ResponsesTableProps {
 }
 
 export default function ResponsesTable({
+  botId,
   responses,
   questions,
   total,
@@ -52,6 +56,20 @@ export default function ResponsesTable({
     const url = new URL(window.location.href)
     url.searchParams.set('page', String(p))
     window.location.href = url.toString()
+  }
+
+  function getPhoneForResponse(response: FormResponseWithAnswers) {
+    const phoneQuestionIds = new Set(
+      sorted.filter((question) => question.validation_type === 'phone').map((question) => question.id)
+    )
+
+    for (const answer of response.form_response_answers ?? []) {
+      if (phoneQuestionIds.has(answer.question_id) && answer.answer_text?.trim()) {
+        return answer.answer_text.trim()
+      }
+    }
+
+    return null
   }
 
   if (responses.length === 0) {
@@ -94,6 +112,9 @@ export default function ResponsesTable({
               <th className="px-4 py-3 text-left font-black uppercase tracking-widest text-xs whitespace-nowrap">
                 Status
               </th>
+              <th className="px-4 py-3 text-left font-black uppercase tracking-widest text-xs whitespace-nowrap">
+                Chat
+              </th>
               {sorted.map((q, i) => (
                 <th
                   key={q.id}
@@ -110,6 +131,7 @@ export default function ResponsesTable({
               for (const a of (r.form_response_answers ?? [])) {
                 answerMap[a.question_id] = a.answer_text
               }
+              const phone = getPhoneForResponse(r)
               return (
                 <tr
                   key={r.id}
@@ -139,6 +161,25 @@ export default function ResponsesTable({
                     >
                       {r.is_complete ? 'Complete' : 'Incomplete'}
                     </span>
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    {phone ? (
+                      <Link
+                        href={`/dashboard/bots/${botId}/live-chat?sender=${encodeURIComponent(phone)}`}
+                        className="inline-flex items-center gap-1 border-2 border-[#107040] px-2 py-1 text-xs font-bold uppercase tracking-widest text-[#107040] hover:bg-[#107040] hover:text-white transition-colors"
+                      >
+                        <MessageSquare className="w-3 h-3" strokeWidth={2.5} />
+                        View Chat
+                      </Link>
+                    ) : (
+                      <span
+                        title="No phone number in this response"
+                        className="inline-flex items-center gap-1 border-2 border-[#121212]/20 px-2 py-1 text-xs font-bold uppercase tracking-widest text-[#121212]/30 cursor-not-allowed"
+                      >
+                        <MessageSquare className="w-3 h-3" strokeWidth={2.5} />
+                        No Phone
+                      </span>
+                    )}
                   </td>
                   {sorted.map(q => (
                     <td key={q.id} className="px-4 py-3 font-medium text-[#121212] max-w-[200px]">

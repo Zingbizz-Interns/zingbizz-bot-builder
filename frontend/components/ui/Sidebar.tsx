@@ -2,8 +2,11 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { signOut } from '@/lib/actions/auth'
-import { MessageSquare, BarChart2, LogOut, Users } from 'lucide-react'
+import { MessageSquare, BarChart2, LogOut, Users, Inbox } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
+import NotificationBell from '@/components/ui/NotificationBell'
 
 interface BotItem {
   id: string
@@ -22,6 +25,29 @@ export default function Sidebar({ user, bots, isOwner }: SidebarProps) {
   const botsActive      = pathname.startsWith('/dashboard/bots')
   const analyticsActive = pathname.startsWith('/dashboard/analytics')
   const teamActive      = pathname.startsWith('/dashboard/team')
+  const inboxActive     = pathname.startsWith('/dashboard/inbox')
+
+  const [attentionCount, setAttentionCount] = useState(0)
+
+  useEffect(() => {
+    if (!bots.length) return
+    const botIds = bots.map(b => b.id)
+    const supabase = createClient()
+
+    async function fetchCount() {
+      const { count } = await supabase
+        .from('conversations')
+        .select('id', { count: 'exact', head: true })
+        .in('bot_id', botIds)
+        .eq('needs_attention', true)
+        .neq('status', 'closed')
+      setAttentionCount(count ?? 0)
+    }
+
+    fetchCount()
+    const interval = setInterval(fetchCount, 60_000)
+    return () => clearInterval(interval)
+  }, [bots])
 
   return (
     <aside className="w-56 bg-[#121212] border-r-4 border-[#121212] flex flex-col h-full shrink-0">
@@ -87,6 +113,27 @@ export default function Sidebar({ user, bots, isOwner }: SidebarProps) {
             })}
           </div>
         )}
+
+        {/* Inbox */}
+        <Link
+          href="/dashboard/inbox"
+          className={`flex items-center gap-3 px-3 py-2.5 text-xs font-bold uppercase tracking-widest transition-all duration-200 border-2 ${
+            inboxActive
+              ? 'bg-[#F0F0F0] text-[#121212] border-[#F0C020] shadow-[3px_3px_0px_0px_#F0C020]'
+              : 'text-white/60 border-transparent hover:text-white hover:border-white/20'
+          }`}
+        >
+          <Inbox className="w-4 h-4 shrink-0" strokeWidth={inboxActive ? 3 : 2} />
+          Inbox
+          {attentionCount > 0 && (
+            <span className="ml-auto text-[10px] font-black px-1.5 py-0.5 rounded-full bg-[#D02020] text-white">
+              {attentionCount > 99 ? '99+' : attentionCount}
+            </span>
+          )}
+        </Link>
+
+        {/* Notification Bell */}
+        <NotificationBell botIds={bots.map(b => b.id)} />
 
         {/* Team — owners only */}
         {isOwner && (
