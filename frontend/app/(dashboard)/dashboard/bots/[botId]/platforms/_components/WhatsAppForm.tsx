@@ -78,6 +78,10 @@ export default function WhatsAppForm({ botId, existing }: WhatsAppFormProps) {
   }
 
   return (
+    <div className="space-y-4">
+      {/* ── Setup guide (shown when not yet connected) ───────── */}
+      {!existing && <WhatsAppSetupGuide botId={botId} />}
+
     <form onSubmit={handleSave} className="space-y-4">
       {/* Connected indicator */}
       {existing && (
@@ -199,5 +203,6 @@ export default function WhatsAppForm({ botId, existing }: WhatsAppFormProps) {
         </Button>
       </div>
     </form>
+    </div>
   )
 }
