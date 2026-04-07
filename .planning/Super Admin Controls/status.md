@@ -13,11 +13,11 @@
 | Phase 1 | Super Admin Foundation | IN_PROGRESS | 2 / 4 subtasks |
 | Phase 2 | Limits, Flags, and Approval Data Model | IN_PROGRESS | 1 / 4 subtasks |
 | Phase 3 | Runtime Enforcement Engine | IN_PROGRESS | 4 / 4 subtasks |
-| Phase 4 | Super Admin Dashboard | NOT_STARTED | 0 / 4 subtasks |
+| Phase 4 | Super Admin Dashboard | IN_PROGRESS | 4 / 4 subtasks |
 | Phase 5 | Customer-Facing Guardrails | NOT_STARTED | 0 / 4 subtasks |
 | Phase 6 | Approval Activation, QA, and Rollout | NOT_STARTED | 0 / 4 subtasks |
 
-**Overall:** 7 / 24 subtasks completed
+**Overall:** 11 / 24 subtasks completed
 
 ---
 
@@ -70,13 +70,14 @@
 
 | ID | Subtask | Status | Notes |
 |----|---------|--------|-------|
-| 4.1 | Build customer account list page | NOT_STARTED | Needs usage summaries, limits summary, and platform approval counts |
-| 4.2 | Build customer detail controls page | NOT_STARTED | Edit max form submissions, export flag, automation lock state |
-| 4.3 | Build platform approval queue | NOT_STARTED | View pending WA/IG connection requests before activation |
-| 4.4 | Build approve/reject action flows with audit notes | NOT_STARTED | Must support request history and decision metadata |
+| 4.1 | Build customer account list page | COMPLETED | Added `/dashboard/super-admin/customers` with summary cards, local filters, status pills, and direct links into per-customer controls |
+| 4.2 | Build customer detail controls page | COMPLETED | Added `/dashboard/super-admin/customers/[customerId]` with account controls, usage summary, per-bot trigger limits, and related request history |
+| 4.3 | Build platform approval queue | COMPLETED | Added `/dashboard/super-admin/platform-approvals` with search, status filtering, requester metadata, and request payload review |
+| 4.4 | Build approve/reject action flows with audit notes | COMPLETED | Approval queue now captures review notes, updates status via server actions, and revalidates dashboard, queue, and customer detail routes |
 
-**Phase 4 Status:** NOT_STARTED
+**Phase 4 Status:** IN_PROGRESS
 **Validation:** See `phase_4.md`
+**⚠️ Action required:** Run both super-admin migrations in Supabase if needed, then validate dashboard access as a real super admin plus approve/reject flows and customer control persistence in the browser
 
 ---
 
@@ -116,6 +117,7 @@
 | 2026-04-07 | Phase 1 foundation code added: migration file, super-admin helpers, protected dashboard route, sidebar entry, and audit-log test action. Awaiting SQL run + first app admin seed. | Codex |
 | 2026-04-07 | Phase 2 data-model code added: customer controls, bot trigger-limit fields, platform connection request migration, and shared super-admin loaders/mutators. Awaiting SQL run. | Codex |
 | 2026-04-07 | Phase 3 enforcement code added: runtime automation gate, form submission cap guard, trigger creation limit enforcement, and server-side Excel export gating with matching UI state. Awaiting migration-backed QA. | Codex |
+| 2026-04-07 | Phase 4 dashboard code added: customer list and detail pages, platform approval queue, shared super-admin navigation, and review-note approval actions. Awaiting browser-level QA with seeded data. | Codex |
 
 ---
 

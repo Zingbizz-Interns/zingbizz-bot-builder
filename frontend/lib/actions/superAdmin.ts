@@ -57,6 +57,18 @@ export interface PlatformConnectionRequestWithRelations
   bot_name?: string
   customer_name?: string
   customer_email?: string
+  requester_name?: string | null
+  requester_email?: string | null
+  requester_role?: string | null
+  reviewer_name?: string | null
+  reviewer_email?: string | null
+  reviewer_role?: string | null
+}
+
+interface ActorDirectoryEntry {
+  name: string
+  email: string | null
+  role: string
 }
 
 function normalizeNullableLimit(value: number | null) {
@@ -100,6 +112,60 @@ async function ensureCustomerAccountControl(customerId: string) {
   }
 
   return data as CustomerAccountControl
+}
+
+async function buildActorDirectory(userIds: string[]) {
+  const admin = createAdminClient()
+  const uniqueUserIds = Array.from(new Set(userIds.filter(Boolean)))
+  const directory = new Map<string, ActorDirectoryEntry>()
+
+  if (uniqueUserIds.length === 0) {
+    return directory
+  }
+
+  const [
+    { data: appAdmins, error: appAdminsError },
+    { data: customerProfiles, error: customerProfilesError },
+    { data: subAccounts, error: subAccountsError },
+  ] = await Promise.all([
+    admin.from('app_admins').select('user_id, email, label').in('user_id', uniqueUserIds),
+    admin.from('customer_profiles').select('user_id, name, email').in('user_id', uniqueUserIds),
+    admin.from('sub_accounts').select('user_id, name, email').in('user_id', uniqueUserIds),
+  ])
+
+  if (appAdminsError) throw new Error(appAdminsError.message)
+  if (customerProfilesError) throw new Error(customerProfilesError.message)
+  if (subAccountsError) throw new Error(subAccountsError.message)
+
+  for (const appAdmin of appAdmins ?? []) {
+    directory.set(appAdmin.user_id, {
+      name: appAdmin.label || appAdmin.email,
+      email: appAdmin.email,
+      role: 'super_admin',
+    })
+  }
+
+  for (const customerProfile of customerProfiles ?? []) {
+    if (!directory.has(customerProfile.user_id)) {
+      directory.set(customerProfile.user_id, {
+        name: customerProfile.name,
+        email: customerProfile.email,
+        role: 'owner',
+      })
+    }
+  }
+
+  for (const subAccount of subAccounts ?? []) {
+    if (!directory.has(subAccount.user_id)) {
+      directory.set(subAccount.user_id, {
+        name: subAccount.name,
+        email: subAccount.email,
+        role: 'sub_account',
+      })
+    }
+  }
+
+  return directory
 }
 
 export async function getSuperAdminDashboardData() {
@@ -390,6 +456,7 @@ export async function saveCustomerAccountControls(input: {
 
   revalidatePath('/dashboard/super-admin')
   revalidatePath('/dashboard/super-admin/customers')
+  revalidatePath(`/dashboard/super-admin/customers/${input.customerId}`)
   return data as CustomerAccountControl
 }
 
@@ -433,6 +500,7 @@ export async function saveBotTriggerLimit(input: {
 
   revalidatePath('/dashboard/super-admin')
   revalidatePath('/dashboard/super-admin/customers')
+  revalidatePath(`/dashboard/super-admin/customers/${data.customer_id}`)
   return data as Pick<Bot, 'id' | 'customer_id' | 'name' | 'is_active' | 'trigger_limit' | 'trigger_limit_enforced'>
 }
 
@@ -471,12 +539,28 @@ export async function getPlatformConnectionRequests(filters?: {
     customer_profiles?: { id: string; name: string; email: string }[] | null
   }
 
-  return (((data as JoinedRow[] | null) ?? []).map((row) => ({
-    ...row,
-    bot_name: row.bots?.[0]?.name ?? undefined,
-    customer_name: row.customer_profiles?.[0]?.name ?? undefined,
-    customer_email: row.customer_profiles?.[0]?.email ?? undefined,
-  }))) as PlatformConnectionRequestWithRelations[]
+  const rows = (data as JoinedRow[] | null) ?? []
+  const actorDirectory = await buildActorDirectory(
+    rows.flatMap((row) => [row.requested_by, row.reviewed_by ?? ''])
+  )
+
+  return (rows.map((row) => {
+    const requester = actorDirectory.get(row.requested_by)
+    const reviewer = row.reviewed_by ? actorDirectory.get(row.reviewed_by) : undefined
+
+    return {
+      ...row,
+      bot_name: row.bots?.[0]?.name ?? undefined,
+      customer_name: row.customer_profiles?.[0]?.name ?? undefined,
+      customer_email: row.customer_profiles?.[0]?.email ?? undefined,
+      requester_name: requester?.name ?? row.requested_by,
+      requester_email: requester?.email ?? null,
+      requester_role: requester?.role ?? 'unknown',
+      reviewer_name: reviewer?.name ?? row.reviewed_by ?? null,
+      reviewer_email: reviewer?.email ?? null,
+      reviewer_role: reviewer?.role ?? null,
+    }
+  })) as PlatformConnectionRequestWithRelations[]
 }
 
 export async function updatePlatformConnectionRequestStatus(input: {
@@ -533,6 +617,8 @@ export async function updatePlatformConnectionRequestStatus(input: {
   })
 
   revalidatePath('/dashboard/super-admin')
+  revalidatePath('/dashboard/super-admin/customers')
+  revalidatePath(`/dashboard/super-admin/customers/${existing.customer_id}`)
   revalidatePath('/dashboard/super-admin/platform-approvals')
   return data as PlatformConnectionRequest
 }
