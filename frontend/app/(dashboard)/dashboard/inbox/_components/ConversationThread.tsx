@@ -19,6 +19,7 @@ import {
   type Message,
 } from '@/lib/actions/inbox'
 import { getWhatsAppWindowExpiry } from '@/lib/utils'
+import { debugRealtime } from '@/lib/realtimeDebug'
 import { ArrowLeft, MessageSquare, NotebookPen, RefreshCw, Send, Sparkles, StickyNote, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -85,16 +86,11 @@ function applyQuickReply(current: string, content: string) {
   return current.trim() ? `${current.trim()}\n${content}` : content
 }
 
-function mergeMessages(existing: Message[], incoming: Message[]) {
-  const byId = new Map(existing.map((message) => [message.id, message]))
-
-  for (const message of incoming) {
-    byId.set(message.id, message)
-  }
-
-  return Array.from(byId.values()).sort(
-    (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-  )
+function hasConversationChanges(
+  current: Conversation,
+  incoming: Partial<Conversation>
+) {
+  return (Object.keys(incoming) as Array<keyof Conversation>).some((key) => current[key] !== incoming[key])
 }
 
 export default function ConversationThread({ conversation: initialConv, emptySender, onBack, onConversationUpdate }: Props) {
@@ -121,6 +117,10 @@ export default function ConversationThread({ conversation: initialConv, emptySen
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const convRef = useRef<Conversation | undefined>(initialConv)
+  const previousConversationIdRef = useRef<string | undefined>(initialConv?.id)
+  const messagesRequestIdRef = useRef(0)
+  const notesRequestIdRef = useRef(0)
+  const cannedRequestIdRef = useRef(0)
 
   const LIMIT = 50
   const conversationId = conv?.id
@@ -131,45 +131,97 @@ export default function ConversationThread({ conversation: initialConv, emptySen
   }, [conv])
 
   useEffect(() => {
-    setConv(initialConv)
-    if (initialConv) {
+    const nextConversationId = initialConv?.id
+    const previousConversationId = previousConversationIdRef.current
+
+    setConv((current) => {
+      if (!initialConv) return undefined
+      if (current?.id === initialConv.id) {
+        return { ...current, ...initialConv }
+      }
+      return initialConv
+    })
+
+    if (nextConversationId !== previousConversationId) {
+      previousConversationIdRef.current = nextConversationId
       setPage(0)
       setMessages([])
+      setTotalMessages(0)
+      setNotes([])
       setError(null)
       setActiveTab('messages')
+      setReplyText('')
+      setQuickRepliesOpen(false)
+      setQuickReplySearch('')
     }
   }, [initialConv])
 
   useEffect(() => {
-    if (!conversationId) return
+    if (!conversationId) {
+      setLoadingMsgs(false)
+      return
+    }
+
+    const requestId = ++messagesRequestIdRef.current
+    let cancelled = false
+
     setLoadingMsgs(true)
     getMessages(conversationId, 0, LIMIT).then((result) => {
+      if (cancelled || messagesRequestIdRef.current !== requestId) return
       setMessages(result.messages)
       setTotalMessages(result.total)
       setPage(0)
       setLoadingMsgs(false)
       scrollToBottom()
     })
+
+    return () => {
+      cancelled = true
+    }
   }, [conversationId])
 
   useEffect(() => {
-    if (!conversationId) return
+    if (!conversationId) {
+      setLoadingNotes(false)
+      return
+    }
+
+    const requestId = ++notesRequestIdRef.current
+    let cancelled = false
+
     setLoadingNotes(true)
     getConversationNotes(conversationId).then((result) => {
+      if (cancelled || notesRequestIdRef.current !== requestId) return
       setNotes(result.notes)
       setLoadingNotes(false)
       if (result.error) setError(result.error)
     })
+
+    return () => {
+      cancelled = true
+    }
   }, [conversationId])
 
   useEffect(() => {
-    if (!botId) return
+    if (!botId) {
+      setLoadingCanned(false)
+      return
+    }
+
+    const requestId = ++cannedRequestIdRef.current
+    let cancelled = false
+
     setLoadingCanned(true)
     getCannedResponses(botId).then((result) => {
+      if (cancelled || cannedRequestIdRef.current !== requestId) return
       setCannedResponses(result.cannedResponses)
       setLoadingCanned(false)
       if (result.error) setError(result.error)
     })
+
+    return () => {
+      cancelled = true
+    }
   }, [botId])
 
   function scrollToBottom() {
@@ -196,11 +248,21 @@ export default function ConversationThread({ conversation: initialConv, emptySen
   }, [loadingOlder, messages.length, totalMessages, page, conv])
 
   useEffect(() => {
-    if (!conversationId) return
+    if (!conversationId) {
+      debugRealtime('thread', 'skip subscribe: no conversation selected')
+      return
+    }
     const supabase = createClient()
+    const channelName = `thread-messages-${conversationId}`
+
+    debugRealtime('thread', 'subscribing', {
+      channel: channelName,
+      conversationId,
+      botId,
+    })
 
     const channel = supabase
-      .channel(`thread-messages-${conversationId}`)
+      .channel(channelName)
       .on(
         'postgres_changes',
         {
@@ -211,6 +273,12 @@ export default function ConversationThread({ conversation: initialConv, emptySen
         },
         (payload) => {
           const newMsg = payload.new as Message
+          debugRealtime('thread', 'message event received', {
+            event: payload.eventType,
+            conversationId,
+            messageId: newMsg.id,
+            senderType: newMsg.sender_type,
+          })
           setMessages((prev) => {
             if (prev.some((message) => message.id === newMsg.id)) return prev
             return [...prev, newMsg]
@@ -228,9 +296,19 @@ export default function ConversationThread({ conversation: initialConv, emptySen
         },
         (payload) => {
           const updated = payload.new as Conversation
-          setConv((current) => current ? { ...current, ...updated } : current)
+          debugRealtime('thread', 'conversation event received', {
+            event: payload.eventType,
+            conversationId,
+            status: updated.status,
+            needsAttention: updated.needs_attention,
+            updatedAt: updated.updated_at,
+          })
+          setConv((current) => {
+            if (!current) return current
+            return hasConversationChanges(current, updated) ? { ...current, ...updated } : current
+          })
           const currentConversation = convRef.current
-          if (currentConversation) {
+          if (currentConversation && hasConversationChanges(currentConversation, updated)) {
             onConversationUpdate?.({ ...currentConversation, ...updated })
           }
         }
@@ -243,68 +321,40 @@ export default function ConversationThread({ conversation: initialConv, emptySen
           table: 'conversation_notes',
           filter: `conversation_id=eq.${conversationId}`,
         },
-        async () => {
+        async (payload) => {
+          debugRealtime('thread', 'note event received', {
+            event: payload.eventType,
+            conversationId,
+            noteId: (payload.new as { id?: string } | null)?.id ?? (payload.old as { id?: string } | null)?.id ?? null,
+          })
           const result = await getConversationNotes(conversationId)
-          if (!result.error) setNotes(result.notes)
+          if (!result.error) {
+            setNotes(result.notes)
+          } else {
+            debugRealtime('thread', 'note refresh failed', {
+              conversationId,
+              error: result.error,
+            })
+          }
         }
       )
-      .subscribe()
+      .subscribe((status, err) => {
+        debugRealtime('thread', 'channel status changed', {
+          channel: channelName,
+          conversationId,
+          status,
+          error: err ? { message: err.message, name: err.name } : null,
+        })
+      })
 
     return () => {
+      debugRealtime('thread', 'removing channel', {
+        channel: channelName,
+        conversationId,
+      })
       supabase.removeChannel(channel)
     }
-  }, [conversationId, onConversationUpdate])
-
-  // Polling fallback: keeps the thread fresh even if Realtime is delayed or unavailable.
-  useEffect(() => {
-    if (!conversationId) return
-
-    const supabase = createClient()
-
-    const interval = setInterval(async () => {
-      if (document.hidden) return
-
-      const [{ data: latestMessages, error: messagesError }, { data: latestConversation, error: convError }] =
-        await Promise.all([
-          supabase
-            .from('messages')
-            .select('*')
-            .eq('conversation_id', conversationId)
-            .order('created_at', { ascending: false })
-            .limit(20),
-          supabase
-            .from('conversations')
-            .select('*')
-            .eq('id', conversationId)
-            .single(),
-        ])
-
-      if (!messagesError && latestMessages?.length) {
-        const incoming = [...latestMessages].reverse() as Message[]
-        let addedNew = false
-
-        setMessages((prev) => {
-          const prevIds = new Set(prev.map((message) => message.id))
-          addedNew = incoming.some((message) => !prevIds.has(message.id))
-          return mergeMessages(prev, incoming)
-        })
-
-        if (addedNew) {
-          scrollToBottom()
-        }
-      }
-
-      if (!convError && latestConversation) {
-        setConv((current) => (current ? { ...current, ...latestConversation } : current))
-        const currentConversation = convRef.current
-        if (currentConversation) {
-          onConversationUpdate?.({ ...currentConversation, ...latestConversation })
-        }
-      }
-    }, 4000)
-
-    return () => clearInterval(interval)
-  }, [conversationId, onConversationUpdate])
+  }, [conversationId, botId, onConversationUpdate])
 
   async function handleAction(action: () => Promise<{ conversation?: Conversation; error?: string }>) {
     setActionLoading(true)

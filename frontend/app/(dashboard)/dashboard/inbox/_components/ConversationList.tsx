@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { getConversations, type Conversation } from '@/lib/actions/inbox'
 import { getWhatsAppWindowExpiry } from '@/lib/utils'
+import { debugRealtime } from '@/lib/realtimeDebug'
 import { Clock, AlertCircle, Search, RefreshCw } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -73,11 +74,21 @@ export default function ConversationList({ botIds, botId, selectedId, initialSen
 
   // Supabase Realtime — live updates to conversation list (3.6)
   useEffect(() => {
-    if (!botIds.length) return
+    if (!botIds.length) {
+      debugRealtime('inbox-list', 'skip subscribe: no bot ids')
+      return
+    }
     const supabase = createClient()
+    const channelName = 'inbox-conversation-list'
+
+    debugRealtime('inbox-list', 'subscribing', {
+      channel: channelName,
+      botId,
+      botIds,
+    })
 
     const channel = supabase
-      .channel('inbox-conversation-list')
+      .channel(channelName)
       .on(
         'postgres_changes',
         {
@@ -87,7 +98,22 @@ export default function ConversationList({ botIds, botId, selectedId, initialSen
         },
         (payload) => {
           const row = (payload.new ?? payload.old) as Conversation & { bot_id: string }
-          if (!botIds.includes(row.bot_id)) return
+          if (!botIds.includes(row.bot_id)) {
+            debugRealtime('inbox-list', 'ignored conversation event for another bot', {
+              event: payload.eventType,
+              conversationId: row.id,
+              botId: row.bot_id,
+            })
+            return
+          }
+
+          debugRealtime('inbox-list', 'conversation event received', {
+            event: payload.eventType,
+            conversationId: row.id,
+            botId: row.bot_id,
+            status: row.status,
+            needsAttention: row.needs_attention,
+          })
 
           if (payload.eventType === 'INSERT') {
             setConversations(prev => [{ ...payload.new as Conversation, bot_name: '' }, ...prev])
@@ -112,6 +138,11 @@ export default function ConversationList({ botIds, botId, selectedId, initialSen
         },
         (payload) => {
           const msg = payload.new as { conversation_id: string; content: string; sender_type: string }
+          debugRealtime('inbox-list', 'message event received', {
+            event: payload.eventType,
+            conversationId: msg.conversation_id,
+            senderType: msg.sender_type,
+          })
           setConversations(prev =>
             prev.map(c =>
               c.id === msg.conversation_id
@@ -121,10 +152,19 @@ export default function ConversationList({ botIds, botId, selectedId, initialSen
           )
         }
       )
-      .subscribe()
+      .subscribe((status, err) => {
+        debugRealtime('inbox-list', 'channel status changed', {
+          channel: channelName,
+          status,
+          error: err ? { message: err.message, name: err.name } : null,
+        })
+      })
 
-    return () => { supabase.removeChannel(channel) }
-  }, [botIds])
+    return () => {
+      debugRealtime('inbox-list', 'removing channel', { channel: channelName })
+      supabase.removeChannel(channel)
+    }
+  }, [botIds, botId])
 
   // Infinite scroll
   const handleScroll = useCallback(() => {
