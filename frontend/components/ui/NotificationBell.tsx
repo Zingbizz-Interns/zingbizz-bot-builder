@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Bell } from 'lucide-react'
@@ -10,6 +10,11 @@ import type { Alert } from '@/lib/actions/alerts'
 
 interface NotificationBellProps {
   botIds: string[]
+}
+
+interface AlertRow extends Omit<Alert, 'bot_name' | 'sender_id'> {
+  bots?: { name?: string | null } | null
+  conversations?: { sender_id?: string | null } | null
 }
 
 const ALERT_LABELS: Record<string, string> = {
@@ -34,21 +39,24 @@ export default function NotificationBell({ botIds }: NotificationBellProps) {
   const [alerts, setAlerts] = useState<Alert[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const ref = useRef<HTMLDivElement>(null)
+  const botIdsKey = useMemo(() => botIds.join(','), [botIds])
+  const stableBotIds = useMemo(() => (botIdsKey ? botIdsKey.split(',') : []), [botIdsKey])
+  const hasBots = stableBotIds.length > 0
 
-  async function fetchAlerts() {
-    if (!botIds.length) return
+  const fetchAlerts = useCallback(async () => {
+    if (!stableBotIds.length) return
     const supabase = createClient()
 
     const { data, error } = await supabase
       .from('alerts')
       .select('*, bots!inner(name), conversations!inner(sender_id)')
-      .in('bot_id', botIds)
+      .in('bot_id', stableBotIds)
       .order('triggered_at', { ascending: false })
       .limit(20)
 
     if (error || !data) return
 
-    const mapped: Alert[] = data.map((row: any) => ({
+    const mapped: Alert[] = (data as AlertRow[]).map((row) => ({
       ...row,
       bot_name: row.bots?.name ?? '',
       sender_id: row.conversations?.sender_id ?? '',
@@ -56,14 +64,14 @@ export default function NotificationBell({ botIds }: NotificationBellProps) {
 
     setAlerts(mapped)
     setUnreadCount(mapped.filter(a => !a.is_read).length)
-  }
+  }, [stableBotIds])
 
   useEffect(() => {
-    if (!botIds.length) return
+    if (!hasBots) return
     fetchAlerts()
     const interval = setInterval(fetchAlerts, 60_000)
     return () => clearInterval(interval)
-  }, [botIds.join(',')])
+  }, [hasBots, fetchAlerts])
 
   // Close on outside click
   useEffect(() => {
@@ -80,7 +88,7 @@ export default function NotificationBell({ botIds }: NotificationBellProps) {
     setOpen(v => !v)
     // Mark all read when dropdown opens
     if (!open && unreadCount > 0) {
-      await markAllAlertsRead(botIds)
+      await markAllAlertsRead(stableBotIds)
       setAlerts(prev => prev.map(a => ({ ...a, is_read: true })))
       setUnreadCount(0)
     }
@@ -117,7 +125,7 @@ export default function NotificationBell({ botIds }: NotificationBellProps) {
             <p className="text-xs font-black uppercase tracking-widest text-[#121212]">Notifications</p>
             <button
               onClick={async () => {
-                await markAllAlertsRead(botIds)
+                await markAllAlertsRead(stableBotIds)
                 setAlerts(prev => prev.map(a => ({ ...a, is_read: true })))
                 setUnreadCount(0)
               }}

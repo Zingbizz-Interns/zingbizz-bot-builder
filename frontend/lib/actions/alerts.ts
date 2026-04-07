@@ -33,6 +33,11 @@ export interface GetAlertsFilters {
   limit?: number
 }
 
+interface AlertRow extends Omit<Alert, 'bot_name' | 'sender_id'> {
+  bots?: { name?: string | null; customer_id?: string | null } | null
+  conversations?: { sender_id?: string | null } | null
+}
+
 // ─── getAlerts ────────────────────────────────────────────────────────────────
 
 export async function getAlerts(
@@ -70,7 +75,7 @@ export async function getAlerts(
     return { alerts: [], total: 0 }
   }
 
-  const alerts: Alert[] = (data ?? []).map((row: any) => ({
+  const alerts: Alert[] = ((data ?? []) as AlertRow[]).map((row) => ({
     ...row,
     bot_name: row.bots?.name ?? '',
     sender_id: row.conversations?.sender_id ?? '',
@@ -113,7 +118,7 @@ export async function getRecentAlerts(botIds: string[]): Promise<Alert[]> {
     return []
   }
 
-  return (data ?? []).map((row: any) => ({
+  return ((data ?? []) as AlertRow[]).map((row) => ({
     ...row,
     bot_name: row.bots?.name ?? '',
     sender_id: row.conversations?.sender_id ?? '',

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import {
   ChevronDown, ChevronUp, ChevronRight,
   Copy, Check, AlertTriangle, ExternalLink,
-  Building2, Phone, KeyRound, Webhook, ShieldCheck, BookOpen, CreditCard, BadgeCheck,
+  Building2, Phone, KeyRound, Webhook, BookOpen, CreditCard, BadgeCheck,
 } from 'lucide-react'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -102,8 +102,6 @@ function CheckItem({ children }: { children: React.ReactNode }) {
 }
 
 // ─── Step content ──────────────────────────────────────────────────────────────
-
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://your-domain.com'
 
 const STEPS: Step[] = [
   {
