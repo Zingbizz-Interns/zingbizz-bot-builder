@@ -43,6 +43,8 @@ create policy "Users can manage canned responses for their own bots"
     )
   );
 
+grant all on public.canned_responses to anon, authenticated, service_role;
+
 drop trigger if exists canned_responses_updated_at on canned_responses;
 create trigger canned_responses_updated_at
   before update on canned_responses
@@ -75,6 +77,8 @@ create policy "Users can manage notes for their own conversations"
       where b.customer_id = get_my_customer_id()
     )
   );
+
+grant all on public.conversation_notes to anon, authenticated, service_role;
 
 -- ------------------------------------------------------------
 -- 5.6 and 5.7 bot live-chat config

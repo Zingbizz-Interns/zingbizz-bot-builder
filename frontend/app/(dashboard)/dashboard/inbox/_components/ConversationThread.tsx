@@ -85,6 +85,18 @@ function applyQuickReply(current: string, content: string) {
   return current.trim() ? `${current.trim()}\n${content}` : content
 }
 
+function mergeMessages(existing: Message[], incoming: Message[]) {
+  const byId = new Map(existing.map((message) => [message.id, message]))
+
+  for (const message of incoming) {
+    byId.set(message.id, message)
+  }
+
+  return Array.from(byId.values()).sort(
+    (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+  )
+}
+
 export default function ConversationThread({ conversation: initialConv, emptySender, onBack, onConversationUpdate }: Props) {
   const [conv, setConv] = useState<Conversation | undefined>(initialConv)
   const [messages, setMessages] = useState<Message[]>([])
@@ -108,8 +120,15 @@ export default function ConversationThread({ conversation: initialConv, emptySen
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const convRef = useRef<Conversation | undefined>(initialConv)
 
   const LIMIT = 50
+  const conversationId = conv?.id
+  const botId = conv?.bot_id
+
+  useEffect(() => {
+    convRef.current = conv
+  }, [conv])
 
   useEffect(() => {
     setConv(initialConv)
@@ -122,36 +141,36 @@ export default function ConversationThread({ conversation: initialConv, emptySen
   }, [initialConv])
 
   useEffect(() => {
-    if (!conv) return
+    if (!conversationId) return
     setLoadingMsgs(true)
-    getMessages(conv.id, 0, LIMIT).then((result) => {
+    getMessages(conversationId, 0, LIMIT).then((result) => {
       setMessages(result.messages)
       setTotalMessages(result.total)
       setPage(0)
       setLoadingMsgs(false)
       scrollToBottom()
     })
-  }, [conv, conv?.id])
+  }, [conversationId])
 
   useEffect(() => {
-    if (!conv) return
+    if (!conversationId) return
     setLoadingNotes(true)
-    getConversationNotes(conv.id).then((result) => {
+    getConversationNotes(conversationId).then((result) => {
       setNotes(result.notes)
       setLoadingNotes(false)
       if (result.error) setError(result.error)
     })
-  }, [conv, conv?.id])
+  }, [conversationId])
 
   useEffect(() => {
-    if (!conv) return
+    if (!botId) return
     setLoadingCanned(true)
-    getCannedResponses(conv.bot_id).then((result) => {
+    getCannedResponses(botId).then((result) => {
       setCannedResponses(result.cannedResponses)
       setLoadingCanned(false)
       if (result.error) setError(result.error)
     })
-  }, [conv, conv?.bot_id])
+  }, [botId])
 
   function scrollToBottom() {
     setTimeout(() => {
@@ -177,18 +196,18 @@ export default function ConversationThread({ conversation: initialConv, emptySen
   }, [loadingOlder, messages.length, totalMessages, page, conv])
 
   useEffect(() => {
-    if (!conv) return
+    if (!conversationId) return
     const supabase = createClient()
 
     const channel = supabase
-      .channel(`thread-messages-${conv.id}`)
+      .channel(`thread-messages-${conversationId}`)
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
           table: 'messages',
-          filter: `conversation_id=eq.${conv.id}`,
+          filter: `conversation_id=eq.${conversationId}`,
         },
         (payload) => {
           const newMsg = payload.new as Message
@@ -205,12 +224,15 @@ export default function ConversationThread({ conversation: initialConv, emptySen
           event: 'UPDATE',
           schema: 'public',
           table: 'conversations',
-          filter: `id=eq.${conv.id}`,
+          filter: `id=eq.${conversationId}`,
         },
         (payload) => {
           const updated = payload.new as Conversation
           setConv((current) => current ? { ...current, ...updated } : current)
-          onConversationUpdate?.({ ...conv, ...updated })
+          const currentConversation = convRef.current
+          if (currentConversation) {
+            onConversationUpdate?.({ ...currentConversation, ...updated })
+          }
         }
       )
       .on(
@@ -219,10 +241,10 @@ export default function ConversationThread({ conversation: initialConv, emptySen
           event: '*',
           schema: 'public',
           table: 'conversation_notes',
-          filter: `conversation_id=eq.${conv.id}`,
+          filter: `conversation_id=eq.${conversationId}`,
         },
         async () => {
-          const result = await getConversationNotes(conv.id)
+          const result = await getConversationNotes(conversationId)
           if (!result.error) setNotes(result.notes)
         }
       )
@@ -231,7 +253,58 @@ export default function ConversationThread({ conversation: initialConv, emptySen
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [conv, conv?.id, onConversationUpdate])
+  }, [conversationId, onConversationUpdate])
+
+  // Polling fallback: keeps the thread fresh even if Realtime is delayed or unavailable.
+  useEffect(() => {
+    if (!conversationId) return
+
+    const supabase = createClient()
+
+    const interval = setInterval(async () => {
+      if (document.hidden) return
+
+      const [{ data: latestMessages, error: messagesError }, { data: latestConversation, error: convError }] =
+        await Promise.all([
+          supabase
+            .from('messages')
+            .select('*')
+            .eq('conversation_id', conversationId)
+            .order('created_at', { ascending: false })
+            .limit(20),
+          supabase
+            .from('conversations')
+            .select('*')
+            .eq('id', conversationId)
+            .single(),
+        ])
+
+      if (!messagesError && latestMessages?.length) {
+        const incoming = [...latestMessages].reverse() as Message[]
+        let addedNew = false
+
+        setMessages((prev) => {
+          const prevIds = new Set(prev.map((message) => message.id))
+          addedNew = incoming.some((message) => !prevIds.has(message.id))
+          return mergeMessages(prev, incoming)
+        })
+
+        if (addedNew) {
+          scrollToBottom()
+        }
+      }
+
+      if (!convError && latestConversation) {
+        setConv((current) => (current ? { ...current, ...latestConversation } : current))
+        const currentConversation = convRef.current
+        if (currentConversation) {
+          onConversationUpdate?.({ ...currentConversation, ...latestConversation })
+        }
+      }
+    }, 4000)
+
+    return () => clearInterval(interval)
+  }, [conversationId, onConversationUpdate])
 
   async function handleAction(action: () => Promise<{ conversation?: Conversation; error?: string }>) {
     setActionLoading(true)

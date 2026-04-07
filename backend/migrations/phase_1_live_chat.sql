@@ -49,6 +49,8 @@ create policy "Users can access their own bot conversations"
     )
   );
 
+grant all on public.conversations to anon, authenticated, service_role;
+
 -- ------------------------------------------------------------
 -- 1.2 messages table
 -- ------------------------------------------------------------
@@ -81,6 +83,8 @@ create policy "Users can access messages for their own bots"
     )
   );
 
+grant all on public.messages to anon, authenticated, service_role;
+
 -- ------------------------------------------------------------
 -- 1.3 alert_settings table
 -- ------------------------------------------------------------
@@ -107,6 +111,8 @@ create policy "Users can manage alert settings for their own bots"
       select id from bots where customer_id = get_my_customer_id()
     )
   );
+
+grant all on public.alert_settings to anon, authenticated, service_role;
 
 -- ------------------------------------------------------------
 -- 1.4 alerts table
@@ -137,6 +143,8 @@ create policy "Users can access alerts for their own bots"
     )
   );
 
+grant all on public.alerts to anon, authenticated, service_role;
+
 -- ------------------------------------------------------------
 -- Helper: auto-update updated_at on alert_settings changes
 -- ------------------------------------------------------------
@@ -160,3 +168,5 @@ begin
   where id = conv_id;
 end;
 $$ language plpgsql security definer;
+
+grant execute on function public.increment_conversation_fallback_count(uuid) to anon, authenticated, service_role;
