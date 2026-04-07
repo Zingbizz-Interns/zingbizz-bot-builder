@@ -19,7 +19,6 @@ import {
   type Message,
 } from '@/lib/actions/inbox'
 import { getWhatsAppWindowExpiry } from '@/lib/utils'
-import { debugRealtime } from '@/lib/realtimeDebug'
 import { ArrowLeft, MessageSquare, NotebookPen, RefreshCw, Send, Sparkles, StickyNote, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -248,21 +247,11 @@ export default function ConversationThread({ conversation: initialConv, emptySen
   }, [loadingOlder, messages.length, totalMessages, page, conv])
 
   useEffect(() => {
-    if (!conversationId) {
-      debugRealtime('thread', 'skip subscribe: no conversation selected')
-      return
-    }
+    if (!conversationId) return
     const supabase = createClient()
-    const channelName = `thread-messages-${conversationId}`
-
-    debugRealtime('thread', 'subscribing', {
-      channel: channelName,
-      conversationId,
-      botId,
-    })
 
     const channel = supabase
-      .channel(channelName)
+      .channel(`thread-messages-${conversationId}`)
       .on(
         'postgres_changes',
         {
@@ -273,12 +262,6 @@ export default function ConversationThread({ conversation: initialConv, emptySen
         },
         (payload) => {
           const newMsg = payload.new as Message
-          debugRealtime('thread', 'message event received', {
-            event: payload.eventType,
-            conversationId,
-            messageId: newMsg.id,
-            senderType: newMsg.sender_type,
-          })
           setMessages((prev) => {
             if (prev.some((message) => message.id === newMsg.id)) return prev
             return [...prev, newMsg]
@@ -296,13 +279,6 @@ export default function ConversationThread({ conversation: initialConv, emptySen
         },
         (payload) => {
           const updated = payload.new as Conversation
-          debugRealtime('thread', 'conversation event received', {
-            event: payload.eventType,
-            conversationId,
-            status: updated.status,
-            needsAttention: updated.needs_attention,
-            updatedAt: updated.updated_at,
-          })
           setConv((current) => {
             if (!current) return current
             return hasConversationChanges(current, updated) ? { ...current, ...updated } : current
@@ -321,37 +297,14 @@ export default function ConversationThread({ conversation: initialConv, emptySen
           table: 'conversation_notes',
           filter: `conversation_id=eq.${conversationId}`,
         },
-        async (payload) => {
-          debugRealtime('thread', 'note event received', {
-            event: payload.eventType,
-            conversationId,
-            noteId: (payload.new as { id?: string } | null)?.id ?? (payload.old as { id?: string } | null)?.id ?? null,
-          })
+        async () => {
           const result = await getConversationNotes(conversationId)
-          if (!result.error) {
-            setNotes(result.notes)
-          } else {
-            debugRealtime('thread', 'note refresh failed', {
-              conversationId,
-              error: result.error,
-            })
-          }
+          if (!result.error) setNotes(result.notes)
         }
       )
-      .subscribe((status, err) => {
-        debugRealtime('thread', 'channel status changed', {
-          channel: channelName,
-          conversationId,
-          status,
-          error: err ? { message: err.message, name: err.name } : null,
-        })
-      })
+      .subscribe()
 
     return () => {
-      debugRealtime('thread', 'removing channel', {
-        channel: channelName,
-        conversationId,
-      })
       supabase.removeChannel(channel)
     }
   }, [conversationId, botId, onConversationUpdate])
@@ -397,7 +350,16 @@ export default function ConversationThread({ conversation: initialConv, emptySen
       setMessages((prev) => prev.filter((message) => message.id !== optimistic.id))
       setReplyText(text)
     } else if (result.message) {
-      setMessages((prev) => prev.map((message) => message.id === optimistic.id ? result.message! : message))
+      setMessages((prev) => {
+        const withoutOptimistic = prev.filter((message) => message.id !== optimistic.id)
+        if (withoutOptimistic.some((message) => message.id === result.message!.id)) {
+          return withoutOptimistic
+        }
+
+        return [...withoutOptimistic, result.message!].sort(
+          (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        )
+      })
     }
     setSending(false)
   }
