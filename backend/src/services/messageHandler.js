@@ -8,6 +8,7 @@ const { executeTrigger, handleFormInput, handleQueryInput } = require('./actionE
 const { track } = require('./analytics');
 const { upsertContact } = require('./contactManager');
 const conversationStore = require('./conversationStore');
+const { getCustomerAutomationGate } = require('./customerAccountControls');
 
 // ---------------------------------------------------------------------------
 // Escalation keywords — customers asking for a human agent
@@ -201,27 +202,7 @@ async function handleMessage(platform, senderId, identifier, input) {
       console.error(`[messageHandler] contact upsert error: ${err.message}`)
     );
 
-    // 2b. Business hours check
-    if (botConfig.businessHours && !isWithinBusinessHours(botConfig.businessHours)) {
-      const platformConfig = {
-        platform: botConfig.platform,
-        accessToken: botConfig.accessToken,
-        phoneNumberId: botConfig.phoneNumberId,
-        pageId: botConfig.pageId,
-        conversationId: conversation?.id ?? null,
-        botId: botConfig.botId,
-      };
-      await sendText(platform, senderId, botConfig.businessHours.outside_hours_message, platformConfig);
-      return;
-    }
-
-    // 3. Build session key and touch (creates/refreshes session + timers)
     const sessionKey = `${platform}:${senderId}:${botConfig.botId}`;
-    sessionManager.touchSession(sessionKey, botConfig, senderId);
-    const session = sessionManager.getSession(sessionKey);
-
-    // platformConfig: what messageSender needs
-    // conversationId and botId are included so messageSender can persist bot replies.
     const platformConfig = {
       platform: botConfig.platform,
       accessToken: botConfig.accessToken,
@@ -230,6 +211,29 @@ async function handleMessage(platform, senderId, identifier, input) {
       conversationId: conversation?.id ?? null,
       botId: botConfig.botId,
     };
+
+    // 2b. Super-admin automation gate
+    const automationGate = await getCustomerAutomationGate(botConfig.customerId);
+    if (automationGate.isBlocked) {
+      sessionManager.clearSession(sessionKey);
+      console.warn(
+        `[messageHandler] Automation blocked for bot ${botConfig.botId} (${automationGate.blockReason})`
+      );
+      if (automationGate.blockMessage) {
+        await sendText(platform, senderId, automationGate.blockMessage, platformConfig);
+      }
+      return;
+    }
+
+    // 2c. Business hours check
+    if (botConfig.businessHours && !isWithinBusinessHours(botConfig.businessHours)) {
+      await sendText(platform, senderId, botConfig.businessHours.outside_hours_message, platformConfig);
+      return;
+    }
+
+    // 3. Build session key and touch (creates/refreshes session + timers)
+    sessionManager.touchSession(sessionKey, botConfig, senderId);
+    const session = sessionManager.getSession(sessionKey);
 
     // 1.9 — Escalation keyword detection (WhatsApp only)
     // Must run before trigger matching so explicit escalation requests are

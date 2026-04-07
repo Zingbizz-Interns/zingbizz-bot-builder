@@ -11,13 +11,13 @@
 | Phase | Title | Status | Completion |
 |-------|-------|--------|------------|
 | Phase 1 | Super Admin Foundation | IN_PROGRESS | 2 / 4 subtasks |
-| Phase 2 | Limits, Flags, and Approval Data Model | NOT_STARTED | 0 / 4 subtasks |
-| Phase 3 | Runtime Enforcement Engine | NOT_STARTED | 0 / 4 subtasks |
+| Phase 2 | Limits, Flags, and Approval Data Model | IN_PROGRESS | 1 / 4 subtasks |
+| Phase 3 | Runtime Enforcement Engine | IN_PROGRESS | 4 / 4 subtasks |
 | Phase 4 | Super Admin Dashboard | NOT_STARTED | 0 / 4 subtasks |
 | Phase 5 | Customer-Facing Guardrails | NOT_STARTED | 0 / 4 subtasks |
 | Phase 6 | Approval Activation, QA, and Rollout | NOT_STARTED | 0 / 4 subtasks |
 
-**Overall:** 0 / 24 subtasks completed
+**Overall:** 7 / 24 subtasks completed
 
 ---
 
@@ -40,13 +40,14 @@
 
 | ID | Subtask | Status | Notes |
 |----|---------|--------|-------|
-| 2.1 | Create customer-level control record | NOT_STARTED | Stores max form submissions, export flag, global automation lock reason |
-| 2.2 | Create bot-level limit fields | NOT_STARTED | Stores per-bot trigger creation limit and optional hard lock |
-| 2.3 | Create platform connection request workflow tables/fields | NOT_STARTED | Required so WA/IG connections can be requested before approval |
-| 2.4 | Add admin data loaders and mutators for new controls | NOT_STARTED | Shared server actions / backend helpers for later phases |
+| 2.1 | Create customer-level control record | IN_PROGRESS | Migration ready in `database/migrations/007_super_admin_controls_model.sql` — includes backfill into `customer_account_controls` |
+| 2.2 | Create bot-level limit fields | IN_PROGRESS | Migration ready in `database/migrations/007_super_admin_controls_model.sql` — adds `trigger_limit` + `trigger_limit_enforced` to `bots` |
+| 2.3 | Create platform connection request workflow tables/fields | IN_PROGRESS | Migration ready in `database/migrations/007_super_admin_controls_model.sql` — creates `platform_connection_requests` with indexes and owner read/create policies |
+| 2.4 | Add admin data loaders and mutators for new controls | COMPLETED | Expanded `frontend/lib/actions/superAdmin.ts` with customer summaries/details, control saves, bot trigger limit saves, request listing, and request status updates |
 
-**Phase 2 Status:** NOT_STARTED
+**Phase 2 Status:** IN_PROGRESS
 **Validation:** See `phase_2.md`
+**⚠️ Action required:** Run `database/migrations/007_super_admin_controls_model.sql` in Supabase SQL Editor before validating customer controls, bot trigger limits, and platform request records
 
 ---
 
@@ -54,13 +55,14 @@
 
 | ID | Subtask | Status | Notes |
 |----|---------|--------|-------|
-| 3.1 | Block trigger execution when account is over quota or disabled | NOT_STARTED | Centralize in backend runtime, not scattered UI-only checks |
-| 3.2 | Enforce max stored form submissions | NOT_STARTED | Count completed `form_responses` and stop trigger flow at cap |
-| 3.3 | Enforce per-bot trigger creation limit | NOT_STARTED | Return actionable error so UI can show toast/banner |
-| 3.4 | Enforce Excel export feature flag | NOT_STARTED | Must block both API route and client button |
+| 3.1 | Block trigger execution when account is over quota or disabled | COMPLETED | Added shared runtime gate in `backend/src/services/customerAccountControls.js` and wired it into `backend/src/services/messageHandler.js` before trigger routing |
+| 3.2 | Enforce max stored form submissions | COMPLETED | Added write-time guard in `backend/src/services/actionExecutor.js` so completed submissions are rejected once automation is disabled or the cap is reached |
+| 3.3 | Enforce per-bot trigger creation limit | COMPLETED | Added pre-insert trigger limit enforcement and user-facing error string in `frontend/lib/actions/triggers.ts` |
+| 3.4 | Enforce Excel export feature flag | COMPLETED | Added server-side export gating in `frontend/app/api/forms/[triggerId]/export/route.ts` and matching disabled state in the responses UI |
 
-**Phase 3 Status:** NOT_STARTED
+**Phase 3 Status:** IN_PROGRESS
 **Validation:** See `phase_3.md`
+**⚠️ Action required:** Run `database/migrations/007_super_admin_controls_model.sql` in Supabase SQL Editor if not already applied, then validate the blocked automation, form cap, trigger limit, and export-disabled flows end to end
 
 ---
 
@@ -112,6 +114,8 @@
 |------|--------|--------------|
 | 2026-04-07 | Initial super-admin planning module created with 6 phases and central status tracker. | Codex |
 | 2026-04-07 | Phase 1 foundation code added: migration file, super-admin helpers, protected dashboard route, sidebar entry, and audit-log test action. Awaiting SQL run + first app admin seed. | Codex |
+| 2026-04-07 | Phase 2 data-model code added: customer controls, bot trigger-limit fields, platform connection request migration, and shared super-admin loaders/mutators. Awaiting SQL run. | Codex |
+| 2026-04-07 | Phase 3 enforcement code added: runtime automation gate, form submission cap guard, trigger creation limit enforcement, and server-side Excel export gating with matching UI state. Awaiting migration-backed QA. | Codex |
 
 ---
 

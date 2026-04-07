@@ -4,6 +4,7 @@
 const supabase = require('./supabase');
 const { sendText, sendButtons } = require('./messageSender');
 const { track } = require('./analytics');
+const { getCustomerAutomationGate } = require('./customerAccountControls');
 
 // ---------------------------------------------------------------------------
 // Instagram-specific numbered query buttons
@@ -150,7 +151,7 @@ function countVisibleQuestions(questions, formAnswers) {
 // Save completed form to Supabase
 // ---------------------------------------------------------------------------
 
-async function saveFormResponse(form, session, senderId, platform) {
+async function saveFormResponse(form, session, senderId, platform, customerId) {
   try {
     const now = new Date().toISOString();
     const formAnswers = session.formAnswers || {};
@@ -160,6 +161,18 @@ async function saveFormResponse(form, session, senderId, platform) {
 
     if (answerCount === 0) {
       console.warn('[actionExecutor] saveFormResponse: formAnswers is empty — no answers will be saved');
+    }
+
+    const automationGate = await getCustomerAutomationGate(customerId);
+    if (automationGate.isBlocked) {
+      console.warn(
+        `[actionExecutor] Blocking form save for customer ${customerId} (${automationGate.blockReason})`
+      );
+      return {
+        status: 'blocked',
+        blockReason: automationGate.blockReason,
+        message: automationGate.blockMessage,
+      };
     }
 
     // Insert form_response
@@ -178,7 +191,10 @@ async function saveFormResponse(form, session, senderId, platform) {
 
     if (responseError) {
       console.error('[actionExecutor] form_responses insert error:', responseError.message, responseError.details);
-      return;
+      return {
+        status: 'error',
+        message: 'We could not save your response right now. Please try again later.',
+      };
     }
 
     const responseId = responseData.id;
@@ -203,8 +219,17 @@ async function saveFormResponse(form, session, senderId, platform) {
     } else {
       console.warn(`[actionExecutor] No answers to save for responseId=${responseId}`);
     }
+
+    return {
+      status: 'saved',
+      responseId,
+    };
   } catch (err) {
     console.error('[actionExecutor] saveFormResponse error:', err.message);
+    return {
+      status: 'error',
+      message: 'We could not save your response right now. Please try again later.',
+    };
   }
 }
 
@@ -441,11 +466,16 @@ async function completeForm(platform, senderId, session, sessionKey, formAnswers
   const form = trigger && trigger.form;
 
   // Save to Supabase
+  let saveResult = { status: 'saved' };
   if (form) {
-    await saveFormResponse(form, { ...session, formAnswers }, senderId, platform);
+    saveResult = await saveFormResponse(
+      form,
+      { ...session, formAnswers },
+      senderId,
+      platform,
+      botConfig.customerId
+    );
   }
-
-  track(botConfig.botId, 'form_completed', { triggerId: session.formTriggerId, platform, senderId });
 
   // Reset session
   sessionManager.setSession(sessionKey, {
@@ -455,6 +485,28 @@ async function completeForm(platform, senderId, session, sessionKey, formAnswers
     formQIndex: 0,
     formAnswers: {},
   });
+
+  if (saveResult.status === 'blocked') {
+    await sendText(
+      platform,
+      senderId,
+      saveResult.message || 'Bot automation is currently unavailable right now. Please contact support.',
+      platformConfig
+    );
+    return;
+  }
+
+  if (saveResult.status === 'error') {
+    await sendText(
+      platform,
+      senderId,
+      saveResult.message || 'We could not save your response right now. Please try again later.',
+      platformConfig
+    );
+    return;
+  }
+
+  track(botConfig.botId, 'form_completed', { triggerId: session.formTriggerId, platform, senderId });
 
   const rawSubmitMsg = session.formSubmitMessage || 'Thank you! Your responses have been submitted.';
   const submitMsg = resolveTokens(rawSubmitMsg, session.formQuestions || [], formAnswers);

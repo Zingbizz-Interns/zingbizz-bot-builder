@@ -1,6 +1,7 @@
 // Auto-maintained TypeScript types matching the Supabase schema
 
 export type Platform = 'whatsapp' | 'instagram'
+export type PlatformConnectionRequestStatus = 'pending' | 'approved' | 'rejected' | 'cancelled'
 export type TriggerType = 'single' | 'multi' | 'any'
 export type ActionType = 'replier' | 'form' | 'query'
 export type InputType = 'text' | 'choice'
@@ -26,6 +27,16 @@ export interface CustomerProfile {
   updated_at: string
 }
 
+export interface CustomerAccountControl {
+  customer_id: string
+  max_form_submissions: number | null
+  excel_export_enabled: boolean
+  automation_enabled: boolean
+  automation_disabled_reason: string | null
+  created_at: string
+  updated_at: string
+}
+
 export interface Bot {
   id: string
   customer_id: string
@@ -35,6 +46,8 @@ export interface Bot {
   takeover_message: string | null
   takeover_message_enabled: boolean
   is_active: boolean
+  trigger_limit: number | null
+  trigger_limit_enforced: boolean
   created_at: string
   updated_at: string
 }
@@ -182,6 +195,21 @@ export interface AnalyticsEvent {
   platform: Platform | null
   sender_id: string | null
   created_at: string
+}
+
+export interface PlatformConnectionRequest {
+  id: string
+  bot_id: string
+  customer_id: string
+  platform: Platform
+  request_payload: Record<string, unknown>
+  status: PlatformConnectionRequestStatus
+  decision_note: string | null
+  requested_by: string
+  reviewed_by: string | null
+  reviewed_at: string | null
+  created_at: string
+  updated_at: string
 }
 
 export interface CannedResponse {

@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { getFormResponses } from '@/lib/actions/responses'
 import ResponsesTable from './_components/ResponsesTable'
 
@@ -16,6 +17,7 @@ export default async function ResponsesPage({ params, searchParams }: PageProps)
   const page = Math.max(1, parseInt(pageStr ?? '1', 10))
 
   const supabase = await createClient()
+  const admin = createAdminClient()
 
   // Load form with questions
   const { data: form } = await supabase
@@ -34,6 +36,26 @@ export default async function ResponsesPage({ params, searchParams }: PageProps)
     .single()
 
   const { responses, total } = await getFormResponses(form.id, page)
+
+  const { data: bot } = await admin
+    .from('bots')
+    .select('customer_id')
+    .eq('id', botId)
+    .maybeSingle()
+
+  const { data: controls, error: controlsError } = bot
+    ? await admin
+        .from('customer_account_controls')
+        .select('excel_export_enabled')
+        .eq('customer_id', bot.customer_id)
+        .maybeSingle()
+    : { data: null, error: null }
+
+  if (controlsError && !/does not exist/i.test(controlsError.message)) {
+    throw new Error(controlsError.message)
+  }
+
+  const exportEnabled = controls?.excel_export_enabled ?? true
 
   const questions = form.form_questions as {
     id: string
@@ -81,6 +103,7 @@ export default async function ResponsesPage({ params, searchParams }: PageProps)
         page={page}
         triggerId={triggerId}
         formTitle={form.title}
+        exportEnabled={exportEnabled}
       />
     </div>
   )

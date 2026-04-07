@@ -293,6 +293,7 @@ async function resolveBot(platform, identifier) {
 
     const config = {
       botId,
+      customerId: bot.customer_id,
       botName: bot.name,
       fallbackMessage: bot.fallback_message || "I'm sorry, I didn't understand that.",
       escalationKeywords: bot.escalation_keywords || null,

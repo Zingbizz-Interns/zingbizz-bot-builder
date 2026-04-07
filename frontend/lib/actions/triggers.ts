@@ -4,6 +4,10 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import type { TriggerWithKeywords } from '@/types/database'
 
+function isMissingSchemaError(message: string) {
+  return /does not exist/i.test(message) || /Could not find/i.test(message)
+}
+
 export async function getTriggers(botId: string): Promise<TriggerWithKeywords[]> {
   const supabase = await createClient()
   const { data } = await supabase
@@ -26,6 +30,36 @@ export async function createTrigger(botId: string, formData: FormData) {
   if (!name)                return { error: 'Trigger name is required' }
   if (!platforms.length)    return { error: 'Select at least one platform' }
   if (trigger_type !== 'any' && !keywords.length) return { error: 'Add at least one keyword' }
+
+  const { data: bot, error: botError } = await supabase
+    .from('bots')
+    .select('id, trigger_limit, trigger_limit_enforced')
+    .eq('id', botId)
+    .maybeSingle()
+
+  if (botError) {
+    if (!isMissingSchemaError(botError.message)) {
+      return { error: botError.message }
+    }
+    console.warn('[triggers] trigger limit fields are not available yet; skipping limit enforcement')
+  }
+
+  if (bot && bot.trigger_limit_enforced !== false && bot.trigger_limit !== null) {
+    const { count, error: countError } = await supabase
+      .from('triggers')
+      .select('id', { count: 'exact', head: true })
+      .eq('bot_id', botId)
+
+    if (countError) {
+      return { error: countError.message }
+    }
+
+    if ((count ?? 0) >= bot.trigger_limit) {
+      return {
+        error: 'This bot has reached its trigger creation limit. Please contact your administrator to increase it.',
+      }
+    }
+  }
 
   const { data: trigger, error } = await supabase
     .from('triggers')

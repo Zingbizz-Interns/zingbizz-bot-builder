@@ -21,6 +21,7 @@ interface ResponsesTableProps {
   page: number
   triggerId: string
   formTitle: string
+  exportEnabled: boolean
 }
 
 export default function ResponsesTable({
@@ -31,15 +32,25 @@ export default function ResponsesTable({
   page,
   triggerId,
   formTitle,
+  exportEnabled,
 }: ResponsesTableProps) {
   const [exporting, setExporting] = useState(false)
+  const [exportError, setExportError] = useState<string | null>(null)
   const totalPages = Math.max(1, Math.ceil(total / 50))
   const sorted = [...questions].sort((a, b) => a.order_index - b.order_index)
 
   async function handleExport() {
+    if (!exportEnabled) return
+
     setExporting(true)
+    setExportError(null)
     try {
       const res = await fetch(`/api/forms/${triggerId}/export`)
+      if (!res.ok) {
+        const message = await res.text()
+        setExportError(message || 'Export is currently unavailable.')
+        return
+      }
       const blob = await res.blob()
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -47,6 +58,8 @@ export default function ResponsesTable({
       a.download = `${formTitle.replace(/[^a-z0-9]/gi, '_')}_responses.xlsx`
       a.click()
       URL.revokeObjectURL(url)
+    } catch {
+      setExportError('Export is currently unavailable.')
     } finally {
       setExporting(false)
     }
@@ -92,11 +105,23 @@ export default function ResponsesTable({
         <p className="text-sm font-bold uppercase tracking-widest text-[#121212]/50">
           {total} response{total !== 1 ? 's' : ''}
         </p>
-        <Button variant="blue" onClick={handleExport} disabled={exporting}>
+        <Button variant="blue" onClick={handleExport} disabled={exporting || !exportEnabled}>
           <Download className="w-3.5 h-3.5" strokeWidth={2.5} />
-          {exporting ? 'Exporting…' : 'Export XLSX'}
+          {!exportEnabled ? 'Export Disabled' : exporting ? 'Exporting…' : 'Export XLSX'}
         </Button>
       </div>
+
+      {!exportEnabled && (
+        <p className="text-xs font-bold uppercase tracking-widest text-[#D02020]">
+          Excel export is disabled for this account.
+        </p>
+      )}
+
+      {exportError && (
+        <p className="text-xs font-bold uppercase tracking-widest text-[#D02020]">
+          {exportError}
+        </p>
+      )}
 
       {/* Table */}
       <div className="border-4 border-[#121212] overflow-x-auto shadow-[4px_4px_0px_0px_#121212]">
