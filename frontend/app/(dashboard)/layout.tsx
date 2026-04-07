@@ -17,13 +17,20 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   // Detect sub-account (admin client — sub_accounts requires service role)
   const admin = createAdminClient()
+  const { data: appAdmin } = await admin
+    .from('app_admins')
+    .select('user_id, label')
+    .eq('user_id', user.id)
+    .single()
+
   const { data: subAccount } = await admin
     .from('sub_accounts')
     .select('id')
     .eq('user_id', user.id)
     .single()
 
-  const isOwner = !subAccount
+  const isSuperAdmin = !!appAdmin
+  const isOwner = !!profile && !subAccount
 
   // Fetch bots for sidebar
   let sideBots: { id: string; name: string; is_active: boolean }[] = []
@@ -53,9 +60,18 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
       <Sidebar
-        user={{ name: profile?.name ?? '', email: profile?.email ?? user.email ?? '' }}
+        user={{
+          name:
+            profile?.name ??
+            appAdmin?.label ??
+            user.user_metadata?.name ??
+            user.email?.split('@')[0] ??
+            '',
+          email: profile?.email ?? user.email ?? '',
+        }}
         bots={sideBots}
         isOwner={isOwner}
+        isSuperAdmin={isSuperAdmin}
       />
       <main className="flex-1 overflow-y-auto">
         {children}

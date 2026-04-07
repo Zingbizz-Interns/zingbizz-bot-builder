@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { signOut } from '@/lib/actions/auth'
-import { MessageSquare, BarChart2, LogOut, Users, Inbox } from 'lucide-react'
+import { MessageSquare, BarChart2, LogOut, Users, Inbox, ShieldCheck } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import NotificationBell from '@/components/ui/NotificationBell'
 
@@ -18,14 +18,16 @@ interface SidebarProps {
   user: { name: string; email: string }
   bots: BotItem[]
   isOwner: boolean
+  isSuperAdmin?: boolean
 }
 
-export default function Sidebar({ user, bots, isOwner }: SidebarProps) {
+export default function Sidebar({ user, bots, isOwner, isSuperAdmin = false }: SidebarProps) {
   const pathname = usePathname()
   const botsActive      = pathname.startsWith('/dashboard/bots')
   const analyticsActive = pathname.startsWith('/dashboard/analytics')
   const teamActive      = pathname.startsWith('/dashboard/team')
   const inboxActive     = pathname.startsWith('/dashboard/inbox')
+  const superAdminActive = pathname.startsWith('/dashboard/super-admin')
 
   const [attentionCount, setAttentionCount] = useState(0)
 
@@ -147,6 +149,20 @@ export default function Sidebar({ user, bots, isOwner }: SidebarProps) {
           >
             <Users className="w-4 h-4 shrink-0" strokeWidth={teamActive ? 3 : 2} />
             Team
+          </Link>
+        )}
+
+        {isSuperAdmin && (
+          <Link
+            href="/dashboard/super-admin"
+            className={`flex items-center gap-3 px-3 py-2.5 text-xs font-bold uppercase tracking-widest transition-all duration-200 border-2 ${
+              superAdminActive
+                ? 'bg-[#F0F0F0] text-[#121212] border-[#F0C020] shadow-[3px_3px_0px_0px_#F0C020]'
+                : 'text-white/60 border-transparent hover:text-white hover:border-white/20'
+            }`}
+          >
+            <ShieldCheck className="w-4 h-4 shrink-0" strokeWidth={superAdminActive ? 3 : 2} />
+            Super Admin
           </Link>
         )}
 
