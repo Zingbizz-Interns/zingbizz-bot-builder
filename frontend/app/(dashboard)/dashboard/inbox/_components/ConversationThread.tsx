@@ -360,6 +360,8 @@ export default function ConversationThread({ conversation: initialConv, emptySen
           (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
         )
       })
+    } else {
+      setMessages((prev) => prev.filter((message) => message.id !== optimistic.id))
     }
     setSending(false)
   }

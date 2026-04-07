@@ -66,17 +66,28 @@ async function getOrCreateConversation(botId, senderId, platform) {
 async function storeMessage(conversationId, botId, senderType, content, messageType = 'text', metadata = null) {
   if (!conversationId || !botId) return;
   try {
-    const { error } = await supabase.from('messages').insert({
-      conversation_id: conversationId,
-      bot_id: botId,
-      sender_type: senderType,
-      content: String(content),
-      message_type: messageType,
-      metadata,
-    });
-    if (error) console.error(`[conversationStore] storeMessage error: ${error.message}`);
+    const { data, error } = await supabase
+      .from('messages')
+      .insert({
+        conversation_id: conversationId,
+        bot_id: botId,
+        sender_type: senderType,
+        content: String(content),
+        message_type: messageType,
+        metadata,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error(`[conversationStore] storeMessage error: ${error.message}`);
+      return null;
+    }
+
+    return data;
   } catch (err) {
     console.error(`[conversationStore] storeMessage exception: ${err.message}`);
+    return null;
   }
 }
 
