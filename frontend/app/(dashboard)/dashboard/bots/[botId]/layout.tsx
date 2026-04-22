@@ -3,7 +3,6 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { getBotAutomationGuardrailState } from '@/lib/botGuardrails'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ChevronRight } from 'lucide-react'
 import { BotPermissionProvider } from '@/lib/context/botPermission'
 import BotAutomationStatusBanner from './_components/BotAutomationStatusBanner'
 
@@ -77,23 +76,36 @@ export default async function BotLayout({
   return (
     <div className="flex flex-col h-full">
       {/* Bot header */}
-      <div className="border-b-4 border-black bg-[#FFFDF5] px-8 py-4">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-black/40 mb-3">
-          <Link href="/dashboard/bots" className="hover:text-[#FF6B6B] transition-colors">
+      <div className="border-b-4 border-black bg-[#C4B5FD]/20 px-8 py-6 relative overflow-hidden">
+        {/* Background texture */}
+        <div 
+          className="absolute inset-0 opacity-20 pointer-events-none"
+          style={{
+            backgroundImage: 'linear-gradient(to right, rgba(0,0,0,1) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,1) 1px, transparent 1px)',
+            backgroundSize: '40px 40px'
+          }}
+        />
+
+        {/* Breadcrumb as layered stickers */}
+        <div className="relative z-10 flex items-center gap-4 mb-6">
+          <Link 
+            href="/dashboard/bots" 
+            className="border-4 border-black bg-[#FFD93D] px-3 py-1 text-[10px] font-black uppercase tracking-widest text-black shadow-[4px_4px_0px_0px_#000] -rotate-2 hover:rotate-0 hover:-translate-y-1 transition-all duration-200"
+          >
             Bots
           </Link>
-          <ChevronRight className="w-3 h-3" strokeWidth={3} />
-          <span className="text-black">{bot.name}</span>
+          <div className="border-4 border-black bg-white px-4 py-2 text-lg font-black uppercase tracking-tighter text-black shadow-[6px_6px_0px_0px_#000] rotate-1">
+            {bot.name}
+          </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 -mb-[17px] flex-wrap">
+        <div className="relative z-10 flex gap-2 -mb-[28px] flex-wrap">
           {tabs.map(tab => (
             <Link
               key={tab.href}
               href={`/dashboard/bots/${botId}/${tab.href}`}
-              className="text-xs font-black uppercase tracking-widest px-4 py-2 border-4 border-b-0 border-black bg-[#FFFDF5] hover:bg-[#FFD93D] transition-colors duration-100"
+              className="text-xs font-black uppercase tracking-widest px-4 py-3 border-4 border-b-0 border-black bg-[#FFFDF5] hover:bg-[#FFD93D] hover:-translate-y-1 transition-all duration-100"
             >
               {tab.label}
             </Link>

@@ -83,24 +83,24 @@ export default function PhoneMockup({ platforms, botName, label, inputValue, onI
         </div>
 
         {/* Input bar */}
-        <div className={`px-2 py-2 flex items-center gap-1.5 ${isWA ? 'bg-[#F0F0F0]' : 'bg-white border-t border-gray-200'}`}>
+        <div className={`px-2 py-2 flex items-center gap-2 border-t-4 border-black ${isWA ? 'bg-[#FFFDF5]' : 'bg-[#FFFDF5]'}`}>
           {onInputChange ? (
             <input
               value={inputValue ?? ''}
               onChange={e => onInputChange(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') onInputSubmit?.() }}
               placeholder={inputPlaceholder ?? 'Message...'}
-              className={`flex-1 rounded-full px-3 py-1.5 text-[10px] text-gray-700 focus:outline-none ${isWA ? 'bg-white' : 'bg-[#F0F0F0]'}`}
+              className={`flex-1 border-4 border-black px-3 py-1.5 text-[10px] font-bold text-black focus:outline-none focus:bg-[#FFD93D] ${isWA ? 'bg-white' : 'bg-white'}`}
             />
           ) : (
-            <div className={`flex-1 rounded-full px-3 py-1.5 text-[10px] text-gray-400 ${isWA ? 'bg-white' : 'bg-[#F0F0F0]'}`}>
+            <div className={`flex-1 border-4 border-black px-3 py-1.5 text-[10px] font-bold text-black/50 ${isWA ? 'bg-white' : 'bg-white'}`}>
               Message...
             </div>
           )}
           <button
             onClick={onInputSubmit}
             disabled={!onInputChange}
-            className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold ${isWA ? 'bg-[#075E54]' : 'bg-[#0095F6]'} disabled:opacity-50`}
+            className={`w-8 h-8 flex items-center justify-center border-4 border-black text-black text-[10px] font-black shadow-[2px_2px_0px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none ${isWA ? 'bg-[#FFD93D]' : 'bg-[#FFD93D]'} disabled:opacity-50 disabled:shadow-[2px_2px_0px_0px_#000]`}
           >
             →
           </button>

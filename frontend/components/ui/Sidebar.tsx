@@ -61,19 +61,21 @@ export default function Sidebar({ user, bots, isOwner, isSuperAdmin = false }: S
     'text-white/50 border-transparent hover:text-white hover:border-white/30 hover:bg-white/5'
 
   return (
-    <aside className="w-56 bg-black border-r-4 border-black flex flex-col h-full shrink-0">
+    <aside className="w-56 bg-black border-4 border-black flex flex-col h-full shrink-0 shadow-[8px_8px_0px_0px_#000]">
 
-      {/* Logo */}
-      <div className="px-5 py-5 border-b-4 border-[#FFD93D]">
-        <div className="flex items-center gap-1.5 mb-2">
-          <div className="w-3 h-3 rounded-full bg-[#FF6B6B]" />
-          <div className="w-3 h-3 bg-[#FFD93D]" />
-          <div
-            className="w-3 h-3"
-            style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)', backgroundColor: '#C4B5FD' }}
-          />
+      {/* Logo Sticker */}
+      <div className="px-5 py-6 border-b-4 border-black bg-[#FFD93D]">
+        <div className="border-4 border-black bg-white px-3 py-2 -rotate-2 w-max shadow-[4px_4px_0px_0px_#000] hover:rotate-0 transition-transform duration-200">
+          <div className="flex items-center gap-1.5 mb-1">
+            <div className="w-2.5 h-2.5 rounded-full bg-[#FF6B6B]" />
+            <div className="w-2.5 h-2.5 bg-black" />
+            <div
+              className="w-2.5 h-2.5 bg-[#C4B5FD]"
+              style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }}
+            />
+          </div>
+          <span className="text-sm font-black uppercase tracking-tighter text-black">BotBuilder</span>
         </div>
-        <span className="text-base font-black uppercase tracking-tighter text-white">BotBuilder</span>
       </div>
 
       {/* Nav */}

@@ -58,7 +58,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   return (
-    <div className="flex h-screen bg-[#FFFDF5] overflow-hidden">
+    <div 
+      className="flex h-screen bg-[#FFFDF5] overflow-hidden p-4 md:p-6 gap-6"
+      style={{
+        backgroundImage: 'radial-gradient(rgba(0,0,0,0.1) 1.5px, transparent 1.5px)',
+        backgroundSize: '20px 20px',
+      }}
+    >
       <Sidebar
         user={{
           name:
@@ -73,7 +79,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         isOwner={isOwner}
         isSuperAdmin={isSuperAdmin}
       />
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto border-4 border-black bg-white shadow-[12px_12px_0px_0px_#000]">
         {children}
       </main>
     </div>

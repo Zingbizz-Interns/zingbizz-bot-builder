@@ -19,10 +19,10 @@ export default async function GlobalAnalyticsPage({ searchParams }: PageProps) {
   return (
     <div className="p-8">
       {/* Header */}
-      <div className="flex flex-wrap items-start justify-between gap-4 mb-8">
-        <div>
+      <div className="flex flex-wrap items-start justify-between gap-6 mb-12">
+        <div className="border-4 border-black bg-[#FFD93D] px-6 py-3 shadow-[6px_6px_0px_0px_#000] -rotate-1 w-fit">
           <h1 className="font-black uppercase tracking-tighter text-4xl text-black">Analytics</h1>
-          <p className="text-xs font-black uppercase tracking-widest text-black/40 mt-1">
+          <p className="text-[10px] font-black uppercase tracking-widest text-black/60 mt-1 bg-white border-2 border-black px-2 py-0.5 w-fit">
             All Bots · Overview
           </p>
         </div>
@@ -32,16 +32,18 @@ export default async function GlobalAnalyticsPage({ searchParams }: PageProps) {
       </div>
 
       {/* Global totals */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-10">
-        <TotalCard label="Trigger Fires"    value={data.totals.triggerFires}  accent="red" />
-        <TotalCard label="Forms Started"    value={data.totals.formsStarted}  />
-        <TotalCard label="Forms Completed"  value={data.totals.formsCompleted} />
-        <TotalCard
-          label="Completion Rate"
-          value={data.totals.formsStarted > 0 ? `${data.totals.completionRate}%` : '—'}
-          accent="yellow"
-        />
-        <TotalCard label="Active Users (1h)" value={data.totals.activeUsers} accent="muted" />
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 lg:gap-4 mb-16 mt-4">
+        <div className="-mt-2 rotate-1"><TotalCard label="Trigger Fires" value={data.totals.triggerFires} accent="red" /></div>
+        <div className="mt-2 -rotate-1"><TotalCard label="Forms Started" value={data.totals.formsStarted} /></div>
+        <div className="-mt-1 rotate-2"><TotalCard label="Forms Completed" value={data.totals.formsCompleted} /></div>
+        <div className="mt-3 -rotate-2">
+          <TotalCard
+            label="Completion Rate"
+            value={data.totals.formsStarted > 0 ? `${data.totals.completionRate}%` : '—'}
+            accent="yellow"
+          />
+        </div>
+        <div className="-mt-3 rotate-1"><TotalCard label="Active Users (1h)" value={data.totals.activeUsers} accent="muted" /></div>
       </div>
 
       {/* Per-bot grid */}
@@ -54,7 +56,7 @@ export default async function GlobalAnalyticsPage({ searchParams }: PageProps) {
         </div>
       ) : (
         <>
-          <h2 className="font-black uppercase tracking-tighter text-lg text-[#000000] mb-4">
+          <h2 className="font-black uppercase tracking-tighter text-2xl text-black mb-6 bg-[#C4B5FD] border-4 border-black px-4 py-2 w-fit shadow-[4px_4px_0px_0px_#000] rotate-1">
             Per-Bot Breakdown
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">

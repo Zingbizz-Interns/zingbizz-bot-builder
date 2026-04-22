@@ -44,27 +44,33 @@ export default function BotCard({ bot }: BotCardProps) {
     setToggling(false)
   }
 
+  // Pseudo-random rotation for sticker effect based on ID
+  const rotations = ['rotate-1', '-rotate-1', 'rotate-2', '-rotate-2', 'rotate-0'];
+  const rotateClass = rotations[bot.id.charCodeAt(0) % 5];
+
   return (
-    <div className={`border-4 border-black shadow-[8px_8px_0px_0px_#000] bg-white hover:-translate-y-0.5 transition-transform duration-200 ${!isActive ? 'opacity-60' : ''}`}>
+    <div className={`relative border-4 border-black shadow-[8px_8px_0px_0px_#000] bg-white hover:-translate-y-2 hover:shadow-[12px_12px_0px_0px_#000] transition-all duration-200 ${rotateClass} hover:rotate-0 z-10 hover:z-20 ${!isActive ? 'opacity-60' : ''}`}>
+      {/* Absolute overlapping status badge */}
+      {!isActive && (
+        <div className="absolute -top-4 -right-4 border-4 border-black bg-white px-2 py-1 text-[10px] font-black uppercase tracking-widest text-black shadow-[4px_4px_0px_0px_#000] rotate-3 z-20">
+          Paused
+        </div>
+      )}
+
       {/* Top accent bar */}
-      <div className={`h-2 ${isActive ? 'bg-[#FF6B6B]' : 'bg-black/20'}`} />
+      <div className={`h-3 border-b-4 border-black ${isActive ? 'bg-[#FF6B6B]' : 'bg-black/20'}`} />
 
       <div className="p-5">
         {/* Name + icon + controls */}
         <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <div className={`w-8 h-8 ${isActive ? 'bg-[#FF6B6B]' : 'bg-black/20'} border-4 border-black flex items-center justify-center`}>
-              <MessageSquare className="w-4 h-4 text-white" strokeWidth={2.5} />
+          <div className="flex items-center gap-3">
+            <div className={`w-10 h-10 ${isActive ? 'bg-[#FFD93D]' : 'bg-black/20'} border-4 border-black flex items-center justify-center shadow-[4px_4px_0px_0px_#000] -rotate-2`}>
+              <MessageSquare className="w-5 h-5 text-black" strokeWidth={3} />
             </div>
             <div>
-              <h3 className="text-base font-black uppercase tracking-tighter text-black">
+              <h3 className="text-xl font-black uppercase tracking-tighter text-black leading-none">
                 {bot.name}
               </h3>
-              {!isActive && (
-                <span className="text-[10px] font-black uppercase tracking-widest text-black/40">
-                  Paused
-                </span>
-              )}
             </div>
           </div>
 
