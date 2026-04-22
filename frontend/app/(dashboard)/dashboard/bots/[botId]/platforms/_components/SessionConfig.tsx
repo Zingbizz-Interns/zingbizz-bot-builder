@@ -17,9 +17,9 @@ const WARNING_OPTIONS = [
 ]
 
 const inputClass =
-  'w-full px-3 py-2.5 border-2 border-[#121212] bg-[#F0F0F0] text-sm font-medium placeholder:text-[#121212]/30 focus:outline-none focus:bg-white transition-colors'
+  'w-full px-3 py-2.5 border-4 border-black bg-[#FFFDF5] text-sm font-medium placeholder:text-black/30 focus:outline-none focus:bg-white transition-colors'
 const selectClass =
-  'w-full px-3 py-2.5 border-2 border-[#121212] bg-[#F0F0F0] text-sm font-bold focus:outline-none focus:bg-white transition-colors cursor-pointer'
+  'w-full px-3 py-2.5 border-4 border-black bg-[#FFFDF5] text-sm font-bold focus:outline-none focus:bg-white transition-colors cursor-pointer'
 
 interface SessionConfigProps {
   existing: PlatformConfig | null
@@ -39,8 +39,8 @@ export default function SessionConfig({ existing }: SessionConfigProps) {
   const warningMs = warningPreset === -1 ? (parseInt(warningCustom) || defaultWarning) : warningPreset
 
   return (
-    <div className="pt-4 mt-4 border-t-2 border-[#121212]/10 space-y-4">
-      <p className="text-xs font-black uppercase tracking-widest text-[#121212]/40">Session Config</p>
+    <div className="pt-4 mt-4 border-t-2 border-black/10 space-y-4">
+      <p className="text-xs font-black uppercase tracking-widest text-black/40">Session Config</p>
 
       {/* Hidden inputs carry computed values into the form submit */}
       <input type="hidden" name="session_expiry_ms" value={expiryMs} />
@@ -49,7 +49,7 @@ export default function SessionConfig({ existing }: SessionConfigProps) {
       <div className="grid grid-cols-2 gap-4">
         {/* Session Expiry */}
         <div>
-          <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">
+          <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">
             Session Expiry
           </label>
           <select
@@ -75,7 +75,7 @@ export default function SessionConfig({ existing }: SessionConfigProps) {
 
         {/* Warning Time */}
         <div>
-          <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">
+          <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">
             Warn Before Expiry
           </label>
           <select
@@ -102,7 +102,7 @@ export default function SessionConfig({ existing }: SessionConfigProps) {
 
       {/* Warning Message */}
       <div>
-        <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">
+        <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">
           Warning Message
         </label>
         <textarea
@@ -112,7 +112,7 @@ export default function SessionConfig({ existing }: SessionConfigProps) {
           placeholder="Your session will expire soon..."
           className={`${inputClass} resize-none`}
         />
-        <p className="text-xs font-medium text-[#121212]/40 mt-1">
+        <p className="text-xs font-medium text-black/40 mt-1">
           Sent to the user before their session expires.
         </p>
       </div>

@@ -23,10 +23,10 @@ interface SidebarProps {
 
 export default function Sidebar({ user, bots, isOwner, isSuperAdmin = false }: SidebarProps) {
   const pathname = usePathname()
-  const botsActive      = pathname.startsWith('/dashboard/bots')
-  const analyticsActive = pathname.startsWith('/dashboard/analytics')
-  const teamActive      = pathname.startsWith('/dashboard/team')
-  const inboxActive     = pathname.startsWith('/dashboard/inbox')
+  const botsActive       = pathname.startsWith('/dashboard/bots')
+  const analyticsActive  = pathname.startsWith('/dashboard/analytics')
+  const teamActive       = pathname.startsWith('/dashboard/team')
+  const inboxActive      = pathname.startsWith('/dashboard/inbox')
   const superAdminActive = pathname.startsWith('/dashboard/super-admin')
 
   const [attentionCount, setAttentionCount] = useState(0)
@@ -51,17 +51,26 @@ export default function Sidebar({ user, bots, isOwner, isSuperAdmin = false }: S
     return () => clearInterval(interval)
   }, [bots])
 
+  const linkBase =
+    'flex items-center gap-3 px-3 py-2.5 text-xs font-black uppercase tracking-widest transition-all duration-100 border-2'
+
+  const linkActive =
+    'bg-[#FFD93D] text-black border-black shadow-[3px_3px_0px_0px_#FFD93D]'
+
+  const linkInactive =
+    'text-white/50 border-transparent hover:text-white hover:border-white/30 hover:bg-white/5'
+
   return (
-    <aside className="w-56 bg-[#121212] border-r-4 border-[#121212] flex flex-col h-full shrink-0">
+    <aside className="w-56 bg-black border-r-4 border-black flex flex-col h-full shrink-0">
 
       {/* Logo */}
-      <div className="px-5 py-5 border-b-4 border-[#F0C020]">
-        <div className="flex items-center gap-2 mb-1">
-          <div className="w-2.5 h-2.5 rounded-full bg-[#D02020]" />
-          <div className="w-2.5 h-2.5 bg-[#F0C020]" />
+      <div className="px-5 py-5 border-b-4 border-[#FFD93D]">
+        <div className="flex items-center gap-1.5 mb-2">
+          <div className="w-3 h-3 rounded-full bg-[#FF6B6B]" />
+          <div className="w-3 h-3 bg-[#FFD93D]" />
           <div
-            className="w-2.5 h-2.5"
-            style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)', backgroundColor: '#1040C0' }}
+            className="w-3 h-3"
+            style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)', backgroundColor: '#C4B5FD' }}
           />
         </div>
         <span className="text-base font-black uppercase tracking-tighter text-white">BotBuilder</span>
@@ -73,17 +82,15 @@ export default function Sidebar({ user, bots, isOwner, isSuperAdmin = false }: S
         {/* Bots */}
         <Link
           href="/dashboard/bots"
-          className={`flex items-center gap-3 px-3 py-2.5 text-xs font-bold uppercase tracking-widest transition-all duration-200 border-2 ${
-            botsActive
-              ? 'bg-[#F0F0F0] text-[#121212] border-[#F0C020] shadow-[3px_3px_0px_0px_#F0C020]'
-              : 'text-white/60 border-transparent hover:text-white hover:border-white/20'
-          }`}
+          className={`${linkBase} ${botsActive ? linkActive : linkInactive}`}
         >
           <MessageSquare className="w-4 h-4 shrink-0" strokeWidth={botsActive ? 3 : 2} />
           Bots
           {bots.length > 0 && (
             <span className={`ml-auto text-[10px] font-black px-1.5 py-0.5 border ${
-              botsActive ? 'border-[#121212]/30 text-[#121212]/50' : 'border-white/20 text-white/30'
+              botsActive
+                ? 'border-black text-black'
+                : 'border-white/20 text-white/30'
             }`}>
               {bots.length}
             </span>
@@ -99,15 +106,17 @@ export default function Sidebar({ user, bots, isOwner, isSuperAdmin = false }: S
                 <Link
                   key={bot.id}
                   href={`/dashboard/bots/${bot.id}/triggers`}
-                  className={`flex items-center gap-2 px-2 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-all duration-150 border ${
+                  className={`flex items-center gap-2 px-2 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all duration-100 border ${
                     botActive
-                      ? 'border-[#F0C020]/40 bg-[#F0C020]/10 text-[#F0C020]'
+                      ? 'border-[#FFD93D]/40 bg-[#FFD93D]/10 text-[#FFD93D]'
                       : 'border-transparent text-white/40 hover:text-white/70'
                   }`}
                 >
                   <span
-                    className="w-1.5 h-1.5 rounded-full shrink-0"
-                    style={{ backgroundColor: bot.is_active ? '#F0C020' : '#ffffff30' }}
+                    className="w-2 h-2 shrink-0"
+                    style={{
+                      backgroundColor: bot.is_active ? '#FFD93D' : 'rgba(255,255,255,0.2)',
+                    }}
                   />
                   <span className="truncate">{bot.name}</span>
                 </Link>
@@ -119,16 +128,12 @@ export default function Sidebar({ user, bots, isOwner, isSuperAdmin = false }: S
         {/* Inbox */}
         <Link
           href="/dashboard/inbox"
-          className={`flex items-center gap-3 px-3 py-2.5 text-xs font-bold uppercase tracking-widest transition-all duration-200 border-2 ${
-            inboxActive
-              ? 'bg-[#F0F0F0] text-[#121212] border-[#F0C020] shadow-[3px_3px_0px_0px_#F0C020]'
-              : 'text-white/60 border-transparent hover:text-white hover:border-white/20'
-          }`}
+          className={`${linkBase} ${inboxActive ? linkActive : linkInactive}`}
         >
           <Inbox className="w-4 h-4 shrink-0" strokeWidth={inboxActive ? 3 : 2} />
           Inbox
           {attentionCount > 0 && (
-            <span className="ml-auto text-[10px] font-black px-1.5 py-0.5 rounded-full bg-[#D02020] text-white">
+            <span className="ml-auto text-[10px] font-black px-1.5 py-0.5 bg-[#FF6B6B] text-black border-2 border-black">
               {attentionCount > 99 ? '99+' : attentionCount}
             </span>
           )}
@@ -141,25 +146,18 @@ export default function Sidebar({ user, bots, isOwner, isSuperAdmin = false }: S
         {isOwner && (
           <Link
             href="/dashboard/team"
-            className={`flex items-center gap-3 px-3 py-2.5 text-xs font-bold uppercase tracking-widest transition-all duration-200 border-2 ${
-              teamActive
-                ? 'bg-[#F0F0F0] text-[#121212] border-[#F0C020] shadow-[3px_3px_0px_0px_#F0C020]'
-                : 'text-white/60 border-transparent hover:text-white hover:border-white/20'
-            }`}
+            className={`${linkBase} ${teamActive ? linkActive : linkInactive}`}
           >
             <Users className="w-4 h-4 shrink-0" strokeWidth={teamActive ? 3 : 2} />
             Team
           </Link>
         )}
 
+        {/* Super Admin */}
         {isSuperAdmin && (
           <Link
             href="/dashboard/super-admin"
-            className={`flex items-center gap-3 px-3 py-2.5 text-xs font-bold uppercase tracking-widest transition-all duration-200 border-2 ${
-              superAdminActive
-                ? 'bg-[#F0F0F0] text-[#121212] border-[#F0C020] shadow-[3px_3px_0px_0px_#F0C020]'
-                : 'text-white/60 border-transparent hover:text-white hover:border-white/20'
-            }`}
+            className={`${linkBase} ${superAdminActive ? linkActive : linkInactive}`}
           >
             <ShieldCheck className="w-4 h-4 shrink-0" strokeWidth={superAdminActive ? 3 : 2} />
             Super Admin
@@ -169,11 +167,7 @@ export default function Sidebar({ user, bots, isOwner, isSuperAdmin = false }: S
         {/* Analytics */}
         <Link
           href="/dashboard/analytics"
-          className={`flex items-center gap-3 px-3 py-2.5 text-xs font-bold uppercase tracking-widest transition-all duration-200 border-2 ${
-            analyticsActive
-              ? 'bg-[#F0F0F0] text-[#121212] border-[#F0C020] shadow-[3px_3px_0px_0px_#F0C020]'
-              : 'text-white/60 border-transparent hover:text-white hover:border-white/20'
-          }`}
+          className={`${linkBase} ${analyticsActive ? linkActive : linkInactive}`}
         >
           <BarChart2 className="w-4 h-4 shrink-0" strokeWidth={analyticsActive ? 3 : 2} />
           Analytics
@@ -181,17 +175,19 @@ export default function Sidebar({ user, bots, isOwner, isSuperAdmin = false }: S
 
       </nav>
 
-      {/* User */}
-      <div className="px-4 py-4 border-t-2 border-white/10">
+      {/* User footer */}
+      <div className="px-4 py-4 border-t-4 border-[#FFD93D]/30">
         <div className="mb-3 px-1">
-          <p className="text-xs font-bold uppercase tracking-widest text-white/40 mb-0.5">Signed in as</p>
-          <p className="text-sm font-bold text-white truncate">{user.name}</p>
-          <p className="text-xs font-medium text-white/40 truncate">{user.email}</p>
+          <p className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-0.5">
+            Signed in as
+          </p>
+          <p className="text-sm font-black text-white truncate">{user.name}</p>
+          <p className="text-xs font-bold text-white/30 truncate">{user.email}</p>
         </div>
         <form action={signOut}>
           <button
             type="submit"
-            className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/40 hover:text-[#D02020] transition-colors duration-200 px-1"
+            className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-white/30 hover:text-[#FF6B6B] transition-colors duration-100 px-1"
           >
             <LogOut className="w-3.5 h-3.5" />
             Sign Out

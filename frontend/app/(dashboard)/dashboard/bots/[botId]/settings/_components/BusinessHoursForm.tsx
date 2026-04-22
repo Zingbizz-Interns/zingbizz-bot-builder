@@ -104,13 +104,13 @@ export default function BusinessHoursForm({ botId, existing }: BusinessHoursForm
     setSaving(false)
   }
 
-  const inputClass = 'w-full px-3 py-2.5 border-2 border-[#121212] bg-[#F0F0F0] text-sm font-medium placeholder:text-[#121212]/30 focus:outline-none focus:bg-white transition-colors'
+  const inputClass = 'w-full px-3 py-2.5 border-4 border-black bg-[#FFFDF5] text-sm font-medium placeholder:text-black/30 focus:outline-none focus:bg-white transition-colors'
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       {/* Timezone */}
       <div>
-        <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">
+        <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">
           Timezone
         </label>
         <select
@@ -127,28 +127,28 @@ export default function BusinessHoursForm({ botId, existing }: BusinessHoursForm
 
       {/* Days */}
       <div>
-        <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-2">
+        <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-2">
           Operating Hours
         </label>
         <div className="space-y-2">
           {DAYS.map(({ key, label }) => {
             const d = days[key]
             return (
-              <div key={key} className="flex items-center gap-3 border-2 border-[#121212] px-3 py-2 bg-[#F0F0F0]">
+              <div key={key} className="flex items-center gap-3 border-4 border-black px-3 py-2 bg-[#FFFDF5]">
                 {/* Toggle */}
                 <button
                   type="button"
                   onClick={() => canEdit && setDay(key, { enabled: !d.enabled })}
                   disabled={!canEdit}
-                  className={`w-9 h-5 rounded-full border-2 border-[#121212] flex items-center transition-colors shrink-0 disabled:opacity-60 disabled:cursor-not-allowed ${
-                    d.enabled ? 'bg-[#121212] justify-end' : 'bg-white justify-start'
+                  className={`w-9 h-5 rounded-full border-4 border-black flex items-center transition-colors shrink-0 disabled:opacity-60 disabled:cursor-not-allowed ${
+                    d.enabled ? 'bg-black justify-end' : 'bg-white justify-start'
                   }`}
                 >
-                  <div className={`w-3 h-3 rounded-full mx-0.5 ${d.enabled ? 'bg-white' : 'bg-[#121212]'}`} />
+                  <div className={`w-3 h-3 rounded-full mx-0.5 ${d.enabled ? 'bg-white' : 'bg-black'}`} />
                 </button>
 
                 {/* Day name */}
-                <span className={`text-xs font-black uppercase tracking-widest w-24 shrink-0 ${d.enabled ? 'text-[#121212]' : 'text-[#121212]/30'}`}>
+                <span className={`text-xs font-black uppercase tracking-widest w-24 shrink-0 ${d.enabled ? 'text-black' : 'text-black/30'}`}>
                   {label}
                 </span>
 
@@ -159,31 +159,31 @@ export default function BusinessHoursForm({ botId, existing }: BusinessHoursForm
                       type="time"
                       value={d.start}
                       onChange={e => setDay(key, { start: e.target.value })}
-                      className="px-2 py-1 border-2 border-[#121212] bg-white text-xs font-bold focus:outline-none"
+                      className="px-2 py-1 border-4 border-black bg-white text-xs font-bold focus:outline-none"
                     />
-                    <span className="text-xs font-bold text-[#121212]/40">to</span>
+                    <span className="text-xs font-bold text-black/40">to</span>
                     <input
                       type="time"
                       value={d.end}
                       onChange={e => setDay(key, { end: e.target.value })}
-                      className="px-2 py-1 border-2 border-[#121212] bg-white text-xs font-bold focus:outline-none"
+                      className="px-2 py-1 border-4 border-black bg-white text-xs font-bold focus:outline-none"
                     />
                   </div>
                 ) : (
-                  <span className="text-xs font-medium text-[#121212]/30 flex-1">Closed</span>
+                  <span className="text-xs font-medium text-black/30 flex-1">Closed</span>
                 )}
               </div>
             )
           })}
         </div>
-        <p className="text-xs font-medium text-[#121212]/40 mt-1.5">
+        <p className="text-xs font-medium text-black/40 mt-1.5">
           Toggle days on/off. When all days are off, business hours are not enforced.
         </p>
       </div>
 
       {/* Outside hours message */}
       <div>
-        <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">
+        <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">
           Outside Hours Message
         </label>
         <textarea
@@ -197,18 +197,18 @@ export default function BusinessHoursForm({ botId, existing }: BusinessHoursForm
       </div>
 
       {error && (
-        <div className="border-2 border-[#D02020] bg-[#D02020]/10 px-3 py-2">
-          <p className="text-sm font-medium text-[#D02020]">{error}</p>
+        <div className="border-2 border-[#FF6B6B] bg-[#FF6B6B]/10 px-3 py-2">
+          <p className="text-sm font-medium text-[#FF6B6B]">{error}</p>
         </div>
       )}
       {success && (
-        <div className="border-2 border-[#1040C0] bg-[#1040C0]/10 px-3 py-2">
-          <p className="text-sm font-bold uppercase tracking-widest text-[#121212]">Business hours saved</p>
+        <div className="border-2 border-[#FF6B6B] bg-[#FF6B6B]/10 px-3 py-2">
+          <p className="text-sm font-bold uppercase tracking-widest text-black">Business hours saved</p>
         </div>
       )}
 
       {canEdit && (
-        <Button type="submit" variant="blue" disabled={saving}>
+        <Button type="submit" variant="yellow" disabled={saving}>
           {saving ? 'Saving...' : 'Save Business Hours'}
         </Button>
       )}

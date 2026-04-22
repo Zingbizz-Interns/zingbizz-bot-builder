@@ -56,12 +56,12 @@ export default function LiveChatConfigForm({ botId, existing }: Props) {
     setSaving(false)
   }
 
-  const inputClass = 'w-full px-3 py-2.5 border-2 border-[#121212] bg-[#F0F0F0] text-sm font-medium placeholder:text-[#121212]/30 focus:outline-none focus:bg-white transition-colors'
+  const inputClass = 'w-full px-3 py-2.5 border-4 border-black bg-[#FFFDF5] text-sm font-medium placeholder:text-black/30 focus:outline-none focus:bg-white transition-colors'
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
-        <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">
+        <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">
           Escalation Keywords
         </label>
         <textarea
@@ -72,17 +72,17 @@ export default function LiveChatConfigForm({ botId, existing }: Props) {
           placeholder="human, agent, support, talk to, real person"
           className={`${inputClass} resize-none read-only:opacity-60 read-only:cursor-not-allowed`}
         />
-        <p className="text-xs font-medium text-[#121212]/40 mt-1">
+        <p className="text-xs font-medium text-black/40 mt-1">
           Comma-separated list. Customers using one of these phrases will be flagged for human attention. {keywordCount} keyword{keywordCount === 1 ? '' : 's'} configured.
         </p>
       </div>
 
-      <div className="border-t-2 border-[#121212]/10" />
+      <div className="border-t-2 border-black/10" />
 
       <div className="flex items-center justify-between gap-4">
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-[#121212]">Takeover Acknowledgement</p>
-          <p className="text-xs font-medium text-[#121212]/40 mt-0.5">
+          <p className="text-xs font-bold uppercase tracking-widest text-black">Takeover Acknowledgement</p>
+          <p className="text-xs font-medium text-black/40 mt-0.5">
             Send a message to the customer when your team takes over a conversation.
           </p>
         </div>
@@ -90,14 +90,14 @@ export default function LiveChatConfigForm({ botId, existing }: Props) {
           type="button"
           disabled={!canEdit}
           onClick={() => setTakeoverEnabled((value) => !value)}
-          className={`relative w-11 h-6 border-2 border-[#121212] transition-colors ${takeoverEnabled ? 'bg-[#107040]' : 'bg-[#F0F0F0]'} disabled:opacity-50 disabled:cursor-not-allowed`}
+          className={`relative w-11 h-6 border-4 border-black transition-colors ${takeoverEnabled ? 'bg-[#107040]' : 'bg-[#FFFDF5]'} disabled:opacity-50 disabled:cursor-not-allowed`}
         >
-          <span className={`absolute top-0.5 w-4 h-4 bg-white border border-[#121212] transition-all ${takeoverEnabled ? 'left-[18px]' : 'left-0.5'}`} />
+          <span className={`absolute top-0.5 w-4 h-4 bg-white border border-black transition-all ${takeoverEnabled ? 'left-[18px]' : 'left-0.5'}`} />
         </button>
       </div>
 
       <div>
-        <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">
+        <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">
           Takeover Message
         </label>
         <textarea
@@ -110,26 +110,26 @@ export default function LiveChatConfigForm({ botId, existing }: Props) {
           placeholder="You're now connected with our team. We'll be right with you."
           className={`${inputClass} resize-none disabled:opacity-50 disabled:cursor-not-allowed read-only:opacity-60 read-only:cursor-not-allowed`}
         />
-        <div className="flex items-center justify-between mt-1 text-xs font-medium text-[#121212]/40">
+        <div className="flex items-center justify-between mt-1 text-xs font-medium text-black/40">
           <span>{takeoverEnabled ? 'This message is sent automatically on takeover.' : 'Takeover message is currently disabled.'}</span>
           <span className="font-mono">{takeoverMessage.length}/500</span>
         </div>
       </div>
 
       {error && (
-        <div className="border-2 border-[#D02020] bg-[#D02020]/10 px-3 py-2">
-          <p className="text-sm font-medium text-[#D02020]">{error}</p>
+        <div className="border-2 border-[#FF6B6B] bg-[#FF6B6B]/10 px-3 py-2">
+          <p className="text-sm font-medium text-[#FF6B6B]">{error}</p>
         </div>
       )}
 
       {success && (
-        <div className="border-2 border-[#1040C0] bg-[#1040C0]/10 px-3 py-2">
-          <p className="text-sm font-bold uppercase tracking-widest text-[#121212]">Live chat settings saved</p>
+        <div className="border-2 border-[#FF6B6B] bg-[#FF6B6B]/10 px-3 py-2">
+          <p className="text-sm font-bold uppercase tracking-widest text-black">Live chat settings saved</p>
         </div>
       )}
 
       {canEdit && (
-        <Button type="submit" variant="blue" disabled={saving}>
+        <Button type="submit" variant="yellow" disabled={saving}>
           {saving ? 'Saving...' : 'Save Live Chat Settings'}
         </Button>
       )}

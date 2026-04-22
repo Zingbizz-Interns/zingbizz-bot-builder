@@ -53,22 +53,22 @@ export default function LiveChatAlertsForm({ botId, existing }: LiveChatAlertsFo
       {/* Enable alerts */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-[#121212]">Enable Alerts</p>
-          <p className="text-xs font-medium text-[#121212]/40 mt-0.5">Receive alerts when conversations need attention</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-black">Enable Alerts</p>
+          <p className="text-xs font-medium text-black/40 mt-0.5">Receive alerts when conversations need attention</p>
         </div>
         <button
           type="button"
           disabled={!canEdit}
           onClick={() => setEnabled(v => !v)}
-          className={`relative w-11 h-6 border-2 border-[#121212] transition-colors ${enabled ? 'bg-[#1040C0]' : 'bg-[#F0F0F0]'} disabled:opacity-50 disabled:cursor-not-allowed`}
+          className={`relative w-11 h-6 border-4 border-black transition-colors ${enabled ? 'bg-[#FF6B6B]' : 'bg-[#FFFDF5]'} disabled:opacity-50 disabled:cursor-not-allowed`}
         >
-          <span className={`absolute top-0.5 w-4 h-4 bg-white border border-[#121212] transition-all ${enabled ? 'left-[18px]' : 'left-0.5'}`} />
+          <span className={`absolute top-0.5 w-4 h-4 bg-white border border-black transition-all ${enabled ? 'left-[18px]' : 'left-0.5'}`} />
         </button>
       </div>
 
       {/* Alert threshold */}
       <div>
-        <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">
+        <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">
           Alert me after (minutes)
         </label>
         <input
@@ -78,35 +78,35 @@ export default function LiveChatAlertsForm({ botId, existing }: LiveChatAlertsFo
           value={thresholdMinutes}
           onChange={e => setThresholdMinutes(Number(e.target.value))}
           disabled={!canEdit || !enabled}
-          className="w-full px-3 py-2.5 border-2 border-[#121212] bg-[#F0F0F0] text-sm font-medium focus:outline-none focus:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full px-3 py-2.5 border-4 border-black bg-[#FFFDF5] text-sm font-medium focus:outline-none focus:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         />
         {enabled && (
-          <p className="text-xs font-medium text-[#121212]/40 mt-1">
+          <p className="text-xs font-medium text-black/40 mt-1">
             You&apos;ll be alerted if a conversation is unanswered for {thresholdHours}
           </p>
         )}
       </div>
 
-      <div className="border-t-2 border-[#121212]/10" />
+      <div className="border-t-2 border-black/10" />
 
       {/* Window warning */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-[#121212]">WhatsApp Window Warning</p>
-          <p className="text-xs font-medium text-[#121212]/40 mt-0.5">Alert before the 24-hour reply window closes</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-black">WhatsApp Window Warning</p>
+          <p className="text-xs font-medium text-black/40 mt-0.5">Alert before the 24-hour reply window closes</p>
         </div>
         <button
           type="button"
           disabled={!canEdit}
           onClick={() => setWindowWarningEnabled(v => !v)}
-          className={`relative w-11 h-6 border-2 border-[#121212] transition-colors ${windowWarningEnabled ? 'bg-[#1040C0]' : 'bg-[#F0F0F0]'} disabled:opacity-50 disabled:cursor-not-allowed`}
+          className={`relative w-11 h-6 border-4 border-black transition-colors ${windowWarningEnabled ? 'bg-[#FF6B6B]' : 'bg-[#FFFDF5]'} disabled:opacity-50 disabled:cursor-not-allowed`}
         >
-          <span className={`absolute top-0.5 w-4 h-4 bg-white border border-[#121212] transition-all ${windowWarningEnabled ? 'left-[18px]' : 'left-0.5'}`} />
+          <span className={`absolute top-0.5 w-4 h-4 bg-white border border-black transition-all ${windowWarningEnabled ? 'left-[18px]' : 'left-0.5'}`} />
         </button>
       </div>
 
       <div>
-        <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">
+        <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">
           Warn me when N minutes remain
         </label>
         <input
@@ -116,42 +116,42 @@ export default function LiveChatAlertsForm({ botId, existing }: LiveChatAlertsFo
           value={windowWarningMinutes}
           onChange={e => setWindowWarningMinutes(Number(e.target.value))}
           disabled={!canEdit || !windowWarningEnabled}
-          className="w-full px-3 py-2.5 border-2 border-[#121212] bg-[#F0F0F0] text-sm font-medium focus:outline-none focus:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full px-3 py-2.5 border-4 border-black bg-[#FFFDF5] text-sm font-medium focus:outline-none focus:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
 
-      <div className="border-t-2 border-[#121212]/10" />
+      <div className="border-t-2 border-black/10" />
 
       {/* Email notifications */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-[#121212]">Email Notifications</p>
-          <p className="text-xs font-medium text-[#121212]/40 mt-0.5">Receive alert emails at your account email address</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-black">Email Notifications</p>
+          <p className="text-xs font-medium text-black/40 mt-0.5">Receive alert emails at your account email address</p>
         </div>
         <button
           type="button"
           disabled={!canEdit}
           onClick={() => setNotifyEmail(v => !v)}
-          className={`relative w-11 h-6 border-2 border-[#121212] transition-colors ${notifyEmail ? 'bg-[#1040C0]' : 'bg-[#F0F0F0]'} disabled:opacity-50 disabled:cursor-not-allowed`}
+          className={`relative w-11 h-6 border-4 border-black transition-colors ${notifyEmail ? 'bg-[#FF6B6B]' : 'bg-[#FFFDF5]'} disabled:opacity-50 disabled:cursor-not-allowed`}
         >
-          <span className={`absolute top-0.5 w-4 h-4 bg-white border border-[#121212] transition-all ${notifyEmail ? 'left-[18px]' : 'left-0.5'}`} />
+          <span className={`absolute top-0.5 w-4 h-4 bg-white border border-black transition-all ${notifyEmail ? 'left-[18px]' : 'left-0.5'}`} />
         </button>
       </div>
 
       {error && (
-        <div className="border-2 border-[#D02020] bg-[#D02020]/10 px-3 py-2">
-          <p className="text-sm font-medium text-[#D02020]">{error}</p>
+        <div className="border-2 border-[#FF6B6B] bg-[#FF6B6B]/10 px-3 py-2">
+          <p className="text-sm font-medium text-[#FF6B6B]">{error}</p>
         </div>
       )}
 
       {success && (
-        <div className="border-2 border-[#1040C0] bg-[#1040C0]/10 px-3 py-2">
-          <p className="text-sm font-bold uppercase tracking-widest text-[#121212]">Saved successfully</p>
+        <div className="border-2 border-[#FF6B6B] bg-[#FF6B6B]/10 px-3 py-2">
+          <p className="text-sm font-bold uppercase tracking-widest text-black">Saved successfully</p>
         </div>
       )}
 
       {canEdit && (
-        <Button type="submit" variant="blue" disabled={saving}>
+        <Button type="submit" variant="yellow" disabled={saving}>
           {saving ? 'Saving...' : 'Save Alert Settings'}
         </Button>
       )}

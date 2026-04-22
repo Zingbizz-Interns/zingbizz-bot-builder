@@ -99,12 +99,12 @@ export default function InstagramForm({ botId, existing, request }: InstagramFor
     return (
       <div className="space-y-4">
         <PlatformRequestStatus platform="instagram" request={request} hasLiveConfig={Boolean(existing)} />
-        <div className={`flex items-center gap-2 border-2 px-4 py-3 ${existing ? 'border-[#D02020] bg-[#D02020]/10' : 'border-[#121212]/20 bg-[#F0F0F0]'}`}>
+        <div className={`flex items-center gap-2 border-2 px-4 py-3 ${existing ? 'border-[#FF6B6B] bg-[#FF6B6B]/10' : 'border-black/20 bg-[#FFFDF5]'}`}>
           {existing
-            ? <CheckCircle className="w-4 h-4 text-[#121212]" strokeWidth={2.5} />
-            : <XCircle className="w-4 h-4 text-[#121212]/30" strokeWidth={2.5} />
+            ? <CheckCircle className="w-4 h-4 text-black" strokeWidth={2.5} />
+            : <XCircle className="w-4 h-4 text-black/30" strokeWidth={2.5} />
           }
-          <span className="text-xs font-bold uppercase tracking-widest text-[#121212]">
+          <span className="text-xs font-bold uppercase tracking-widest text-black">
             {existing ? 'Connected' : 'Not connected'}
           </span>
         </div>
@@ -118,16 +118,16 @@ export default function InstagramForm({ botId, existing, request }: InstagramFor
 
       {/* ── Connected banner ──────────────────────────────────── */}
       {existing && (
-        <div className="flex items-center justify-between border-2 border-[#D02020] bg-[#D02020]/10 px-4 py-3">
+        <div className="flex items-center justify-between border-2 border-[#FF6B6B] bg-[#FF6B6B]/10 px-4 py-3">
           <div className="flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-[#121212]" strokeWidth={2.5} />
-            <span className="text-xs font-bold uppercase tracking-widest text-[#121212]">Connected</span>
+            <CheckCircle className="w-4 h-4 text-black" strokeWidth={2.5} />
+            <span className="text-xs font-bold uppercase tracking-widest text-black">Connected</span>
           </div>
           <button
             type="button"
             onClick={handleDelete}
             disabled={deleting}
-            className="text-xs font-bold uppercase tracking-widest text-[#D02020] hover:underline disabled:opacity-50"
+            className="text-xs font-bold uppercase tracking-widest text-[#FF6B6B] hover:underline disabled:opacity-50"
           >
             {deleting ? 'Disconnecting...' : 'Disconnect'}
           </button>
@@ -136,18 +136,18 @@ export default function InstagramForm({ botId, existing, request }: InstagramFor
 
       {/* ── OAuth success banner (from redirect) ─────────────── */}
       {igConnected && (
-        <div className="flex items-center gap-2 border-2 border-[#D02020] bg-[#D02020]/10 px-3 py-2.5">
-          <CheckCircle className="w-4 h-4 text-[#121212] shrink-0" strokeWidth={2.5} />
-          <span className="text-xs font-bold uppercase tracking-widest text-[#121212]">
+        <div className="flex items-center gap-2 border-2 border-[#FF6B6B] bg-[#FF6B6B]/10 px-3 py-2.5">
+          <CheckCircle className="w-4 h-4 text-[#000000] shrink-0" strokeWidth={2.5} />
+          <span className="text-xs font-bold uppercase tracking-widest text-black">
             Connected as @{igConnected}
           </span>
         </div>
       )}
 
       {igRequestSubmitted && (
-        <div className="flex items-center gap-2 border-2 border-[#F0C020] bg-[#F0C020]/12 px-3 py-2.5">
-          <CheckCircle className="w-4 h-4 text-[#121212] shrink-0" strokeWidth={2.5} />
-          <span className="text-xs font-bold uppercase tracking-widest text-[#121212]">
+        <div className="flex items-center gap-2 border-2 border-[#FFD93D] bg-[#FFD93D]/12 px-3 py-2.5">
+          <CheckCircle className="w-4 h-4 text-[#000000] shrink-0" strokeWidth={2.5} />
+          <span className="text-xs font-bold uppercase tracking-widest text-black">
             Approval request submitted for @{igRequestSubmitted}
           </span>
         </div>
@@ -155,8 +155,8 @@ export default function InstagramForm({ botId, existing, request }: InstagramFor
 
       {/* ── OAuth error banner (from redirect) ───────────────── */}
       {igError && (
-        <div className="border-2 border-[#D02020] bg-[#D02020]/10 px-3 py-2">
-          <p className="text-xs font-bold uppercase tracking-widest text-[#D02020]">
+        <div className="border-2 border-[#FF6B6B] bg-[#FF6B6B]/10 px-3 py-2">
+          <p className="text-xs font-bold uppercase tracking-widest text-[#FF6B6B]">
             Instagram Error: {igError}
           </p>
         </div>
@@ -171,7 +171,7 @@ export default function InstagramForm({ botId, existing, request }: InstagramFor
           type="button"
           onClick={handleConnectWithInstagram}
           disabled={oauthPending}
-          className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-[#833AB4] via-[#E1306C] to-[#F56040] text-white font-black uppercase tracking-widest text-sm px-4 py-3 border-2 border-[#121212] shadow-[4px_4px_0px_0px_#121212] hover:shadow-[2px_2px_0px_0px_#121212] hover:translate-x-[2px] hover:translate-y-[2px] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-[#833AB4] via-[#E1306C] to-[#F56040] text-white font-black uppercase tracking-widest text-sm px-4 py-3 border-4 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
         >
           <Instagram className="w-4 h-4" strokeWidth={2.5} />
           {oauthPending ? 'Redirecting...' : 'Connect with Instagram'}
@@ -182,7 +182,7 @@ export default function InstagramForm({ botId, existing, request }: InstagramFor
       <button
         type="button"
         onClick={() => setShowManual(v => !v)}
-        className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#121212]/40 hover:text-[#121212]/70 transition-colors"
+        className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-black/40 hover:text-black/70 transition-colors"
       >
         {showManual ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
         {existing ? 'Update credentials manually' : 'Enter credentials manually instead'}
@@ -190,26 +190,26 @@ export default function InstagramForm({ botId, existing, request }: InstagramFor
 
       {/* ── Manual form (fallback) ────────────────────────────── */}
       {showManual && (
-        <form onSubmit={handleSave} className="space-y-4 pt-2 border-t-2 border-[#121212]/10">
+        <form onSubmit={handleSave} className="space-y-4 pt-2 border-t-2 border-black/10">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">
-              Instagram Business Account ID <span className="text-[#D02020]">*</span>
+            <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">
+              Instagram Business Account ID <span className="text-[#FF6B6B]">*</span>
             </label>
             <input
               name="page_id"
               required
               defaultValue={existing?.page_id ?? ''}
               placeholder="17841473521420472"
-              className="w-full px-3 py-2.5 border-2 border-[#121212] bg-[#F0F0F0] text-sm font-medium placeholder:text-[#121212]/30 focus:outline-none focus:bg-white transition-colors"
+              className="w-full px-3 py-2.5 border-4 border-black bg-[#FFFDF5] text-sm font-medium placeholder:text-black/30 focus:outline-none focus:bg-white transition-colors"
             />
-            <p className="text-xs font-medium text-[#121212]/40 mt-1">
-              Numeric IGID from the Meta webhook payload (<code className="bg-[#F0F0F0] px-1">entry.id</code>).
+            <p className="text-xs font-medium text-black/40 mt-1">
+              Numeric IGID from the Meta webhook payload (<code className="bg-[#FFFDF5] px-1">entry.id</code>).
             </p>
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">
-              Access Token <span className="text-[#D02020]">*</span>
+            <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">
+              Access Token <span className="text-[#FF6B6B]">*</span>
             </label>
             <input
               name="access_token"
@@ -217,30 +217,30 @@ export default function InstagramForm({ botId, existing, request }: InstagramFor
               defaultValue={existing?.access_token ?? ''}
               placeholder="EAAWp55eJj5MB..."
               type="password"
-              className="w-full px-3 py-2.5 border-2 border-[#121212] bg-[#F0F0F0] text-sm font-medium placeholder:text-[#121212]/30 focus:outline-none focus:bg-white transition-colors font-mono"
+              className="w-full px-3 py-2.5 border-4 border-black bg-[#FFFDF5] text-sm font-medium placeholder:text-black/30 focus:outline-none focus:bg-white transition-colors font-mono"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">
-              Webhook Verify Token <span className="text-[#D02020]">*</span>
+            <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">
+              Webhook Verify Token <span className="text-[#FF6B6B]">*</span>
             </label>
             <input
               name="verify_token"
               required
               defaultValue={existing?.verify_token ?? ''}
               placeholder="my_secret_token"
-              className="w-full px-3 py-2.5 border-2 border-[#121212] bg-[#F0F0F0] text-sm font-medium placeholder:text-[#121212]/30 focus:outline-none focus:bg-white transition-colors"
+              className="w-full px-3 py-2.5 border-4 border-black bg-[#FFFDF5] text-sm font-medium placeholder:text-black/30 focus:outline-none focus:bg-white transition-colors"
             />
           </div>
 
           <SessionConfig existing={existing} />
 
           {validated && (
-            <div className={`flex items-center gap-2 border-2 px-3 py-2.5 ${validated.ok ? 'border-[#D02020] bg-[#D02020]/10' : 'border-[#D02020] bg-[#D02020]/10'}`}>
+            <div className={`flex items-center gap-2 border-2 px-3 py-2.5 ${validated.ok ? 'border-[#FF6B6B] bg-[#FF6B6B]/10' : 'border-[#FF6B6B] bg-[#FF6B6B]/10'}`}>
               {validated.ok
-                ? <CheckCircle className="w-4 h-4 text-[#121212] shrink-0" strokeWidth={2.5} />
-                : <XCircle className="w-4 h-4 text-[#D02020] shrink-0" strokeWidth={2.5} />
+                ? <CheckCircle className="w-4 h-4 text-[#000000] shrink-0" strokeWidth={2.5} />
+                : <XCircle className="w-4 h-4 text-[#FF6B6B] shrink-0" strokeWidth={2.5} />
               }
               <span className="text-xs font-bold uppercase tracking-widest">
                 {validated.ok ? `Valid — ${validated.name}` : validated.error}
@@ -249,14 +249,14 @@ export default function InstagramForm({ botId, existing, request }: InstagramFor
           )}
 
           {manualError && (
-            <div className="border-2 border-[#D02020] bg-[#D02020]/10 px-3 py-2">
-              <p className="text-sm font-medium text-[#D02020]">{manualError}</p>
+            <div className="border-2 border-[#FF6B6B] bg-[#FF6B6B]/10 px-3 py-2">
+              <p className="text-sm font-medium text-[#FF6B6B]">{manualError}</p>
             </div>
           )}
 
           {success && (
-            <div className="border-2 border-[#F0C020] bg-[#F0C020]/10 px-3 py-2">
-              <p className="text-sm font-bold uppercase tracking-widest text-[#121212]">{success}</p>
+            <div className="border-2 border-[#FFD93D] bg-[#FFD93D]/10 px-3 py-2">
+              <p className="text-sm font-bold uppercase tracking-widest text-black">{success}</p>
             </div>
           )}
 

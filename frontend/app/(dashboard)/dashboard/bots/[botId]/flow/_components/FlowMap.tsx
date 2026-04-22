@@ -23,14 +23,14 @@ const COLS = 3
 const PAD = 48
 
 const ACTION_BG: Record<string, string> = {
-  replier: '#1040C0',
-  form: '#D02020',
-  query: '#F0C020',
+  replier: '#FF6B6B',
+  form: '#FF6B6B',
+  query: '#FFD93D',
 }
 const ACTION_TEXT: Record<string, string> = {
   replier: '#FFFFFF',
   form: '#FFFFFF',
-  query: '#121212',
+  query: '#000000',
 }
 
 export default function FlowMap({ botId, triggers }: FlowMapProps) {
@@ -61,9 +61,9 @@ export default function FlowMap({ botId, triggers }: FlowMapProps) {
 
   if (triggers.length === 0) {
     return (
-      <div className="border-4 border-dashed border-[#121212] p-20 text-center">
-        <p className="text-sm font-bold uppercase tracking-widest text-[#121212]/40">No triggers yet.</p>
-        <p className="text-xs font-medium text-[#121212]/30 mt-2">Create triggers to see the flow map.</p>
+      <div className="border-4 border-dashed border-black p-20 text-center">
+        <p className="text-sm font-bold uppercase tracking-widest text-black/40">No triggers yet.</p>
+        <p className="text-xs font-medium text-black/30 mt-2">Create triggers to see the flow map.</p>
       </div>
     )
   }
@@ -73,7 +73,7 @@ export default function FlowMap({ botId, triggers }: FlowMapProps) {
   const svgH = PAD * 2 + rows * NODE_H + (rows - 1) * ROW_GAP + 30
 
   return (
-    <div className="overflow-x-auto border-4 border-[#121212] bg-[#F0F0F0] shadow-[8px_8px_0px_0px_#121212]">
+    <div className="overflow-x-auto border-4 border-black bg-[#FFFDF5] shadow-[8px_8px_0px_0px_#000]">
       <svg width={svgW} height={svgH} className="block">
         <defs>
           <marker
@@ -85,7 +85,7 @@ export default function FlowMap({ botId, triggers }: FlowMapProps) {
             orient="auto"
             markerUnits="strokeWidth"
           >
-            <path d="M0,0 L0,6 L8,3 z" fill="#121212" opacity="0.7" />
+            <path d="M0,0 L0,6 L8,3 z" fill="#000000" opacity="0.7" />
           </marker>
         </defs>
 
@@ -112,12 +112,12 @@ export default function FlowMap({ botId, triggers }: FlowMapProps) {
                 <path
                   d={`M ${from.x + NODE_W} ${from.y + NODE_H / 2 - 10} Q ${cx + 20} ${cy} ${from.x + NODE_W} ${from.y + NODE_H / 2 + 10}`}
                   fill="none"
-                  stroke="#121212"
+                  stroke="#000000"
                   strokeWidth="1.5"
                   opacity="0.5"
                   markerEnd="url(#arrowhead)"
                 />
-                <text x={cx + 22} y={cy + 3} textAnchor="start" fontSize="8" fontWeight="700" fill="#121212" opacity="0.5">
+                <text x={cx + 22} y={cy + 3} textAnchor="start" fontSize="8" fontWeight="700" fill="#000000" opacity="0.5">
                   {e.label.length > 12 ? e.label.slice(0, 11) + '…' : e.label}
                 </text>
               </g>
@@ -129,7 +129,7 @@ export default function FlowMap({ botId, triggers }: FlowMapProps) {
               <path
                 d={`M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`}
                 fill="none"
-                stroke="#121212"
+                stroke="#000000"
                 strokeWidth="1.5"
                 opacity="0.55"
                 markerEnd="url(#arrowhead)"
@@ -141,7 +141,7 @@ export default function FlowMap({ botId, triggers }: FlowMapProps) {
                   textAnchor="middle"
                   fontSize="8"
                   fontWeight="700"
-                  fill="#121212"
+                  fill="#000000"
                   opacity="0.5"
                 >
                   {e.label.length > 14 ? e.label.slice(0, 13) + '…' : e.label}
@@ -156,16 +156,16 @@ export default function FlowMap({ botId, triggers }: FlowMapProps) {
           const pos = layout[t.id]
           if (!pos) return null
           const bg = ACTION_BG[t.action_type] ?? '#F0F0F0'
-          const fg = ACTION_TEXT[t.action_type] ?? '#121212'
+          const fg = ACTION_TEXT[t.action_type] ?? '#000000'
           const href = `/dashboard/bots/${botId}/triggers/${t.id}/${t.action_type}`
           const displayName = t.name.length > 17 ? t.name.slice(0, 15) + '…' : t.name
 
           return (
             <a key={t.id} href={href}>
               {/* Hard shadow */}
-              <rect x={pos.x + 4} y={pos.y + 4} width={NODE_W} height={NODE_H} fill="#121212" />
+              <rect x={pos.x + 4} y={pos.y + 4} width={NODE_W} height={NODE_H} fill="#000000" />
               {/* Main node */}
-              <rect x={pos.x} y={pos.y} width={NODE_W} height={NODE_H} fill={bg} stroke="#121212" strokeWidth="2" />
+              <rect x={pos.x} y={pos.y} width={NODE_W} height={NODE_H} fill={bg} stroke="#000000" strokeWidth="2" />
               {/* Name */}
               <text
                 x={pos.x + NODE_W / 2}

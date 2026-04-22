@@ -77,23 +77,23 @@ export default async function BotLayout({
   return (
     <div className="flex flex-col h-full">
       {/* Bot header */}
-      <div className="border-b-4 border-[#121212] bg-white px-8 py-4">
+      <div className="border-b-4 border-black bg-[#FFFDF5] px-8 py-4">
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#121212]/40 mb-3">
-          <Link href="/dashboard/bots" className="hover:text-[#1040C0] transition-colors">
+        <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-black/40 mb-3">
+          <Link href="/dashboard/bots" className="hover:text-[#FF6B6B] transition-colors">
             Bots
           </Link>
           <ChevronRight className="w-3 h-3" strokeWidth={3} />
-          <span className="text-[#121212]">{bot.name}</span>
+          <span className="text-black">{bot.name}</span>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 -mb-[17px]">
+        <div className="flex gap-1 -mb-[17px] flex-wrap">
           {tabs.map(tab => (
             <Link
               key={tab.href}
               href={`/dashboard/bots/${botId}/${tab.href}`}
-              className="text-xs font-black uppercase tracking-widest px-4 py-2 border-2 border-b-0 border-[#121212] bg-[#F0F0F0] hover:bg-[#E0E0E0] transition-colors"
+              className="text-xs font-black uppercase tracking-widest px-4 py-2 border-4 border-b-0 border-black bg-[#FFFDF5] hover:bg-[#FFD93D] transition-colors duration-100"
             >
               {tab.label}
             </Link>

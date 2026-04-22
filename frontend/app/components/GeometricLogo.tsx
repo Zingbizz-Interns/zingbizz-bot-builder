@@ -2,16 +2,23 @@ import React from 'react';
 
 export default function GeometricLogo() {
   return (
-    <div className="flex items-center gap-2 group cursor-pointer">
-      <div className="flex gap-[-2px] items-center relative h-8 w-16 group-hover:scale-105 transition-transform duration-300">
-        <div className="w-6 h-6 rounded-full bg-[#1040C0] border-2 border-black absolute left-0 z-10 shadow-[2px_2px_0px_0px_black]"></div>
-        <div className="w-6 h-6 bg-[#D02020] border-2 border-black absolute left-4 z-20 shadow-[2px_2px_0px_0px_black]"></div>
-        <div 
-          className="w-6 h-6 bg-[#F0C020] border-2 border-black absolute left-8 z-30 shadow-[2px_2px_0px_0px_black]" 
+    <div className="flex items-center gap-3 group cursor-pointer">
+      {/* Sticker mark — three overlapping neo shapes */}
+      <div className="relative h-9 w-[52px] shrink-0 group-hover:scale-105 transition-transform duration-200">
+        {/* Circle — hot red */}
+        <div className="absolute left-0 top-0 w-7 h-7 rounded-full bg-[#FF6B6B] border-2 border-black shadow-[2px_2px_0px_0px_#000] z-10" />
+        {/* Square — vivid yellow */}
+        <div className="absolute left-4 top-0 w-7 h-7 bg-[#FFD93D] border-2 border-black shadow-[2px_2px_0px_0px_#000] z-20" />
+        {/* Triangle — soft violet */}
+        <div
+          className="absolute left-8 top-0 w-7 h-7 bg-[#C4B5FD] border-2 border-black shadow-[2px_2px_0px_0px_#000] z-30"
           style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }}
-        ></div>
+        />
       </div>
-      <span className="font-black tracking-tighter uppercase text-xl md:text-2xl mt-1">ZingBizz</span>
+
+      <span className="font-black tracking-tighter uppercase text-xl md:text-2xl leading-none">
+        ZingBizz
+      </span>
     </div>
   );
 }

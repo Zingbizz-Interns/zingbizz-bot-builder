@@ -1,61 +1,60 @@
 import { cn } from '@/lib/utils'
 
-type Accent = 'red' | 'blue' | 'yellow' | 'none'
-type Decoration = 'circle' | 'square' | 'triangle' | 'none'
+type Variant = 'cream' | 'white' | 'red' | 'yellow' | 'muted' | 'black'
+type Shadow = 'sm' | 'md' | 'lg' | 'xl'
 
 interface CardProps {
   children: React.ReactNode
   className?: string
-  accent?: Accent
-  decoration?: Decoration
+  variant?: Variant
+  shadow?: Shadow
   hover?: boolean
 }
 
-const accentColors: Record<Accent, string> = {
-  red:    '#D02020',
-  blue:   '#1040C0',
-  yellow: '#F0C020',
-  none:   'transparent',
+const variantMap: Record<Variant, string> = {
+  cream:  'bg-[#FFFDF5] text-black',
+  white:  'bg-white text-black',
+  red:    'bg-[#FF6B6B] text-black',
+  yellow: 'bg-[#FFD93D] text-black',
+  muted:  'bg-[#C4B5FD] text-black',
+  black:  'bg-black text-white',
+}
+
+const shadowMap: Record<Shadow, string> = {
+  sm: 'shadow-[4px_4px_0px_0px_#000]',
+  md: 'shadow-[8px_8px_0px_0px_#000]',
+  lg: 'shadow-[12px_12px_0px_0px_#000]',
+  xl: 'shadow-[16px_16px_0px_0px_#000]',
+}
+
+const hoverShadowMap: Record<Shadow, string> = {
+  sm: 'hover:shadow-[6px_6px_0px_0px_#000]',
+  md: 'hover:shadow-[10px_10px_0px_0px_#000]',
+  lg: 'hover:shadow-[16px_16px_0px_0px_#000]',
+  xl: 'hover:shadow-[20px_20px_0px_0px_#000]',
 }
 
 export default function Card({
   children,
   className,
-  accent = 'none',
-  decoration = 'none',
+  variant = 'white',
+  shadow = 'md',
   hover = false,
 }: CardProps) {
-  const accentColor = accentColors[accent]
-
   return (
     <div
       className={cn(
-        'relative bg-white border-4 border-[#121212] shadow-[8px_8px_0px_0px_#121212]',
-        'transition-transform duration-200 ease-out',
-        hover && 'hover:-translate-y-1 cursor-pointer',
+        'relative border-4 border-black',
+        variantMap[variant],
+        shadowMap[shadow],
+        hover && [
+          'transition-transform duration-200 ease-out cursor-pointer',
+          'hover:-translate-y-1',
+          hoverShadowMap[shadow],
+        ],
         className
       )}
     >
-      {/* Corner decoration */}
-      {decoration !== 'none' && accent !== 'none' && (
-        <div className="absolute top-3 right-3">
-          {decoration === 'circle' && (
-            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: accentColor }} />
-          )}
-          {decoration === 'square' && (
-            <div className="w-3 h-3 rounded-none" style={{ backgroundColor: accentColor }} />
-          )}
-          {decoration === 'triangle' && (
-            <div
-              className="w-3 h-3"
-              style={{
-                backgroundColor: accentColor,
-                clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
-              }}
-            />
-          )}
-        </div>
-      )}
       {children}
     </div>
   )

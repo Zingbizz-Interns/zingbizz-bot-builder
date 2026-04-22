@@ -22,9 +22,9 @@ const TRIGGER_TYPES: { value: TriggerType; label: string; desc: string }[] = [
 ]
 
 const ACTION_TYPES: { value: ActionType; label: string; color: string }[] = [
-  { value: 'replier', label: 'Replier',       color: 'bg-[#1040C0] text-white' },
-  { value: 'form',    label: 'Form',          color: 'bg-[#D02020] text-white' },
-  { value: 'query',   label: 'Query Builder', color: 'bg-[#F0C020] text-[#121212]' },
+  { value: 'replier', label: 'Replier',       color: 'bg-[#FF6B6B] text-white' },
+  { value: 'form',    label: 'Form',          color: 'bg-[#FF6B6B] text-white' },
+  { value: 'query',   label: 'Query Builder', color: 'bg-[#FFD93D] text-black' },
 ]
 
 export default function TriggerModal({ botId, existing, onClose }: TriggerModalProps) {
@@ -90,15 +90,15 @@ export default function TriggerModal({ botId, existing, onClose }: TriggerModalP
     }
   }
 
-  const inputClass = 'w-full px-3 py-2.5 border-2 border-[#121212] bg-[#F0F0F0] text-sm font-medium placeholder:text-[#121212]/30 focus:outline-none focus:bg-white transition-colors'
+  const inputClass = 'w-full px-3 py-2.5 border-4 border-black bg-[#FFFDF5] text-sm font-medium placeholder:text-black/30 focus:outline-none focus:bg-white transition-colors'
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-[#121212]/60" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/60" onClick={onClose} />
 
-      <div className="relative w-full max-w-lg border-4 border-[#121212] shadow-[8px_8px_0px_0px_#121212] bg-white z-10 max-h-[90vh] overflow-y-auto">
+      <div className="relative w-full max-w-lg border-4 border-black shadow-[8px_8px_0px_0px_#000] bg-white z-10 max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="bg-[#1040C0] px-6 py-4 flex items-center justify-between border-b-4 border-[#121212] sticky top-0">
+        <div className="bg-[#FF6B6B] px-6 py-4 flex items-center justify-between border-b-4 border-black sticky top-0">
           <h2 className="text-lg font-black uppercase tracking-tighter text-white">
             {existing ? 'Edit Trigger' : 'New Trigger'}
           </h2>
@@ -110,8 +110,8 @@ export default function TriggerModal({ botId, existing, onClose }: TriggerModalP
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           {/* Name */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">
-              Trigger Name <span className="text-[#D02020]">*</span>
+            <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">
+              Trigger Name <span className="text-[#FF6B6B]">*</span>
             </label>
             <input
               value={name}
@@ -124,8 +124,8 @@ export default function TriggerModal({ botId, existing, onClose }: TriggerModalP
 
           {/* Trigger Type */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-2">
-              Trigger Type <span className="text-[#D02020]">*</span>
+            <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-2">
+              Trigger Type <span className="text-[#FF6B6B]">*</span>
             </label>
             <div className="grid grid-cols-3 gap-2">
               {TRIGGER_TYPES.map(t => (
@@ -133,14 +133,14 @@ export default function TriggerModal({ botId, existing, onClose }: TriggerModalP
                   key={t.value}
                   type="button"
                   onClick={() => { setTriggerType(t.value); setKeywords([]) }}
-                  className={`border-2 border-[#121212] px-3 py-2.5 text-left transition-colors ${
+                  className={`border-4 border-black px-3 py-2.5 text-left transition-colors ${
                     triggerType === t.value
-                      ? 'bg-[#121212] text-white'
-                      : 'bg-[#F0F0F0] hover:bg-[#E0E0E0]'
+                      ? 'bg-black text-white'
+                      : 'bg-[#FFFDF5] hover:bg-[#FFD93D]/30'
                   }`}
                 >
                   <p className="text-xs font-black uppercase tracking-tighter leading-tight">{t.label}</p>
-                  <p className={`text-xs font-medium mt-0.5 ${triggerType === t.value ? 'text-white/60' : 'text-[#121212]/40'}`}>
+                  <p className={`text-xs font-medium mt-0.5 ${triggerType === t.value ? 'text-white/60' : 'text-black/40'}`}>
                     {t.desc}
                   </p>
                 </button>
@@ -151,29 +151,29 @@ export default function TriggerModal({ botId, existing, onClose }: TriggerModalP
           {/* Keywords */}
           {triggerType !== 'any' && (
             <div>
-              <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">
                 {triggerType === 'single' ? 'Keyword' : 'Keywords'}{' '}
-                <span className="text-[#D02020]">*</span>
-                <span className="text-[#121212]/40 normal-case font-medium ml-2">
+                <span className="text-[#FF6B6B]">*</span>
+                <span className="text-black/40 normal-case font-medium ml-2">
                   {triggerType === 'single' ? '(one keyword)' : '(press Enter or comma to add)'}
                 </span>
               </label>
 
               {/* Tag input */}
               <div
-                className="min-h-[42px] flex flex-wrap gap-1.5 px-2 py-2 border-2 border-[#121212] bg-[#F0F0F0] cursor-text focus-within:bg-white transition-colors"
+                className="min-h-[42px] flex flex-wrap gap-1.5 px-2 py-2 border-4 border-black bg-[#FFFDF5] cursor-text focus-within:bg-white transition-colors"
                 onClick={() => inputRef.current?.focus()}
               >
                 {keywords.map(kw => (
                   <span
                     key={kw}
-                    className="flex items-center gap-1 bg-[#121212] text-white text-xs font-bold uppercase tracking-wide px-2 py-0.5"
+                    className="flex items-center gap-1 bg-black text-white text-xs font-bold uppercase tracking-wide px-2 py-0.5"
                   >
                     {kw}
                     <button
                       type="button"
                       onClick={() => setKeywords(prev => prev.filter(k => k !== kw))}
-                      className="hover:text-[#D02020] transition-colors"
+                      className="hover:text-[#FF6B6B] transition-colors"
                     >
                       <X className="w-3 h-3" strokeWidth={3} />
                     </button>
@@ -187,7 +187,7 @@ export default function TriggerModal({ botId, existing, onClose }: TriggerModalP
                     onKeyDown={handleKwKeyDown}
                     onBlur={() => addKeyword(kwInput)}
                     placeholder={keywords.length === 0 ? 'Type a keyword...' : ''}
-                    className="flex-1 min-w-[120px] bg-transparent text-sm font-medium focus:outline-none placeholder:text-[#121212]/30"
+                    className="flex-1 min-w-[120px] bg-transparent text-sm font-medium focus:outline-none placeholder:text-black/30"
                   />
                 )}
               </div>
@@ -196,20 +196,20 @@ export default function TriggerModal({ botId, existing, onClose }: TriggerModalP
 
           {/* Platforms */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-2">
-              Platforms <span className="text-[#D02020]">*</span>
+            <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-2">
+              Platforms <span className="text-[#FF6B6B]">*</span>
             </label>
             <div className="flex gap-3">
               {[
-                { value: 'whatsapp',  label: 'WhatsApp', activeClass: 'bg-[#F0C020] text-[#121212]' },
-                { value: 'instagram', label: 'Instagram', activeClass: 'bg-[#D02020] text-white' },
+                { value: 'whatsapp',  label: 'WhatsApp', activeClass: 'bg-[#FFD93D] text-black' },
+                { value: 'instagram', label: 'Instagram', activeClass: 'bg-[#FF6B6B] text-white' },
               ].map(p => (
                 <button
                   key={p.value}
                   type="button"
                   onClick={() => togglePlatform(p.value)}
-                  className={`flex-1 py-2.5 border-2 border-[#121212] text-xs font-black uppercase tracking-widest transition-colors ${
-                    platforms.includes(p.value) ? p.activeClass : 'bg-[#F0F0F0] text-[#121212]/40'
+                  className={`flex-1 py-2.5 border-4 border-black text-xs font-black uppercase tracking-widest transition-colors ${
+                    platforms.includes(p.value) ? p.activeClass : 'bg-[#FFFDF5] text-black/40'
                   }`}
                 >
                   {p.label} {platforms.includes(p.value) ? '●' : '○'}
@@ -220,8 +220,8 @@ export default function TriggerModal({ botId, existing, onClose }: TriggerModalP
 
           {/* Action Type */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-2">
-              Action Type <span className="text-[#D02020]">*</span>
+            <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-2">
+              Action Type <span className="text-[#FF6B6B]">*</span>
             </label>
             <div className="grid grid-cols-3 gap-2">
               {ACTION_TYPES.map(a => (
@@ -229,8 +229,8 @@ export default function TriggerModal({ botId, existing, onClose }: TriggerModalP
                   key={a.value}
                   type="button"
                   onClick={() => setActionType(a.value)}
-                  className={`border-2 border-[#121212] py-2.5 text-xs font-black uppercase tracking-widest transition-colors ${
-                    actionType === a.value ? a.color : 'bg-[#F0F0F0] text-[#121212]/40'
+                  className={`border-4 border-black py-2.5 text-xs font-black uppercase tracking-widest transition-colors ${
+                    actionType === a.value ? a.color : 'bg-[#FFFDF5] text-black/40'
                   }`}
                 >
                   {a.label}
@@ -240,8 +240,8 @@ export default function TriggerModal({ botId, existing, onClose }: TriggerModalP
           </div>
 
           {error && (
-            <div className="border-2 border-[#D02020] bg-[#D02020]/10 px-3 py-2">
-              <p className="text-sm font-medium text-[#D02020]">{error}</p>
+            <div className="border-2 border-[#FF6B6B] bg-[#FF6B6B]/10 px-3 py-2">
+              <p className="text-sm font-medium text-[#FF6B6B]">{error}</p>
             </div>
           )}
 
@@ -249,7 +249,7 @@ export default function TriggerModal({ botId, existing, onClose }: TriggerModalP
             <Button variant="outline" type="button" onClick={onClose} className="flex-1">
               Cancel
             </Button>
-            <Button variant="blue" type="submit" disabled={saving} className="flex-1">
+            <Button variant="yellow" type="submit" disabled={saving} className="flex-1">
               {saving ? 'Saving...' : existing ? 'Save Changes' : 'Create Trigger'}
             </Button>
           </div>

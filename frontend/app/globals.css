@@ -1,27 +1,30 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;900&display=swap');
 
-/* ─── Bauhaus Design System ─────────────────────────────── */
+/* ─── Neo-Brutalism Design System ───────────────────────── */
 @theme inline {
   /* Colors */
-  --color-background:     #F0F0F0;
-  --color-foreground:     #121212;
-  --color-border:         #121212;
-  --color-muted:          #E0E0E0;
-  --color-bauhaus-red:    #D02020;
-  --color-bauhaus-blue:   #1040C0;
-  --color-bauhaus-yellow: #F0C020;
-  --color-bauhaus-black:  #121212;
-  --color-bauhaus-white:  #F0F0F0;
+  --color-background:   #FFFDF5;
+  --color-foreground:   #000000;
+  --color-border:       #000000;
+  --color-muted:        #C4B5FD;
+  --color-neo-accent:   #FF6B6B;
+  --color-neo-secondary:#FFD93D;
+  --color-neo-muted:    #C4B5FD;
+  --color-neo-black:    #000000;
+  --color-neo-white:    #FFFDF5;
 
   /* Typography */
-  --font-sans: "Avenir Next", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-sans: 'Space Grotesk', sans-serif;
 
-  /* Hard offset shadows */
-  --shadow-hard-sm:  3px 3px 0px 0px #121212;
-  --shadow-hard-md:  6px 6px 0px 0px #121212;
-  --shadow-hard-lg:  8px 8px 0px 0px #121212;
-  --shadow-hard-xl:  12px 12px 0px 0px #121212;
-  --shadow-accent-red-xl: 16px 16px 0px 0px #D02020;
+  /* Hard offset shadows — zero blur, solid black */
+  --shadow-hard-xs:  2px 2px 0px 0px #000;
+  --shadow-hard-sm:  4px 4px 0px 0px #000;
+  --shadow-hard-md:  8px 8px 0px 0px #000;
+  --shadow-hard-lg:  12px 12px 0px 0px #000;
+  --shadow-hard-xl:  16px 16px 0px 0px #000;
+  --shadow-accent-red-xl: 16px 16px 0px 0px #FF6B6B;
+  --shadow-accent-yellow-xl: 16px 16px 0px 0px #FFD93D;
 }
 
 /* ─── Base ───────────────────────────────────────────────── */
@@ -33,4 +36,35 @@ body {
 
 * {
   box-sizing: border-box;
+}
+
+/* ─── Animations ─────────────────────────────────────────── */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 10s linear infinite;
+}
+
+/* ─── Accessibility ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin-slow,
+  .animate-bounce,
+  .animate-pulse {
+    animation: none;
+  }
+}
+
+/* ─── Texture helpers ────────────────────────────────────── */
+.bg-halftone {
+  background-image: radial-gradient(#000 1.5px, transparent 1.5px);
+  background-size: 20px 20px;
+}
+
+.bg-grid {
+  background-size: 40px 40px;
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
 }

@@ -67,30 +67,30 @@ export default async function ResponsesPage({ params, searchParams }: PageProps)
   return (
     <div className="p-8">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#121212]/40 mb-6">
+      <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-black/40 mb-6">
         <Link
           href={`/dashboard/bots/${botId}/triggers`}
-          className="hover:text-[#1040C0] transition-colors"
+          className="hover:text-[#FF6B6B] transition-colors"
         >
           Triggers
         </Link>
         <ChevronRight className="w-3 h-3" strokeWidth={3} />
         <Link
           href={`/dashboard/bots/${botId}/triggers/${triggerId}/form`}
-          className="hover:text-[#1040C0] transition-colors"
+          className="hover:text-[#FF6B6B] transition-colors"
         >
           {trigger?.name ?? 'Form'}
         </Link>
         <ChevronRight className="w-3 h-3" strokeWidth={3} />
-        <span className="text-[#121212]">Responses</span>
+        <span className="text-black">Responses</span>
       </div>
 
       {/* Page title */}
       <div className="mb-8">
-        <h1 className="font-black uppercase tracking-tighter text-3xl text-[#121212]">
+        <h1 className="font-black uppercase tracking-tighter text-3xl text-black">
           {form.title}
         </h1>
-        <p className="text-sm font-medium text-[#121212]/50 mt-1 uppercase tracking-widest">
+        <p className="text-sm font-medium text-black/50 mt-1 uppercase tracking-widest">
           Response Viewer
         </p>
       </div>

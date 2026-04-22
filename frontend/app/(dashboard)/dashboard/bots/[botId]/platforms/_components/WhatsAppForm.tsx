@@ -71,12 +71,12 @@ export default function WhatsAppForm({ botId, existing, request }: WhatsAppFormP
     return (
       <div className="space-y-4">
         <PlatformRequestStatus platform="whatsapp" request={request} hasLiveConfig={Boolean(existing)} />
-        <div className={`flex items-center gap-2 border-2 px-4 py-3 ${existing ? 'border-[#F0C020] bg-[#F0C020]/10' : 'border-[#121212]/20 bg-[#F0F0F0]'}`}>
+        <div className={`flex items-center gap-2 border-2 px-4 py-3 ${existing ? 'border-[#FFD93D] bg-[#FFD93D]/10' : 'border-black/20 bg-[#FFFDF5]'}`}>
           {existing
-            ? <CheckCircle className="w-4 h-4 text-[#121212]" strokeWidth={2.5} />
-            : <XCircle className="w-4 h-4 text-[#121212]/30" strokeWidth={2.5} />
+            ? <CheckCircle className="w-4 h-4 text-black" strokeWidth={2.5} />
+            : <XCircle className="w-4 h-4 text-black/30" strokeWidth={2.5} />
           }
-          <span className="text-xs font-bold uppercase tracking-widest text-[#121212]">
+          <span className="text-xs font-bold uppercase tracking-widest text-black">
             {existing ? 'Connected' : 'Not connected'}
           </span>
         </div>
@@ -94,16 +94,16 @@ export default function WhatsAppForm({ botId, existing, request }: WhatsAppFormP
     <form onSubmit={handleSave} className="space-y-4">
       {/* Connected indicator */}
       {existing && (
-        <div className="flex items-center justify-between border-2 border-[#F0C020] bg-[#F0C020]/10 px-4 py-3">
+        <div className="flex items-center justify-between border-2 border-[#FFD93D] bg-[#FFD93D]/10 px-4 py-3">
           <div className="flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-[#121212]" strokeWidth={2.5} />
-            <span className="text-xs font-bold uppercase tracking-widest text-[#121212]">Connected</span>
+            <CheckCircle className="w-4 h-4 text-black" strokeWidth={2.5} />
+            <span className="text-xs font-bold uppercase tracking-widest text-black">Connected</span>
           </div>
           <button
             type="button"
             onClick={handleDelete}
             disabled={deleting}
-            className="text-xs font-bold uppercase tracking-widest text-[#D02020] hover:underline disabled:opacity-50"
+            className="text-xs font-bold uppercase tracking-widest text-[#FF6B6B] hover:underline disabled:opacity-50"
           >
             {deleting ? 'Disconnecting...' : 'Disconnect'}
           </button>
@@ -112,34 +112,34 @@ export default function WhatsAppForm({ botId, existing, request }: WhatsAppFormP
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">
-            Phone Number ID <span className="text-[#D02020]">*</span>
+          <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">
+            Phone Number ID <span className="text-[#FF6B6B]">*</span>
           </label>
           <input
             name="phone_number_id"
             required
             defaultValue={existing?.phone_number_id ?? ''}
             placeholder="1234567890"
-            className="w-full px-3 py-2.5 border-2 border-[#121212] bg-[#F0F0F0] text-sm font-medium placeholder:text-[#121212]/30 focus:outline-none focus:bg-white transition-colors"
+            className="w-full px-3 py-2.5 border-4 border-black bg-[#FFFDF5] text-sm font-medium placeholder:text-black/30 focus:outline-none focus:bg-white transition-colors"
           />
         </div>
         <div>
-          <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">
-            WABA ID <span className="text-[#D02020]">*</span>
+          <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">
+            WABA ID <span className="text-[#FF6B6B]">*</span>
           </label>
           <input
             name="waba_id"
             required
             defaultValue={existing?.waba_id ?? ''}
             placeholder="9876543210"
-            className="w-full px-3 py-2.5 border-2 border-[#121212] bg-[#F0F0F0] text-sm font-medium placeholder:text-[#121212]/30 focus:outline-none focus:bg-white transition-colors"
+            className="w-full px-3 py-2.5 border-4 border-black bg-[#FFFDF5] text-sm font-medium placeholder:text-black/30 focus:outline-none focus:bg-white transition-colors"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">
-          Access Token <span className="text-[#D02020]">*</span>
+        <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">
+          Access Token <span className="text-[#FF6B6B]">*</span>
         </label>
         <input
           name="access_token"
@@ -147,20 +147,20 @@ export default function WhatsAppForm({ botId, existing, request }: WhatsAppFormP
           defaultValue={existing?.access_token ?? ''}
           placeholder="EAAWp55eJj5MB..."
           type="password"
-          className="w-full px-3 py-2.5 border-2 border-[#121212] bg-[#F0F0F0] text-sm font-medium placeholder:text-[#121212]/30 focus:outline-none focus:bg-white transition-colors font-mono"
+          className="w-full px-3 py-2.5 border-4 border-black bg-[#FFFDF5] text-sm font-medium placeholder:text-black/30 focus:outline-none focus:bg-white transition-colors font-mono"
         />
       </div>
 
       <div>
-        <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">
-          Webhook Verify Token <span className="text-[#D02020]">*</span>
+        <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">
+          Webhook Verify Token <span className="text-[#FF6B6B]">*</span>
         </label>
         <input
           name="verify_token"
           required
           defaultValue={existing?.verify_token ?? ''}
           placeholder="my_secret_token"
-          className="w-full px-3 py-2.5 border-2 border-[#121212] bg-[#F0F0F0] text-sm font-medium placeholder:text-[#121212]/30 focus:outline-none focus:bg-white transition-colors"
+          className="w-full px-3 py-2.5 border-4 border-black bg-[#FFFDF5] text-sm font-medium placeholder:text-black/30 focus:outline-none focus:bg-white transition-colors"
         />
       </div>
 
@@ -168,10 +168,10 @@ export default function WhatsAppForm({ botId, existing, request }: WhatsAppFormP
 
       {/* Validation feedback */}
       {validated && (
-        <div className={`flex items-center gap-2 border-2 px-3 py-2.5 ${validated.ok ? 'border-[#F0C020] bg-[#F0C020]/10' : 'border-[#D02020] bg-[#D02020]/10'}`}>
+        <div className={`flex items-center gap-2 border-2 px-3 py-2.5 ${validated.ok ? 'border-[#FFD93D] bg-[#FFD93D]/10' : 'border-[#FF6B6B] bg-[#FF6B6B]/10'}`}>
           {validated.ok
-            ? <CheckCircle className="w-4 h-4 text-[#121212] shrink-0" strokeWidth={2.5} />
-            : <XCircle className="w-4 h-4 text-[#D02020] shrink-0" strokeWidth={2.5} />
+            ? <CheckCircle className="w-4 h-4 text-[#000000] shrink-0" strokeWidth={2.5} />
+            : <XCircle className="w-4 h-4 text-[#FF6B6B] shrink-0" strokeWidth={2.5} />
           }
           <span className="text-xs font-bold uppercase tracking-widest">
             {validated.ok ? `Valid — ${validated.name}` : validated.error}
@@ -180,14 +180,14 @@ export default function WhatsAppForm({ botId, existing, request }: WhatsAppFormP
       )}
 
       {error && (
-        <div className="border-2 border-[#D02020] bg-[#D02020]/10 px-3 py-2">
-          <p className="text-sm font-medium text-[#D02020]">{error}</p>
+        <div className="border-2 border-[#FF6B6B] bg-[#FF6B6B]/10 px-3 py-2">
+          <p className="text-sm font-medium text-[#FF6B6B]">{error}</p>
         </div>
       )}
 
       {success && (
-        <div className="border-2 border-[#F0C020] bg-[#F0C020]/10 px-3 py-2">
-          <p className="text-sm font-bold uppercase tracking-widest text-[#121212]">{success}</p>
+        <div className="border-2 border-[#FFD93D] bg-[#FFD93D]/10 px-3 py-2">
+          <p className="text-sm font-bold uppercase tracking-widest text-black">{success}</p>
         </div>
       )}
 

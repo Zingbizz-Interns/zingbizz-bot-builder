@@ -23,12 +23,15 @@ export default function FAQSection() {
   return (
     <section
       id="faq"
-      className="w-full max-w-7xl mx-auto border-x-4 border-black bg-bauhaus-white px-4 py-20 sm:px-6 lg:px-8 lg:py-32"
+      className="w-full max-w-7xl mx-auto border-x-4 border-black bg-[#C4B5FD]/30 px-4 py-20 sm:px-6 lg:px-8 lg:py-32"
     >
       <div className="mx-auto max-w-4xl">
         <AnimatedContent direction="vertical" distance={50}>
-          <h2 className="mb-12 text-center text-5xl font-black uppercase tracking-tighter md:text-6xl">
-            Questions?
+          <h2 className="mb-12 text-5xl font-black uppercase tracking-tighter md:text-7xl leading-none">
+            Got{' '}
+            <span className="bg-black text-white border-4 border-black px-2 inline-block shadow-[6px_6px_0px_0px_#FF6B6B]">
+              Questions?
+            </span>
           </h2>
         </AnimatedContent>
 

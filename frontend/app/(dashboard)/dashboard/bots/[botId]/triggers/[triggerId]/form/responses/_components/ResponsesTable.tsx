@@ -87,11 +87,11 @@ export default function ResponsesTable({
 
   if (responses.length === 0) {
     return (
-      <div className="border-4 border-[#121212] border-dashed p-16 text-center">
-        <p className="font-black uppercase tracking-tighter text-[#121212]/30 text-xl">
+      <div className="border-4 border-black border-dashed p-16 text-center">
+        <p className="font-black uppercase tracking-tighter text-black/30 text-xl">
           No responses yet
         </p>
-        <p className="text-sm font-medium text-[#121212]/40 mt-2">
+        <p className="text-sm font-medium text-black/40 mt-2">
           Responses will appear here once users submit this form.
         </p>
       </div>
@@ -102,32 +102,32 @@ export default function ResponsesTable({
     <div className="flex flex-col gap-4">
       {/* Header row */}
       <div className="flex items-center justify-between">
-        <p className="text-sm font-bold uppercase tracking-widest text-[#121212]/50">
+        <p className="text-sm font-bold uppercase tracking-widest text-black/50">
           {total} response{total !== 1 ? 's' : ''}
         </p>
-        <Button variant="blue" onClick={handleExport} disabled={exporting || !exportEnabled}>
+        <Button variant="yellow" onClick={handleExport} disabled={exporting || !exportEnabled}>
           <Download className="w-3.5 h-3.5" strokeWidth={2.5} />
           {!exportEnabled ? 'Export Disabled' : exporting ? 'Exporting…' : 'Export XLSX'}
         </Button>
       </div>
 
       {!exportEnabled && (
-        <p className="text-xs font-bold uppercase tracking-widest text-[#D02020]">
+        <p className="text-xs font-bold uppercase tracking-widest text-[#FF6B6B]">
           Excel export is disabled for this account by your super admin.
         </p>
       )}
 
       {exportError && (
-        <p className="text-xs font-bold uppercase tracking-widest text-[#D02020]">
+        <p className="text-xs font-bold uppercase tracking-widest text-[#FF6B6B]">
           {exportError}
         </p>
       )}
 
       {/* Table */}
-      <div className="border-4 border-[#121212] overflow-x-auto shadow-[4px_4px_0px_0px_#121212]">
+      <div className="border-4 border-black overflow-x-auto shadow-[4px_4px_0px_0px_#000]">
         <table className="w-full text-sm border-collapse min-w-max">
           <thead>
-            <tr className="border-b-4 border-[#121212] bg-[#121212] text-white">
+            <tr className="border-b-4 border-black bg-black text-white">
               <th className="px-4 py-3 text-left font-black uppercase tracking-widest text-xs whitespace-nowrap">
                 Date
               </th>
@@ -160,17 +160,17 @@ export default function ResponsesTable({
               return (
                 <tr
                   key={r.id}
-                  className={`border-b-2 border-[#121212]/10 ${idx % 2 === 0 ? 'bg-white' : 'bg-[#F0F0F0]'}`}
+                  className={`border-b-2 border-black/10 ${idx % 2 === 0 ? 'bg-white' : 'bg-[#FFFDF5]'}`}
                 >
-                  <td className="px-4 py-3 font-medium text-[#121212]/70 whitespace-nowrap" suppressHydrationWarning>
+                  <td className="px-4 py-3 font-medium text-black/70 whitespace-nowrap" suppressHydrationWarning>
                     {new Date(r.created_at).toLocaleString()}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
                     <span
-                      className={`text-xs font-bold uppercase tracking-widest px-2 py-0.5 border-2 border-[#121212] ${
+                      className={`text-xs font-bold uppercase tracking-widest px-2 py-0.5 border-4 border-black ${
                         r.platform === 'whatsapp'
-                          ? 'bg-[#F0C020] text-[#121212]'
-                          : 'bg-[#D02020] text-white'
+                          ? 'bg-[#FFD93D] text-black'
+                          : 'bg-[#FF6B6B] text-white'
                       }`}
                     >
                       {r.platform === 'whatsapp' ? 'WA' : 'IG'}
@@ -178,10 +178,10 @@ export default function ResponsesTable({
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
                     <span
-                      className={`text-xs font-bold uppercase tracking-widest px-2 py-0.5 border-2 border-[#121212] ${
+                      className={`text-xs font-bold uppercase tracking-widest px-2 py-0.5 border-4 border-black ${
                         r.is_complete
-                          ? 'bg-[#1040C0] text-white'
-                          : 'bg-[#F0F0F0] text-[#121212]/60'
+                          ? 'bg-[#FF6B6B] text-white'
+                          : 'bg-[#FFFDF5] text-black/60'
                       }`}
                     >
                       {r.is_complete ? 'Complete' : 'Incomplete'}
@@ -199,7 +199,7 @@ export default function ResponsesTable({
                     ) : (
                       <span
                         title="No phone number in this response"
-                        className="inline-flex items-center gap-1 border-2 border-[#121212]/20 px-2 py-1 text-xs font-bold uppercase tracking-widest text-[#121212]/30 cursor-not-allowed"
+                        className="inline-flex items-center gap-1 border-4 border-black/20 px-2 py-1 text-xs font-bold uppercase tracking-widest text-black/30 cursor-not-allowed"
                       >
                         <MessageSquare className="w-3 h-3" strokeWidth={2.5} />
                         No Phone
@@ -207,7 +207,7 @@ export default function ResponsesTable({
                     )}
                   </td>
                   {sorted.map(q => (
-                    <td key={q.id} className="px-4 py-3 font-medium text-[#121212] max-w-[200px]">
+                    <td key={q.id} className="px-4 py-3 font-medium text-[#000000] max-w-[200px]">
                       <span className="block truncate">{answerMap[q.id] ?? '—'}</span>
                     </td>
                   ))}
@@ -230,7 +230,7 @@ export default function ResponsesTable({
             <ChevronLeft className="w-3.5 h-3.5" strokeWidth={2.5} />
             Previous
           </Button>
-          <span className="text-xs font-bold uppercase tracking-widest text-[#121212]/50">
+          <span className="text-xs font-bold uppercase tracking-widest text-black/50">
             Page {page} of {totalPages}
           </span>
           <Button

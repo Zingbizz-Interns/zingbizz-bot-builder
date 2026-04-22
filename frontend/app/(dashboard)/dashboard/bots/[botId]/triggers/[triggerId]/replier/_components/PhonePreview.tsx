@@ -21,12 +21,12 @@ export default function PhonePreview({ platforms, message, buttons, botName }: P
           <div className="max-w-[85%] self-start">
             <div
               className={`px-3 py-2 rounded-tr-xl rounded-br-xl rounded-bl-xl text-xs leading-relaxed ${
-                isWA ? 'bg-white text-[#121212] shadow-sm' : 'bg-[#F0F0F0] text-[#121212]'
+                isWA ? 'bg-white text-[#000000] shadow-sm' : 'bg-[#FFFDF5] text-black'
               }`}
               style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
             >
               {message}
-              <span className="block text-right text-[9px] mt-0.5 text-gray-400">
+              <span className="block text-right text-[9px] mt-0.5 text-black/400">
                 {isWA ? '9:41 ✓✓' : '9:41 AM'}
               </span>
             </div>
@@ -50,7 +50,7 @@ export default function PhonePreview({ platforms, message, buttons, botName }: P
           )}
         </div>
       ) : (
-        <p className="text-center text-xs text-gray-400 italic py-8">
+        <p className="text-center text-xs text-black/400 italic py-8">
           Type a message to preview
         </p>
       )}

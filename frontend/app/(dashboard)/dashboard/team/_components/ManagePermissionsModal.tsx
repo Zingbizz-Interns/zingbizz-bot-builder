@@ -69,11 +69,11 @@ export default function ManagePermissionsModal({ subAccount, allBots, onClose }:
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-[#121212]/60" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/60" onClick={onClose} />
 
-      <div className="relative w-full max-w-lg border-4 border-[#121212] shadow-[8px_8px_0px_0px_#121212] bg-white z-10 max-h-[90vh] flex flex-col">
+      <div className="relative w-full max-w-lg border-4 border-black shadow-[8px_8px_0px_0px_#000] bg-white z-10 max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="bg-[#D02020] px-6 py-4 flex items-center justify-between border-b-4 border-[#121212] shrink-0">
+        <div className="bg-[#FF6B6B] px-6 py-4 flex items-center justify-between border-b-4 border-black shrink-0">
           <div>
             <h2 className="text-lg font-black uppercase tracking-tighter text-white">Manage Access</h2>
             <p className="text-xs font-bold text-white/60 uppercase tracking-widest mt-0.5">{subAccount.name}</p>
@@ -85,7 +85,7 @@ export default function ManagePermissionsModal({ subAccount, allBots, onClose }:
 
         {/* Column labels */}
         <div className="px-6 pt-4 pb-2 shrink-0">
-          <div className="flex items-center text-xs font-black uppercase tracking-widest text-[#121212]/40">
+          <div className="flex items-center text-xs font-black uppercase tracking-widest text-black/40">
             <span className="flex-1">Bot</span>
             <span className="w-20 text-center">View</span>
             <span className="w-20 text-center">Edit</span>
@@ -95,9 +95,9 @@ export default function ManagePermissionsModal({ subAccount, allBots, onClose }:
         {/* Bot list */}
         <div className="flex-1 overflow-y-auto px-6 pb-4">
           {loading ? (
-            <p className="text-xs font-medium text-[#121212]/40 py-4">Loading...</p>
+            <p className="text-xs font-medium text-black/40 py-4">Loading...</p>
           ) : allBots.length === 0 ? (
-            <p className="text-xs font-medium text-[#121212]/40 py-4">No bots yet. Create a bot first.</p>
+            <p className="text-xs font-medium text-black/40 py-4">No bots yet. Create a bot first.</p>
           ) : (
             <div className="space-y-2">
               {allBots.map(bot => {
@@ -105,11 +105,11 @@ export default function ManagePermissionsModal({ subAccount, allBots, onClose }:
                 return (
                   <div
                     key={bot.id}
-                    className={`flex items-center border-2 border-[#121212] px-4 py-3 transition-colors ${
-                      perm.granted ? 'bg-white' : 'bg-[#F0F0F0]'
+                    className={`flex items-center border-4 border-black px-4 py-3 transition-colors ${
+                      perm.granted ? 'bg-white' : 'bg-[#FFFDF5]'
                     }`}
                   >
-                    <span className={`flex-1 text-sm font-bold truncate ${perm.granted ? 'text-[#121212]' : 'text-[#121212]/40'}`}>
+                    <span className={`flex-1 text-sm font-bold truncate ${perm.granted ? 'text-black' : 'text-black/40'}`}>
                       {bot.name}
                     </span>
 
@@ -121,8 +121,8 @@ export default function ManagePermissionsModal({ subAccount, allBots, onClose }:
                         className="flex items-center"
                         aria-label="Toggle view access"
                       >
-                        <div className={`relative w-10 h-5 border-2 border-[#121212] transition-colors ${perm.granted ? 'bg-[#121212]' : 'bg-[#F0F0F0]'}`}>
-                          <div className={`absolute top-[2px] w-3 h-3 transition-all duration-150 ${perm.granted ? 'left-[18px] bg-white' : 'left-[2px] bg-[#121212]/30'}`} />
+                        <div className={`relative w-10 h-5 border-4 border-black transition-colors ${perm.granted ? 'bg-black' : 'bg-[#FFFDF5]'}`}>
+                          <div className={`absolute top-[2px] w-3 h-3 transition-all duration-150 ${perm.granted ? 'left-[18px] bg-white' : 'left-[2px] bg-black/30'}`} />
                         </div>
                       </button>
                     </div>
@@ -136,8 +136,8 @@ export default function ManagePermissionsModal({ subAccount, allBots, onClose }:
                         className="flex items-center disabled:opacity-30"
                         aria-label="Toggle edit access"
                       >
-                        <div className={`relative w-10 h-5 border-2 border-[#121212] transition-colors ${perm.canEdit && perm.granted ? 'bg-[#1040C0]' : 'bg-[#F0F0F0]'}`}>
-                          <div className={`absolute top-[2px] w-3 h-3 transition-all duration-150 ${perm.canEdit && perm.granted ? 'left-[18px] bg-white' : 'left-[2px] bg-[#121212]/30'}`} />
+                        <div className={`relative w-10 h-5 border-4 border-black transition-colors ${perm.canEdit && perm.granted ? 'bg-[#FF6B6B]' : 'bg-[#FFFDF5]'}`}>
+                          <div className={`absolute top-[2px] w-3 h-3 transition-all duration-150 ${perm.canEdit && perm.granted ? 'left-[18px] bg-white' : 'left-[2px] bg-black/30'}`} />
                         </div>
                       </button>
                     </div>
@@ -149,13 +149,13 @@ export default function ManagePermissionsModal({ subAccount, allBots, onClose }:
         </div>
 
         {/* Footer */}
-        <div className="px-6 pb-6 pt-3 border-t-2 border-[#121212]/10 shrink-0">
-          <p className="text-xs font-medium text-[#121212]/40 mb-3">
+        <div className="px-6 pb-6 pt-3 border-t-2 border-black/10 shrink-0">
+          <p className="text-xs font-medium text-black/40 mb-3">
             {grantedCount} of {allBots.length} bots granted access
           </p>
           {error && (
-            <div className="border-2 border-[#D02020] bg-[#D02020]/10 px-3 py-2 mb-3">
-              <p className="text-sm font-medium text-[#D02020]">{error}</p>
+            <div className="border-2 border-[#FF6B6B] bg-[#FF6B6B]/10 px-3 py-2 mb-3">
+              <p className="text-sm font-medium text-[#FF6B6B]">{error}</p>
             </div>
           )}
           <div className="flex gap-3">

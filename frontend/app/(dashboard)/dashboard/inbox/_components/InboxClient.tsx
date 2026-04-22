@@ -26,7 +26,7 @@ export default function InboxClient({ botIds, botId, initialConversation, initia
   return (
     <div className="flex h-full bg-[#F5F5F0]">
       {/* Left panel — conversation list */}
-      <div className={selected ? 'hidden md:flex md:w-80 md:shrink-0 md:border-r-2 md:border-[#121212]/10 md:flex-col md:bg-white' : 'w-full md:w-80 md:shrink-0 md:border-r-2 md:border-[#121212]/10 flex flex-col bg-white'}>
+      <div className={selected ? 'hidden md:flex md:w-80 md:shrink-0 md:border-r-2 md:border-black/10 md:flex-col md:bg-white' : 'w-full md:w-80 md:shrink-0 md:border-r-2 md:border-black/10 flex flex-col bg-white'}>
         <ConversationList
           botIds={botIds}
           botId={botId}

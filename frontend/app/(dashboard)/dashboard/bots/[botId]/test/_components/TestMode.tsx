@@ -450,40 +450,40 @@ export default function TestMode({ config }: { config: BotConfig }) {
       {/* ── Left: Trigger reference ── */}
       <div className="hidden lg:flex flex-col gap-4 w-[280px] shrink-0">
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-[#121212]/40 mb-1">How to test</p>
-          <h2 className="text-3xl font-black uppercase tracking-tighter text-[#121212]">Test Mode</h2>
-          <p className="text-sm font-medium text-[#121212]/50 mt-1">
+          <p className="text-xs font-bold uppercase tracking-widest text-black/40 mb-1">How to test</p>
+          <h2 className="text-3xl font-black uppercase tracking-tighter text-black">Test Mode</h2>
+          <p className="text-sm font-medium text-black/50 mt-1">
             Type keywords or click buttons in the phone to simulate a real conversation.
           </p>
         </div>
 
         {/* Trigger reference list */}
-        <div className="border-4 border-[#121212] shadow-[4px_4px_0px_0px_#121212] bg-white">
-          <div className="bg-[#121212] px-4 py-2.5">
+        <div className="border-4 border-black shadow-[4px_4px_0px_0px_#000] bg-white">
+          <div className="bg-black px-4 py-2.5">
             <p className="text-xs font-black uppercase tracking-widest text-white">Available Triggers</p>
           </div>
-          <div className="divide-y-2 divide-[#121212]/10 max-h-[500px] overflow-y-auto">
+          <div className="divide-y-2 divide-[#000000]/10 max-h-[500px] overflow-y-auto">
             {config.triggers.length === 0 ? (
-              <p className="px-4 py-6 text-xs font-medium text-[#121212]/40 text-center">No triggers yet</p>
+              <p className="px-4 py-6 text-xs font-medium text-black/40 text-center">No triggers yet</p>
             ) : config.triggers.map(t => (
               <div key={t.id} className="px-4 py-3">
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <span className="text-xs font-black text-[#121212] uppercase tracking-tight">{t.name}</span>
+                  <span className="text-xs font-black text-[#000000] uppercase tracking-tight">{t.name}</span>
                   <span className={`text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 ${
-                    t.action_type === 'replier' ? 'bg-[#1040C0] text-white'
-                    : t.action_type === 'form'   ? 'bg-[#D02020] text-white'
-                    : 'bg-[#F0C020] text-[#121212]'
+                    t.action_type === 'replier' ? 'bg-[#FF6B6B] text-white'
+                    : t.action_type === 'form'   ? 'bg-[#FF6B6B] text-white'
+                    : 'bg-[#FFD93D] text-black'
                   }`}>
                     {t.action_type}
                   </span>
                 </div>
 
                 {t.trigger_type === 'any' ? (
-                  <p className="text-[10px] font-bold text-[#121212]/40 uppercase tracking-widest">Catch-all (any message)</p>
+                  <p className="text-[10px] font-bold text-black/40 uppercase tracking-widest">Catch-all (any message)</p>
                 ) : (
                   <div className="flex flex-wrap gap-1 mt-1">
                     {t.keywords.map((kw, i) => (
-                      <span key={i} className="text-[10px] font-bold bg-[#F0F0F0] border border-[#121212]/20 px-1.5 py-0.5">
+                      <span key={i} className="text-[10px] font-bold bg-[#FFFDF5] border border-black/20 px-1.5 py-0.5">
                         {kw}
                       </span>
                     ))}
@@ -492,7 +492,7 @@ export default function TestMode({ config }: { config: BotConfig }) {
 
                 <div className="flex gap-1 mt-1.5">
                   {t.platforms.map(p => (
-                    <span key={p} className="text-[9px] font-black uppercase tracking-widest text-[#121212]/40">
+                    <span key={p} className="text-[9px] font-black uppercase tracking-widest text-black/40">
                       {p === 'whatsapp' ? 'WA' : 'IG'}
                     </span>
                   ))}
@@ -504,9 +504,9 @@ export default function TestMode({ config }: { config: BotConfig }) {
 
         {/* Session indicator */}
         {session.type !== 'idle' && (
-          <div className="border-2 border-[#F0C020] bg-[#F0C020]/20 px-4 py-3">
-            <p className="text-xs font-black uppercase tracking-widest text-[#121212]">Active Session</p>
-            <p className="text-xs font-medium text-[#121212]/60 mt-0.5">
+          <div className="border-2 border-[#FFD93D] bg-[#FFD93D]/20 px-4 py-3">
+            <p className="text-xs font-black uppercase tracking-widest text-black">Active Session</p>
+            <p className="text-xs font-medium text-black/60 mt-0.5">
               {session.type === 'form' && `Form — Q${session.qIndex + 1} of ${session.questions.length}`}
               {session.type === 'query' && 'FAQ browser'}
             </p>
@@ -520,13 +520,13 @@ export default function TestMode({ config }: { config: BotConfig }) {
         <div className="flex items-center gap-3 self-stretch justify-center">
           {/* Platform toggle */}
           {platforms.length > 1 && (
-            <div className="flex border-2 border-[#121212]">
+            <div className="flex border-4 border-black">
               {platforms.map(p => (
                 <button
                   key={p}
                   onClick={() => { setPlatform(p); handleReset() }}
                   className={`px-4 py-1.5 text-xs font-black uppercase tracking-widest transition-colors ${
-                    platform === p ? 'bg-[#121212] text-white' : 'bg-white text-[#121212]/50'
+                    platform === p ? 'bg-black text-white' : 'bg-white text-black/50'
                   }`}
                 >
                   {p === 'whatsapp' ? 'WhatsApp' : 'Instagram'}
@@ -537,7 +537,7 @@ export default function TestMode({ config }: { config: BotConfig }) {
 
           <button
             onClick={handleReset}
-            className="flex items-center gap-1.5 px-3 py-1.5 border-2 border-[#121212] text-xs font-black uppercase tracking-widest hover:bg-[#F0F0F0] transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 border-4 border-black text-xs font-black uppercase tracking-widest hover:bg-[#FFFDF5] transition-colors"
           >
             <RotateCcw className="w-3.5 h-3.5" strokeWidth={3} />
             Reset
@@ -545,9 +545,9 @@ export default function TestMode({ config }: { config: BotConfig }) {
         </div>
 
         {/* Phone frame */}
-        <div className="w-[300px] border-[6px] border-[#121212] rounded-[32px] overflow-hidden shadow-[8px_8px_0px_0px_#121212] bg-white">
+        <div className="w-[300px] border-[6px] border-black rounded-[32px] overflow-hidden shadow-[8px_8px_0px_0px_#000] bg-white">
           {/* Status bar */}
-          <div className={`px-5 pt-2 pb-1 flex justify-between items-center text-[10px] font-bold ${isWA ? 'bg-[#075E54] text-white' : 'bg-white text-[#121212]'}`}>
+          <div className={`px-5 pt-2 pb-1 flex justify-between items-center text-[10px] font-bold ${isWA ? 'bg-[#075E54] text-white' : 'bg-white text-black'}`}>
             <span>9:41</span>
             <span>100%</span>
           </div>
@@ -567,11 +567,11 @@ export default function TestMode({ config }: { config: BotConfig }) {
             </div>
           ) : (
             <div className="bg-white border-b border-gray-200 px-3 py-2 flex items-center gap-2">
-              <ChevronLeft className="w-5 h-5 text-[#121212]" strokeWidth={2.5} />
+              <ChevronLeft className="w-5 h-5 text-black" strokeWidth={2.5} />
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#833AB4] via-[#FD1D1D] to-[#F77737] flex items-center justify-center shrink-0">
                 <span className="text-white text-xs font-black">{config.bot.name[0]?.toUpperCase()}</span>
               </div>
-              <p className="text-[#121212] text-xs font-bold truncate flex-1">{config.bot.name}</p>
+              <p className="text-[#000000] text-xs font-bold truncate flex-1">{config.bot.name}</p>
             </div>
           )}
 
@@ -587,7 +587,7 @@ export default function TestMode({ config }: { config: BotConfig }) {
                 <div key={msg.id} className="flex flex-col gap-1.5">
                   {/* System message */}
                   {msg.from === 'system' && (
-                    <p className="text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest py-1">
+                    <p className="text-center text-[10px] font-bold text-black/400 uppercase tracking-widest py-1">
                       {msg.text}
                     </p>
                   )}
@@ -596,7 +596,7 @@ export default function TestMode({ config }: { config: BotConfig }) {
                   {msg.from === 'user' && (
                     <div className="self-end max-w-[80%]">
                       <div className={`px-3 py-2 rounded-tl-xl rounded-tr-xl rounded-bl-xl text-xs leading-relaxed ${
-                        isWA ? 'bg-[#DCF8C6] text-[#121212]' : 'bg-[#0095F6] text-white'
+                        isWA ? 'bg-[#DCF8C6] text-black' : 'bg-[#0095F6] text-white'
                       }`}>
                         <p style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{msg.text}</p>
                         <span className="block text-right text-[9px] mt-0.5 opacity-60">
@@ -618,7 +618,7 @@ export default function TestMode({ config }: { config: BotConfig }) {
                               style={{ width: `${((msg.progress.done + 1) / msg.progress.total) * 100}%` }}
                             />
                           </div>
-                          <span className="text-[9px] font-bold text-gray-500 shrink-0">
+                          <span className="text-[9px] font-bold text-black/500 shrink-0">
                             {msg.progress.done + 1}/{msg.progress.total}
                           </span>
                         </div>
@@ -626,10 +626,10 @@ export default function TestMode({ config }: { config: BotConfig }) {
 
                       {/* Bubble */}
                       <div className={`px-3 py-2 rounded-tr-xl rounded-br-xl rounded-bl-xl text-xs leading-relaxed ${
-                        isWA ? 'bg-white text-[#121212] shadow-sm' : 'bg-[#F0F0F0] text-[#121212]'
+                        isWA ? 'bg-white text-[#000000] shadow-sm' : 'bg-[#FFFDF5] text-black'
                       }`}>
                         <p style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{msg.text}</p>
-                        <span className="block text-right text-[9px] mt-0.5 text-gray-400">
+                        <span className="block text-right text-[9px] mt-0.5 text-black/400">
                           {isWA ? '9:41 ✓✓' : '9:41 AM'}
                         </span>
                       </div>
@@ -662,13 +662,13 @@ export default function TestMode({ config }: { config: BotConfig }) {
 
           {/* Error message */}
           {error && (
-            <div className="px-3 py-1.5 bg-[#D02020]/10 border-t border-[#D02020]/30">
-              <p className="text-[10px] font-bold text-[#D02020]">{error}</p>
+            <div className="px-3 py-1.5 bg-[#FF6B6B]/10 border-t border-[#FF6B6B]/30">
+              <p className="text-[10px] font-bold text-[#FF6B6B]">{error}</p>
             </div>
           )}
 
           {/* Input bar */}
-          <div className={`px-2 py-2 flex items-center gap-1.5 ${isWA ? 'bg-[#F0F0F0]' : 'bg-white border-t border-gray-200'}`}>
+          <div className={`px-2 py-2 flex items-center gap-1.5 ${isWA ? 'bg-[#FFFDF5]' : 'bg-white border-t border-gray-200'}`}>
             <input
               type="text"
               value={input}
@@ -677,7 +677,7 @@ export default function TestMode({ config }: { config: BotConfig }) {
               disabled={inputDisabled}
               placeholder={session.type === 'query' ? 'Click a button above...' : 'Type a message...'}
               className={`flex-1 rounded-full px-3 py-1.5 text-[10px] focus:outline-none ${
-                isWA ? 'bg-white' : 'bg-[#F0F0F0]'
+                isWA ? 'bg-white' : 'bg-[#FFFDF5]'
               } disabled:opacity-50`}
             />
             <button
@@ -692,7 +692,7 @@ export default function TestMode({ config }: { config: BotConfig }) {
           </div>
         </div>
 
-        <p className="text-xs font-bold uppercase tracking-widest text-[#121212]/30">
+        <p className="text-xs font-bold uppercase tracking-widest text-black/30">
           Simulator — No real messages sent
         </p>
       </div>

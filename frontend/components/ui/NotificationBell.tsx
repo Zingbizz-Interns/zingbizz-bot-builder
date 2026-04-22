@@ -106,48 +106,50 @@ export default function NotificationBell({ botIds }: NotificationBellProps) {
     <div ref={ref} className="relative">
       <button
         onClick={handleOpen}
-        className="flex items-center gap-2 w-full px-3 py-2.5 text-xs font-bold uppercase tracking-widest transition-all duration-200 border-2 border-transparent text-white/60 hover:text-white hover:border-white/20"
+        className="flex items-center gap-2 w-full px-3 py-2.5 text-xs font-black uppercase tracking-widest transition-all duration-100 border-2 border-transparent text-white/50 hover:text-white hover:border-white/30"
         aria-label="Notifications"
       >
         <Bell className="w-4 h-4 shrink-0" strokeWidth={2} />
         <span>Alerts</span>
         {unreadCount > 0 && (
-          <span className="ml-auto text-[10px] font-black px-1.5 py-0.5 rounded-full bg-[#D02020] text-white">
+          <span className="ml-auto text-[10px] font-black px-1.5 py-0.5 bg-[#FF6B6B] text-black border-2 border-black">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
       </button>
 
       {open && (
-        <div className="absolute left-full top-0 ml-2 w-80 bg-white border-4 border-[#121212] shadow-[6px_6px_0px_0px_#121212] z-50">
+        <div className="absolute left-full top-0 ml-2 w-80 bg-[#FFFDF5] border-4 border-black shadow-[8px_8px_0px_0px_#000] z-50">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b-2 border-[#121212]">
-            <p className="text-xs font-black uppercase tracking-widest text-[#121212]">Notifications</p>
+          <div className="flex items-center justify-between px-4 py-3 border-b-4 border-black">
+            <p className="text-xs font-black uppercase tracking-widest text-black">Notifications</p>
             <button
               onClick={async () => {
                 await markAllAlertsRead(stableBotIds)
                 setAlerts(prev => prev.map(a => ({ ...a, is_read: true })))
                 setUnreadCount(0)
               }}
-              className="text-[10px] font-bold uppercase tracking-widest text-[#1040C0] hover:underline"
+              className="text-[10px] font-black uppercase tracking-widest text-black hover:text-[#FF6B6B] transition-colors"
             >
               Mark all read
             </button>
           </div>
 
           {/* Alert list */}
-          <div className="max-h-80 overflow-y-auto divide-y divide-[#121212]/10">
+          <div className="max-h-80 overflow-y-auto divide-y-2 divide-black/10">
             {alerts.length === 0 ? (
               <div className="px-4 py-6 text-center">
-                <p className="text-xs font-medium text-[#121212]/40">No notifications yet</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-black/40">No notifications yet</p>
               </div>
             ) : (
               alerts.map(alert => (
                 <button
                   key={alert.id}
                   onClick={() => handleAlertClick(alert)}
-                  className={`w-full text-left px-4 py-3 hover:bg-[#F0F0F0] transition-colors border-l-4 ${
-                    !alert.is_read ? 'border-[#1040C0] bg-[#1040C0]/5' : 'border-transparent'
+                  className={`w-full text-left px-4 py-3 transition-colors duration-100 border-l-4 ${
+                    !alert.is_read
+                      ? 'border-[#FF6B6B] bg-[#FF6B6B]/10 hover:bg-[#FF6B6B]/20'
+                      : 'border-transparent hover:bg-[#FFD93D]/20'
                   }`}
                 >
                   <div className="flex items-start gap-2">
@@ -155,13 +157,13 @@ export default function NotificationBell({ botIds }: NotificationBellProps) {
                       {alert.alert_type === 'window_closing' ? '⚠️' : '⏱'}
                     </span>
                     <div className="min-w-0">
-                      <p className="text-xs font-bold text-[#121212] truncate">
+                      <p className="text-xs font-black text-black truncate">
                         {ALERT_LABELS[alert.alert_type] ?? alert.alert_type} — {alert.bot_name}
                       </p>
-                      <p className="text-xs font-medium text-[#121212]/60 truncate mt-0.5">
+                      <p className="text-xs font-bold text-black/50 truncate mt-0.5">
                         {alert.sender_id}
                       </p>
-                      <p className="text-[10px] font-medium text-[#121212]/30 mt-0.5">
+                      <p className="text-[10px] font-bold text-black/30 mt-0.5">
                         {timeAgo(alert.triggered_at)}
                       </p>
                     </div>
@@ -172,11 +174,11 @@ export default function NotificationBell({ botIds }: NotificationBellProps) {
           </div>
 
           {/* Footer */}
-          <div className="border-t-2 border-[#121212] px-4 py-2.5">
+          <div className="border-t-4 border-black px-4 py-2.5 bg-[#FFD93D]">
             <Link
               href="/dashboard/alerts"
               onClick={() => setOpen(false)}
-              className="text-[10px] font-black uppercase tracking-widest text-[#1040C0] hover:underline"
+              className="text-[10px] font-black uppercase tracking-widest text-black hover:underline underline-offset-2"
             >
               View all alerts →
             </Link>

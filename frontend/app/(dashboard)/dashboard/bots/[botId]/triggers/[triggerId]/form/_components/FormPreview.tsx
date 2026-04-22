@@ -130,7 +130,7 @@ export default function FormPreview({ platforms, botName, questions, showProgres
         inputPlaceholder={isTextInput ? (currentQ?.is_required ? 'Type answer...' : 'Type or skip...') : undefined}
       >
         {(isWA) => total === 0 ? (
-          <p className="text-center text-xs text-gray-400 italic py-8">Add questions to preview</p>
+          <p className="text-center text-xs text-black/400 italic py-8">Add questions to preview</p>
         ) : (
           <div className="w-full flex flex-col gap-2">
             {/* Progress bar */}
@@ -142,7 +142,7 @@ export default function FormPreview({ platforms, botName, questions, showProgres
                     style={{ width: `${isComplete ? 100 : total > 0 ? (answeredCount / total) * 100 : 0}%` }}
                   />
                 </div>
-                <span className="text-[9px] font-bold text-gray-500 shrink-0">
+                <span className="text-[9px] font-bold text-black/500 shrink-0">
                   {isComplete ? `${total}/${total}` : `${answeredCount}/${total}`}
                 </span>
               </div>
@@ -153,14 +153,14 @@ export default function FormPreview({ platforms, botName, questions, showProgres
               {history.map((h, i) => (
                 <div key={i} className="flex flex-col gap-1">
                   <div className="max-w-[85%] self-start">
-                    <div className={`px-3 py-2 rounded-tr-xl rounded-br-xl rounded-bl-xl text-xs leading-relaxed ${isWA ? 'bg-white text-[#121212] shadow-sm' : 'bg-[#F0F0F0] text-[#121212]'}`}>
+                    <div className={`px-3 py-2 rounded-tr-xl rounded-br-xl rounded-bl-xl text-xs leading-relaxed ${isWA ? 'bg-white text-[#000000] shadow-sm' : 'bg-[#FFFDF5] text-black'}`}>
                       <p style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
                         {h.questionText || 'Question text...'}
                       </p>
                     </div>
                   </div>
                   <div className="max-w-[70%] self-end">
-                    <div className={`px-3 py-2 rounded-tl-xl rounded-tr-xl rounded-bl-xl text-xs ${isWA ? 'bg-[#DCF8C6] text-[#121212]' : 'bg-[#0095F6] text-white'}`}>
+                    <div className={`px-3 py-2 rounded-tl-xl rounded-tr-xl rounded-bl-xl text-xs ${isWA ? 'bg-[#DCF8C6] text-black' : 'bg-[#0095F6] text-white'}`}>
                       <p>{h.answer}</p>
                     </div>
                   </div>
@@ -170,12 +170,12 @@ export default function FormPreview({ platforms, botName, questions, showProgres
               {/* Current question bubble */}
               {currentQ && (
                 <div className="max-w-[85%] self-start">
-                  <div className={`px-3 py-2 rounded-tr-xl rounded-br-xl rounded-bl-xl text-xs leading-relaxed ${isWA ? 'bg-white text-[#121212] shadow-sm' : 'bg-[#F0F0F0] text-[#121212]'}`}>
+                  <div className={`px-3 py-2 rounded-tr-xl rounded-br-xl rounded-bl-xl text-xs leading-relaxed ${isWA ? 'bg-white text-[#000000] shadow-sm' : 'bg-[#FFFDF5] text-black'}`}>
                     <p style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
                       {resolveTokens(currentQ.question_text, history) || 'Question text...'}
                     </p>
                     {!currentQ.is_required && (
-                      <p className="text-[10px] text-gray-400 mt-1 italic">Optional - reply &quot;skip&quot;</p>
+                      <p className="text-[10px] text-black/400 mt-1 italic">Optional - reply &quot;skip&quot;</p>
                     )}
                   </div>
                 </div>
@@ -184,7 +184,7 @@ export default function FormPreview({ platforms, botName, questions, showProgres
               {/* Completion */}
               {isComplete && (
                 <div className="max-w-[85%] self-start">
-                  <div className={`px-3 py-2 rounded-tr-xl rounded-br-xl rounded-bl-xl text-xs ${isWA ? 'bg-white text-[#121212] shadow-sm' : 'bg-[#F0F0F0] text-[#121212]'}`}>
+                  <div className={`px-3 py-2 rounded-tr-xl rounded-br-xl rounded-bl-xl text-xs ${isWA ? 'bg-white text-[#000000] shadow-sm' : 'bg-[#FFFDF5] text-black'}`}>
                     <p className="font-bold" style={{ color: '#128C7E' }}>✓ Form complete</p>
                   </div>
                 </div>
@@ -216,7 +216,7 @@ export default function FormPreview({ platforms, botName, questions, showProgres
       {total > 0 && (
         <button
           onClick={reset}
-          className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#121212]/50 hover:text-[#121212] border-2 border-[#121212]/30 hover:border-[#121212] px-3 py-1.5 transition-colors"
+          className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-black/50 hover:text-[#000000] border-4 border-black/30 hover:border-black px-3 py-1.5 transition-colors"
         >
           <RotateCcw className="w-3 h-3" strokeWidth={3} />
           Reset

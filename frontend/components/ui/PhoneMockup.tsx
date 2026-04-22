@@ -28,13 +28,13 @@ export default function PhoneMockup({ platforms, botName, label, inputValue, onI
     <div className="flex flex-col items-center gap-3">
       {/* Platform toggle — only when trigger has both platforms */}
       {platforms.includes('whatsapp') && platforms.includes('instagram') && (
-        <div className="flex border-2 border-[#121212]">
+        <div className="flex border-4 border-black shadow-[4px_4px_0px_0px_#000]">
           {(['whatsapp', 'instagram'] as const).map(p => (
             <button
               key={p}
               onClick={() => setSkin(p)}
-              className={`px-4 py-1.5 text-xs font-black uppercase tracking-widest transition-colors ${
-                skin === p ? 'bg-[#121212] text-white' : 'bg-white text-[#121212]/50'
+              className={`px-4 py-1.5 text-xs font-black uppercase tracking-widest transition-colors duration-100 ${
+                skin === p ? 'bg-black text-white' : 'bg-[#FFFDF5] text-black hover:bg-[#FFD93D]'
               }`}
             >
               {p === 'whatsapp' ? 'WA' : 'IG'}
@@ -44,7 +44,7 @@ export default function PhoneMockup({ platforms, botName, label, inputValue, onI
       )}
 
       {/* Phone frame */}
-      <div className="w-[280px] border-[6px] border-[#121212] rounded-[32px] overflow-hidden shadow-[6px_6px_0px_0px_#121212] bg-white">
+      <div className="w-[280px] border-[6px] border-black shadow-[8px_8px_0px_0px_#000] overflow-hidden bg-white">
         {/* Status bar */}
         <div className={`px-5 pt-2 pb-1 flex justify-between items-center text-[10px] font-bold ${isWA ? 'bg-[#075E54] text-white' : 'bg-white text-[#121212]'}`}>
           <span>9:41</span>
@@ -108,7 +108,7 @@ export default function PhoneMockup({ platforms, botName, label, inputValue, onI
       </div>
 
       {labelText && (
-        <p className="text-xs font-bold uppercase tracking-widest text-[#121212]/30">{labelText}</p>
+        <p className="text-xs font-black uppercase tracking-widest text-black/40">{labelText}</p>
       )}
     </div>
   )

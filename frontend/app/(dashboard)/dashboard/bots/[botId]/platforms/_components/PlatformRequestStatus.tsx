@@ -72,17 +72,17 @@ function getStatusCopy(platform: Platform, request: PlatformConnectionRequest | 
 }
 
 const toneClasses = {
-  neutral: 'border-[#121212]/20 bg-[#F6F6F6] text-[#121212]',
-  success: 'border-[#107040] bg-[#107040]/10 text-[#121212]',
-  warning: 'border-[#F0C020] bg-[#F0C020]/12 text-[#121212]',
-  danger: 'border-[#D02020] bg-[#D02020]/10 text-[#121212]',
+  neutral: 'border-black/20 bg-[#F6F6F6] text-black',
+  success: 'border-[#107040] bg-[#107040]/10 text-black',
+  warning: 'border-[#FFD93D] bg-[#FFD93D]/12 text-black',
+  danger: 'border-[#FF6B6B] bg-[#FF6B6B]/10 text-black',
 }
 
 const badgeToneClasses = {
-  neutral: 'border-[#121212] bg-white text-[#121212]/70',
+  neutral: 'border-black bg-white text-black/70',
   success: 'border-[#107040] bg-[#107040] text-white',
-  warning: 'border-[#121212] bg-[#F0C020] text-[#121212]',
-  danger: 'border-[#D02020] bg-[#D02020] text-white',
+  warning: 'border-black bg-[#FFD93D] text-black',
+  danger: 'border-[#FF6B6B] bg-[#FF6B6B] text-white',
 }
 
 export default function PlatformRequestStatus({
@@ -96,17 +96,17 @@ export default function PlatformRequestStatus({
     <div className={`border-2 px-4 py-3 ${toneClasses[status.tone]}`}>
       <div className="flex flex-col gap-2 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-[#121212]/45">
+          <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-[#000000]/45">
             Approval Status
           </p>
-          <h4 className="mt-1 text-sm font-black uppercase tracking-tight text-[#121212]">
+          <h4 className="mt-1 text-sm font-black uppercase tracking-tight text-black">
             {status.title}
           </h4>
-          <p className="mt-2 text-sm font-medium leading-relaxed text-[#121212]/75">
+          <p className="mt-2 text-sm font-medium leading-relaxed text-[#000000]/75">
             {status.body}
           </p>
           {request?.decision_note?.trim() && (
-            <p className="mt-3 border-l-4 border-[#121212] pl-3 text-xs font-bold uppercase tracking-[0.2em] text-[#121212]/65">
+            <p className="mt-3 border-l-4 border-black pl-3 text-xs font-bold uppercase tracking-[0.2em] text-[#000000]/65">
               Review Note: {request.decision_note.trim()}
             </p>
           )}

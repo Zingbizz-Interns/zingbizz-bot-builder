@@ -26,7 +26,7 @@ interface QueryBuilderUIProps {
   } | null
 }
 
-const inputClass = 'w-full px-3 py-2 border-2 border-[#121212] bg-[#F0F0F0] text-sm font-medium placeholder:text-[#121212]/30 focus:outline-none focus:bg-white transition-colors'
+const inputClass = 'w-full px-3 py-2 border-4 border-black bg-[#FFFDF5] text-sm font-medium placeholder:text-black/30 focus:outline-none focus:bg-white transition-colors'
 
 export default function QueryBuilderUI({ trigger, botName, existing }: QueryBuilderUIProps) {
   const canEdit = useCanEdit()
@@ -115,26 +115,26 @@ export default function QueryBuilderUI({ trigger, botName, existing }: QueryBuil
       <div className="flex-1 min-w-0">
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-1">
-            <p className="text-xs font-bold uppercase tracking-widest text-[#121212]/40">Trigger — {trigger.name}</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-black/40">Trigger — {trigger.name}</p>
             <SaveStatusIndicator status={status} />
           </div>
-          <h2 className="text-3xl font-black uppercase tracking-tighter text-[#121212]">Query Builder</h2>
-          <p className="text-sm font-medium text-[#121212]/50 mt-1">Build FAQ categories with questions and pre-written answers.</p>
+          <h2 className="text-3xl font-black uppercase tracking-tighter text-black">Query Builder</h2>
+          <p className="text-sm font-medium text-black/50 mt-1">Build FAQ categories with questions and pre-written answers.</p>
         </div>
 
         <div className="space-y-4">
           {categories.length === 0 && (
-            <div className="border-4 border-dashed border-[#121212] p-10 text-center">
-              <p className="text-sm font-bold uppercase tracking-widest text-[#121212]/40">No categories yet.</p>
+            <div className="border-4 border-dashed border-black p-10 text-center">
+              <p className="text-sm font-bold uppercase tracking-widest text-black/40">No categories yet.</p>
             </div>
           )}
 
           {categories.map((cat, ci) => (
-            <div key={cat.localId} className="border-4 border-[#121212] shadow-[4px_4px_0px_0px_#121212] bg-white">
+            <div key={cat.localId} className="border-4 border-black shadow-[4px_4px_0px_0px_#000] bg-white">
               {/* Category header */}
-              <div className="bg-[#F0C020] border-b-4 border-[#121212] px-4 py-2.5 flex items-center gap-2">
+              <div className="bg-[#FFD93D] border-b-4 border-black px-4 py-2.5 flex items-center gap-2">
                 <button onClick={() => updateCategory(cat.localId, { expanded: !cat.expanded })}
-                  className="p-0.5 text-[#121212]/60 hover:text-[#121212] transition-colors">
+                  className="p-0.5 text-black/60 hover:text-[#000000] transition-colors">
                   <ChevronRight className={`w-4 h-4 transition-transform ${cat.expanded ? 'rotate-90' : ''}`} strokeWidth={3} />
                 </button>
                 <input
@@ -142,13 +142,13 @@ export default function QueryBuilderUI({ trigger, botName, existing }: QueryBuil
                   onChange={e => updateCategory(cat.localId, { category_name: e.target.value })}
                   readOnly={!canEdit}
                   placeholder="Category name e.g. Admissions, Fees"
-                  className="flex-1 bg-transparent text-sm font-black uppercase tracking-tighter placeholder:text-[#121212]/30 focus:outline-none read-only:cursor-not-allowed"
+                  className="flex-1 bg-transparent text-sm font-black uppercase tracking-tighter placeholder:text-black/30 focus:outline-none read-only:cursor-not-allowed"
                 />
                 {canEdit && (
                   <div className="flex items-center gap-1">
-                    <button onClick={() => moveCategory(ci, -1)} disabled={ci === 0} className="p-1 text-[#121212]/30 hover:text-[#121212] disabled:opacity-20 transition-colors"><ChevronUp className="w-3.5 h-3.5" strokeWidth={3} /></button>
-                    <button onClick={() => moveCategory(ci, 1)} disabled={ci === categories.length - 1} className="p-1 text-[#121212]/30 hover:text-[#121212] disabled:opacity-20 transition-colors"><ChevronDown className="w-3.5 h-3.5" strokeWidth={3} /></button>
-                    <button onClick={() => deleteCategory(cat.localId)} className="p-1 text-[#121212]/30 hover:text-[#D02020] transition-colors"><Trash2 className="w-3.5 h-3.5" strokeWidth={2} /></button>
+                    <button onClick={() => moveCategory(ci, -1)} disabled={ci === 0} className="p-1 text-black/30 hover:text-[#000000] disabled:opacity-20 transition-colors"><ChevronUp className="w-3.5 h-3.5" strokeWidth={3} /></button>
+                    <button onClick={() => moveCategory(ci, 1)} disabled={ci === categories.length - 1} className="p-1 text-black/30 hover:text-[#000000] disabled:opacity-20 transition-colors"><ChevronDown className="w-3.5 h-3.5" strokeWidth={3} /></button>
+                    <button onClick={() => deleteCategory(cat.localId)} className="p-1 text-black/30 hover:text-[#FF6B6B] transition-colors"><Trash2 className="w-3.5 h-3.5" strokeWidth={2} /></button>
                   </div>
                 )}
               </div>
@@ -156,18 +156,18 @@ export default function QueryBuilderUI({ trigger, botName, existing }: QueryBuil
               {cat.expanded && (
                 <div className="p-4 space-y-3">
                   {cat.questions.length === 0 && (
-                    <p className="text-xs text-[#121212]/40 italic text-center py-2">No questions yet.</p>
+                    <p className="text-xs text-black/40 italic text-center py-2">No questions yet.</p>
                   )}
 
                   {cat.questions.map((q, qi) => (
-                    <div key={q.localId} className="border-2 border-[#121212] p-3 bg-[#F0F0F0] space-y-2">
+                    <div key={q.localId} className="border-4 border-black p-3 bg-[#FFFDF5] space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-black uppercase tracking-widest text-[#121212]/50">Q{qi + 1}</span>
+                        <span className="text-xs font-black uppercase tracking-widest text-black/50">Q{qi + 1}</span>
                         {canEdit && (
                           <div className="flex gap-1">
-                            <button onClick={() => moveQuestion(cat.localId, qi, -1)} disabled={qi === 0} className="p-0.5 text-[#121212]/30 hover:text-[#121212] disabled:opacity-20"><ChevronUp className="w-3 h-3" strokeWidth={3} /></button>
-                            <button onClick={() => moveQuestion(cat.localId, qi, 1)} disabled={qi === cat.questions.length - 1} className="p-0.5 text-[#121212]/30 hover:text-[#121212] disabled:opacity-20"><ChevronDown className="w-3 h-3" strokeWidth={3} /></button>
-                            <button onClick={() => deleteQuestion(cat.localId, q.localId)} className="p-0.5 text-[#121212]/30 hover:text-[#D02020]"><Trash2 className="w-3 h-3" strokeWidth={2} /></button>
+                            <button onClick={() => moveQuestion(cat.localId, qi, -1)} disabled={qi === 0} className="p-0.5 text-black/30 hover:text-[#000000] disabled:opacity-20"><ChevronUp className="w-3 h-3" strokeWidth={3} /></button>
+                            <button onClick={() => moveQuestion(cat.localId, qi, 1)} disabled={qi === cat.questions.length - 1} className="p-0.5 text-black/30 hover:text-[#000000] disabled:opacity-20"><ChevronDown className="w-3 h-3" strokeWidth={3} /></button>
+                            <button onClick={() => deleteQuestion(cat.localId, q.localId)} className="p-0.5 text-black/30 hover:text-[#FF6B6B]"><Trash2 className="w-3 h-3" strokeWidth={2} /></button>
                           </div>
                         )}
                       </div>
@@ -191,7 +191,7 @@ export default function QueryBuilderUI({ trigger, botName, existing }: QueryBuil
 
                   {canEdit && (
                     <button type="button" onClick={() => addQuestion(cat.localId)}
-                      className="w-full border-2 border-dashed border-[#121212] py-2 flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#121212]/40 hover:text-[#121212] hover:bg-[#F0F0F0] transition-colors">
+                      className="w-full border-2 border-dashed border-black py-2 flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-widest text-black/40 hover:text-[#000000] hover:bg-[#FFFDF5] transition-colors">
                       <Plus className="w-3.5 h-3.5" strokeWidth={3} /> Add Question
                     </button>
                   )}
@@ -202,12 +202,12 @@ export default function QueryBuilderUI({ trigger, botName, existing }: QueryBuil
 
           {canEdit && (
             <button type="button" onClick={addCategory}
-              className="w-full border-4 border-dashed border-[#121212] py-4 flex items-center justify-center gap-2 text-xs font-black uppercase tracking-widest text-[#121212]/40 hover:text-[#121212] hover:bg-[#F0F0F0] transition-colors">
+              className="w-full border-4 border-dashed border-black py-4 flex items-center justify-center gap-2 text-xs font-black uppercase tracking-widest text-black/40 hover:text-[#000000] hover:bg-[#FFFDF5] transition-colors">
               <Plus className="w-4 h-4" strokeWidth={3} /> Add Category
             </button>
           )}
 
-          {error && <div className="border-2 border-[#D02020] bg-[#D02020]/10 px-3 py-2"><p className="text-sm font-medium text-[#D02020]">{error}</p></div>}
+          {error && <div className="border-2 border-[#FF6B6B] bg-[#FF6B6B]/10 px-3 py-2"><p className="text-sm font-medium text-[#FF6B6B]">{error}</p></div>}
 
           {canEdit && (
             <Button variant="yellow" onClick={triggerSave} disabled={status === 'saving'}>

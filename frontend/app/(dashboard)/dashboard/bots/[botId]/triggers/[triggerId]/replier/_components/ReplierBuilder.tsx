@@ -88,7 +88,7 @@ export default function ReplierBuilder({ trigger, botName, existing, allTriggers
   const { status, triggerSave } = useAutoSave(doSave, [message, buttons])
   useUnsavedChanges(status)
 
-  const inputClass = 'w-full px-3 py-2.5 border-2 border-[#121212] bg-[#F0F0F0] text-sm font-medium placeholder:text-[#121212]/30 focus:outline-none focus:bg-white transition-colors'
+  const inputClass = 'w-full px-3 py-2.5 border-4 border-black bg-[#FFFDF5] text-sm font-medium placeholder:text-black/30 focus:outline-none focus:bg-white transition-colors'
 
   return (
     <div className="flex gap-8 p-8 min-h-full">
@@ -96,19 +96,19 @@ export default function ReplierBuilder({ trigger, botName, existing, allTriggers
       <div className="flex-1 min-w-0">
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-1">
-            <p className="text-xs font-bold uppercase tracking-widest text-[#121212]/40">Trigger — {trigger.name}</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-black/40">Trigger — {trigger.name}</p>
             <SaveStatusIndicator status={status} />
           </div>
-          <h2 className="text-3xl font-black uppercase tracking-tighter text-[#121212]">Replier Builder</h2>
-          <p className="text-sm font-medium text-[#121212]/50 mt-1">
+          <h2 className="text-3xl font-black uppercase tracking-tighter text-black">Replier Builder</h2>
+          <p className="text-sm font-medium text-black/50 mt-1">
             Write a message and optionally add quick-reply buttons.
           </p>
         </div>
 
         <div className="space-y-6">
           {/* Message */}
-          <div className="border-4 border-[#121212] shadow-[4px_4px_0px_0px_#121212] bg-white">
-            <div className="bg-[#1040C0] border-b-4 border-[#121212] px-5 py-3">
+          <div className="border-4 border-black shadow-[4px_4px_0px_0px_#000] bg-white">
+            <div className="bg-[#FF6B6B] border-b-4 border-black px-5 py-3">
               <h3 className="text-sm font-black uppercase tracking-tighter text-white">Message</h3>
             </div>
             <div className="p-5">
@@ -120,25 +120,25 @@ export default function ReplierBuilder({ trigger, botName, existing, allTriggers
                 placeholder="Type your bot's message here..."
                 className={`${inputClass} resize-none read-only:opacity-60 read-only:cursor-not-allowed`}
               />
-              <p className="text-xs font-medium text-[#121212]/40 mt-1.5">
+              <p className="text-xs font-medium text-black/40 mt-1.5">
                 Supports plain text. Keep it concise.
               </p>
             </div>
           </div>
 
           {/* Buttons */}
-          <div className="border-4 border-[#121212] shadow-[4px_4px_0px_0px_#121212] bg-white">
-            <div className="bg-[#F0C020] border-b-4 border-[#121212] px-5 py-3 flex items-center justify-between">
+          <div className="border-4 border-black shadow-[4px_4px_0px_0px_#000] bg-white">
+            <div className="bg-[#FFD93D] border-b-4 border-black px-5 py-3 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-black uppercase tracking-tighter text-[#121212]">Quick-Reply Buttons</h3>
-                <p className="text-xs font-medium text-[#121212]/50">Max 3 buttons</p>
+                <h3 className="text-sm font-black uppercase tracking-tighter text-black">Quick-Reply Buttons</h3>
+                <p className="text-xs font-medium text-black/50">Max 3 buttons</p>
               </div>
               {canEdit && (
                 <button
                   type="button"
                   onClick={addButton}
                   disabled={buttons.length >= 3}
-                  className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest border-2 border-[#121212] px-3 py-1.5 bg-white hover:bg-[#F0F0F0] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest border-4 border-black px-3 py-1.5 bg-white hover:bg-[#FFFDF5] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                 >
                   <Plus className="w-3.5 h-3.5" strokeWidth={3} />
                   Add Button
@@ -148,7 +148,7 @@ export default function ReplierBuilder({ trigger, botName, existing, allTriggers
 
             <div className="p-5 space-y-3">
               {buttons.length === 0 ? (
-                <p className="text-xs font-medium text-[#121212]/40 text-center py-4">
+                <p className="text-xs font-medium text-black/40 text-center py-4">
                   No buttons yet. Add up to 3 quick-reply buttons.
                 </p>
               ) : (
@@ -157,10 +157,10 @@ export default function ReplierBuilder({ trigger, botName, existing, allTriggers
                     {/* Order controls */}
                     {canEdit && (
                       <div className="flex flex-col gap-0.5 pt-1">
-                        <button type="button" onClick={() => moveButton(i, -1)} disabled={i === 0} className="p-0.5 text-[#121212]/30 hover:text-[#121212] disabled:opacity-20 transition-colors">
+                        <button type="button" onClick={() => moveButton(i, -1)} disabled={i === 0} className="p-0.5 text-black/30 hover:text-[#000000] disabled:opacity-20 transition-colors">
                           <ChevronUp className="w-3.5 h-3.5" strokeWidth={3} />
                         </button>
-                        <button type="button" onClick={() => moveButton(i, 1)} disabled={i === buttons.length - 1} className="p-0.5 text-[#121212]/30 hover:text-[#121212] disabled:opacity-20 transition-colors">
+                        <button type="button" onClick={() => moveButton(i, 1)} disabled={i === buttons.length - 1} className="p-0.5 text-black/30 hover:text-[#000000] disabled:opacity-20 transition-colors">
                           <ChevronDown className="w-3.5 h-3.5" strokeWidth={3} />
                         </button>
                       </div>
@@ -169,7 +169,7 @@ export default function ReplierBuilder({ trigger, botName, existing, allTriggers
                     {/* Inputs */}
                     <div className="flex-1 grid grid-cols-2 gap-2">
                       <div>
-                        <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1">
+                        <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1">
                           Button Label
                         </label>
                         <input
@@ -182,7 +182,7 @@ export default function ReplierBuilder({ trigger, botName, existing, allTriggers
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1">
+                        <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1">
                           Links to Trigger
                         </label>
                         <select
@@ -201,7 +201,7 @@ export default function ReplierBuilder({ trigger, botName, existing, allTriggers
 
                     {/* Delete */}
                     {canEdit && (
-                      <button type="button" onClick={() => removeButton(btn.localId)} className="mt-6 p-1.5 text-[#121212]/30 hover:text-[#D02020] transition-colors">
+                      <button type="button" onClick={() => removeButton(btn.localId)} className="mt-6 p-1.5 text-black/30 hover:text-[#FF6B6B] transition-colors">
                         <Trash2 className="w-4 h-4" strokeWidth={2} />
                       </button>
                     )}
@@ -213,13 +213,13 @@ export default function ReplierBuilder({ trigger, botName, existing, allTriggers
 
           {/* Feedback + Save */}
           {error && (
-            <div className="border-2 border-[#D02020] bg-[#D02020]/10 px-3 py-2">
-              <p className="text-sm font-medium text-[#D02020]">{error}</p>
+            <div className="border-2 border-[#FF6B6B] bg-[#FF6B6B]/10 px-3 py-2">
+              <p className="text-sm font-medium text-[#FF6B6B]">{error}</p>
             </div>
           )}
 
           {canEdit && (
-            <Button variant="blue" onClick={triggerSave} disabled={status === 'saving'}>
+            <Button variant="yellow" onClick={triggerSave} disabled={status === 'saving'}>
               <Save className="w-4 h-4" strokeWidth={2.5} />
               {status === 'saving' ? 'Saving...' : 'Save Replier'}
             </Button>
@@ -230,7 +230,7 @@ export default function ReplierBuilder({ trigger, botName, existing, allTriggers
       {/* ── Right: Phone Preview ── */}
       <div className="hidden lg:block w-[320px] shrink-0">
         <div className="sticky top-8">
-          <p className="text-xs font-black uppercase tracking-widest text-[#121212]/40 mb-4 text-center">
+          <p className="text-xs font-black uppercase tracking-widest text-black/40 mb-4 text-center">
             Live Preview
           </p>
           <PhonePreview

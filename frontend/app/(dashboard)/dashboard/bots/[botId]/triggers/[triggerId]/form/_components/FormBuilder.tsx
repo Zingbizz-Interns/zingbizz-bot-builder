@@ -163,7 +163,7 @@ export default function FormBuilder({ trigger, botName, existing }: FormBuilderP
   const { status, triggerSave } = useAutoSave(doSave, [title, submitMessage, showProgress, questions])
   useUnsavedChanges(status)
 
-  const inputClass = 'w-full px-3 py-2.5 border-2 border-[#121212] bg-[#F0F0F0] text-sm font-medium placeholder:text-[#121212]/30 focus:outline-none focus:bg-white transition-colors'
+  const inputClass = 'w-full px-3 py-2.5 border-4 border-black bg-[#FFFDF5] text-sm font-medium placeholder:text-black/30 focus:outline-none focus:bg-white transition-colors'
 
   return (
     <div className="flex gap-8 p-8 min-h-full">
@@ -171,23 +171,23 @@ export default function FormBuilder({ trigger, botName, existing }: FormBuilderP
       <div className="flex-1 min-w-0">
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-1">
-            <p className="text-xs font-bold uppercase tracking-widest text-[#121212]/40">Trigger — {trigger.name}</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-black/40">Trigger — {trigger.name}</p>
             <SaveStatusIndicator status={status} />
           </div>
-          <h2 className="text-3xl font-black uppercase tracking-tighter text-[#121212]">Form Builder</h2>
-          <p className="text-sm font-medium text-[#121212]/50 mt-1">
+          <h2 className="text-3xl font-black uppercase tracking-tighter text-black">Form Builder</h2>
+          <p className="text-sm font-medium text-black/50 mt-1">
             Build dynamic question flows with validation and conditional logic.
           </p>
         </div>
 
         <div className="space-y-5">
           {/* Form title */}
-          <div className="border-4 border-[#121212] shadow-[4px_4px_0px_0px_#121212] bg-white">
-            <div className="bg-[#D02020] border-b-4 border-[#121212] px-5 py-3">
+          <div className="border-4 border-black shadow-[4px_4px_0px_0px_#000] bg-white">
+            <div className="bg-[#FF6B6B] border-b-4 border-black px-5 py-3">
               <h3 className="text-sm font-black uppercase tracking-tighter text-white">Form Details</h3>
             </div>
             <div className="p-5">
-              <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">
                 Form Title
               </label>
               <input
@@ -199,18 +199,18 @@ export default function FormBuilder({ trigger, botName, existing }: FormBuilderP
               />
               <div className="mt-4">
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs font-bold uppercase tracking-widest text-[#121212]">
+                  <label className="block text-xs font-bold uppercase tracking-widest text-black">
                     Submit Message
                   </label>
                   {canEdit && questions.length > 0 && (
                     <div className="flex items-center gap-1 flex-wrap justify-end">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-[#121212]/40 mr-1">Insert:</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-black/40 mr-1">Insert:</span>
                       {questions.map((q, i) => (
                         <button
                           key={q.localId}
                           type="button"
                           onClick={() => insertSubmitToken(`{Q${i + 1}}`)}
-                          className="text-[10px] font-bold border border-[#1040C0] text-[#1040C0] px-1.5 py-0.5 hover:bg-[#1040C0] hover:text-white transition-colors"
+                          className="text-[10px] font-bold border border-[#FF6B6B] text-[#FF6B6B] px-1.5 py-0.5 hover:bg-[#FF6B6B] hover:text-white transition-colors"
                         >
                           {`{Q${i + 1}}`}
                         </button>
@@ -227,14 +227,14 @@ export default function FormBuilder({ trigger, botName, existing }: FormBuilderP
                   placeholder="Message sent to user after form is completed..."
                   className={`${inputClass} resize-none read-only:opacity-60 read-only:cursor-not-allowed`}
                 />
-                <p className="text-xs font-medium text-[#121212]/40 mt-1.5">
+                <p className="text-xs font-medium text-black/40 mt-1.5">
                   Sent to the user after they answer the last question. Use {'{Q1}'}, {'{Q2}'} etc. to include answers.
                 </p>
               </div>
               <div className="mt-4 flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-[#121212]">Show Progress Indicator</p>
-                  <p className="text-xs font-medium text-[#121212]/40 mt-0.5">
+                  <p className="text-xs font-bold uppercase tracking-widest text-black">Show Progress Indicator</p>
+                  <p className="text-xs font-medium text-black/40 mt-0.5">
                     Appends &quot;(Question X of Y)&quot; to each message sent to the user.
                   </p>
                 </div>
@@ -244,10 +244,10 @@ export default function FormBuilder({ trigger, botName, existing }: FormBuilderP
                   aria-checked={showProgress}
                   disabled={!canEdit}
                   onClick={() => setShowProgress(prev => !prev)}
-                  className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border-2 border-[#121212] transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${showProgress ? 'bg-[#121212]' : 'bg-[#F0F0F0]'}`}
+                  className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border-4 border-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${showProgress ? 'bg-black' : 'bg-[#FFFDF5]'}`}
                 >
                   <span
-                    className={`inline-block h-4 w-4 rounded-full bg-white border border-[#121212] transition-transform ${showProgress ? 'translate-x-5' : 'translate-x-0.5'}`}
+                    className={`inline-block h-4 w-4 rounded-full bg-white border border-black transition-transform ${showProgress ? 'translate-x-5' : 'translate-x-0.5'}`}
                   />
                 </button>
               </div>
@@ -278,7 +278,7 @@ export default function FormBuilder({ trigger, botName, existing }: FormBuilderP
             <button
               type="button"
               onClick={addQuestion}
-              className="w-full border-4 border-dashed border-[#121212] py-4 flex items-center justify-center gap-2 text-xs font-black uppercase tracking-widest text-[#121212]/40 hover:text-[#121212] hover:border-[#121212] hover:bg-[#F0F0F0] transition-colors"
+              className="w-full border-4 border-dashed border-black py-4 flex items-center justify-center gap-2 text-xs font-black uppercase tracking-widest text-black/40 hover:text-[#000000] hover:border-black hover:bg-[#FFFDF5] transition-colors"
             >
               <Plus className="w-4 h-4" strokeWidth={3} />
               Add Question
@@ -287,8 +287,8 @@ export default function FormBuilder({ trigger, botName, existing }: FormBuilderP
 
           {/* Feedback + Save */}
           {error && (
-            <div className="border-2 border-[#D02020] bg-[#D02020]/10 px-3 py-2">
-              <p className="text-sm font-medium text-[#D02020]">{error}</p>
+            <div className="border-2 border-[#FF6B6B] bg-[#FF6B6B]/10 px-3 py-2">
+              <p className="text-sm font-medium text-[#FF6B6B]">{error}</p>
             </div>
           )}
 

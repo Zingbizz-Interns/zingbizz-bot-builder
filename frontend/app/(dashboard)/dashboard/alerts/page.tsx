@@ -29,9 +29,9 @@ export default async function AlertsPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <p className="text-xs font-bold uppercase tracking-widest text-[#121212]/40 mb-1">Live Chat</p>
-        <h2 className="text-3xl font-black uppercase tracking-tighter text-[#121212]">Alerts</h2>
-        <p className="text-sm font-medium text-[#121212]/50 mt-1">
+        <p className="text-xs font-bold uppercase tracking-widest text-black/40 mb-1">Live Chat</p>
+        <h2 className="text-3xl font-black uppercase tracking-tighter text-black">Alerts</h2>
+        <p className="text-sm font-medium text-black/50 mt-1">
           History of all alerts triggered across your bots.
         </p>
       </div>

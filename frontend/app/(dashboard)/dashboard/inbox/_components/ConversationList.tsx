@@ -153,23 +153,23 @@ export default function ConversationList({ botIds, botId, selectedId, initialSen
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="px-4 py-3 border-b-2 border-[#121212]/10">
-        <h2 className="text-sm font-black uppercase tracking-widest text-[#121212] mb-3">Inbox</h2>
+      <div className="px-4 py-3 border-b-2 border-black/10">
+        <h2 className="text-sm font-black uppercase tracking-widest text-[#000000] mb-3">Inbox</h2>
 
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#121212]/30" />
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-black/30" />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search by phone..."
-            className="w-full pl-8 pr-3 py-1.5 text-xs border-2 border-[#121212]/10 focus:border-[#121212]/30 outline-none bg-[#F5F5F0] placeholder-[#121212]/30"
+            className="w-full pl-8 pr-3 py-1.5 text-xs border-4 border-black/10 focus:border-black/30 outline-none bg-[#F5F5F0] placeholder-[#000000]/30"
           />
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="border-b-2 border-[#121212]/10 flex overflow-x-auto shrink-0">
+      <div className="border-b-2 border-black/10 flex overflow-x-auto shrink-0">
         {TABS.map(t => (
           <button
             key={t.key}
@@ -177,8 +177,8 @@ export default function ConversationList({ botIds, botId, selectedId, initialSen
             className={cn(
               'px-3 py-2 text-[10px] font-black uppercase tracking-widest whitespace-nowrap border-b-2 -mb-0.5 transition-colors',
               tab === t.key
-                ? 'border-[#F0C020] text-[#121212]'
-                : 'border-transparent text-[#121212]/40 hover:text-[#121212]/70'
+                ? 'border-[#FFD93D] text-black'
+                : 'border-transparent text-black/40 hover:text-black/70'
             )}
           >
             {t.label}
@@ -194,11 +194,11 @@ export default function ConversationList({ botIds, botId, selectedId, initialSen
       >
         {loading ? (
           <div className="flex items-center justify-center h-32">
-            <RefreshCw className="w-4 h-4 animate-spin text-[#121212]/30" />
+            <RefreshCw className="w-4 h-4 animate-spin text-black/30" />
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-32 gap-2">
-            <p className="text-xs font-bold uppercase tracking-widest text-[#121212]/30">No conversations</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-black/30">No conversations</p>
           </div>
         ) : (
           filtered.map(conv => (
@@ -212,7 +212,7 @@ export default function ConversationList({ botIds, botId, selectedId, initialSen
         )}
         {loadingMore && (
           <div className="flex justify-center py-3">
-            <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#121212]/30" />
+            <RefreshCw className="w-3.5 h-3.5 animate-spin text-black/30" />
           </div>
         )}
       </div>
@@ -234,32 +234,32 @@ function ConversationCard({
   const showFallbackBadge = conv.fallback_count >= 2
 
   const statusColor = {
-    bot: '#1040C0',
+    bot: '#FF6B6B',
     agent: '#107040',
-    closed: '#121212',
-  }[conv.status] ?? '#121212'
+    closed: '#000000',
+  }[conv.status] ?? '#000000'
 
   return (
     <button
       onClick={() => onSelect?.(conv)}
       className={cn(
-        'w-full text-left px-4 py-3 border-b border-[#121212]/8 transition-colors hover:bg-[#F5F5F0]',
-        selected && 'bg-[#F0C020]/10 border-l-2 border-l-[#F0C020]'
+        'w-full text-left px-4 py-3 border-b border-black/8 transition-colors hover:bg-[#F5F5F0]',
+        selected && 'bg-[#FFD93D]/10 border-l-2 border-l-[#FFD93D]'
       )}
     >
       {/* Row 1: phone + time */}
       <div className="flex items-center justify-between mb-1">
-        <span className="text-xs font-bold text-[#121212] truncate">
+        <span className="text-xs font-bold text-[#000000] truncate">
           {formatPhone(conv.sender_id)}
         </span>
-        <span className="text-[10px] text-[#121212]/40 shrink-0 ml-2">
+        <span className="text-[10px] text-black/40 shrink-0 ml-2">
           {timeAgo(conv.updated_at)}
         </span>
       </div>
 
       {/* Row 2: bot name */}
       {conv.bot_name && (
-        <p className="text-[10px] text-[#121212]/50 mb-1 truncate">{conv.bot_name}</p>
+        <p className="text-[10px] text-black/50 mb-1 truncate">{conv.bot_name}</p>
       )}
 
       {/* Row 3: badges */}
@@ -267,7 +267,7 @@ function ConversationCard({
         {showFallbackBadge && (
           <span
             title={`Bot failed to understand this customer ${conv.fallback_count} times`}
-            className="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 bg-[#D02020] text-white"
+            className="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 bg-[#FF6B6B] text-white"
           >
             {conv.fallback_count} fails
           </span>
@@ -287,7 +287,7 @@ function ConversationCard({
 
         {/* Expiry warning */}
         {showExpiryWarning && (
-          <span className="flex items-center gap-0.5 text-[9px] font-black text-[#D02020]">
+          <span className="flex items-center gap-0.5 text-[9px] font-black text-[#FF6B6B]">
             <Clock className="w-2.5 h-2.5" />
             Expiring
           </span>

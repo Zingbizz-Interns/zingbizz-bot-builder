@@ -30,9 +30,9 @@ function CopyButton({ value }: { value: string }) {
     <button
       type="button"
       onClick={copy}
-      className="inline-flex items-center gap-1 px-2 py-1 border border-[#121212]/20 text-[#121212]/50 hover:text-[#121212] hover:border-[#121212]/50 transition-colors text-[10px] font-bold uppercase tracking-widest"
+      className="inline-flex items-center gap-1 px-2 py-1 border border-black/20 text-black/50 hover:text-[#000000] hover:border-black/50 transition-colors text-[10px] font-bold uppercase tracking-widest"
     >
-      {copied ? <Check className="w-3 h-3 text-[#F0C020]" /> : <Copy className="w-3 h-3" />}
+      {copied ? <Check className="w-3 h-3 text-[#FFD93D]" /> : <Copy className="w-3 h-3" />}
       {copied ? 'Copied' : 'Copy'}
     </button>
   )
@@ -41,9 +41,9 @@ function CopyButton({ value }: { value: string }) {
 function CodeBlock({ value, label }: { value: string; label?: string }) {
   return (
     <div className="mt-2">
-      {label && <p className="text-[10px] font-bold uppercase tracking-widest text-[#121212]/40 mb-1">{label}</p>}
-      <div className="flex items-center gap-2 bg-[#121212] px-3 py-2.5 border border-[#121212]">
-        <code className="text-xs text-[#F0C020] font-mono flex-1 break-all">{value}</code>
+      {label && <p className="text-[10px] font-bold uppercase tracking-widest text-black/40 mb-1">{label}</p>}
+      <div className="flex items-center gap-2 bg-black px-3 py-2.5 border border-black">
+        <code className="text-xs text-[#FFD93D] font-mono flex-1 break-all">{value}</code>
         <CopyButton value={value} />
       </div>
     </div>
@@ -52,16 +52,16 @@ function CodeBlock({ value, label }: { value: string; label?: string }) {
 
 function Note({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex gap-2.5 bg-[#F0C020]/15 border-l-4 border-[#F0C020] px-3 py-2.5 mt-3">
-      <AlertTriangle className="w-3.5 h-3.5 text-[#F0C020] shrink-0 mt-0.5" strokeWidth={2.5} />
-      <p className="text-xs font-medium text-[#121212]/80 leading-relaxed">{children}</p>
+    <div className="flex gap-2.5 bg-[#FFD93D]/15 border-l-4 border-[#FFD93D] px-3 py-2.5 mt-3">
+      <AlertTriangle className="w-3.5 h-3.5 text-[#FFD93D] shrink-0 mt-0.5" strokeWidth={2.5} />
+      <p className="text-xs font-medium text-black/80 leading-relaxed">{children}</p>
     </div>
   )
 }
 
 function Pill({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-block bg-[#F0C020]/20 border border-[#F0C020]/50 text-[#121212] text-[10px] font-bold px-1.5 py-0.5 mx-0.5">
+    <span className="inline-block bg-[#FFD93D]/20 border border-[#FFD93D]/50 text-[#000000] text-[10px] font-bold px-1.5 py-0.5 mx-0.5">
       {children}
     </span>
   )
@@ -70,10 +70,10 @@ function Pill({ children }: { children: React.ReactNode }) {
 function SubStep({ num, children }: { num: number; children: React.ReactNode }) {
   return (
     <div className="flex gap-3 py-2">
-      <span className="w-5 h-5 shrink-0 rounded-full border-2 border-[#121212]/20 flex items-center justify-center text-[10px] font-black text-[#121212]/40 mt-0.5">
+      <span className="w-5 h-5 shrink-0 rounded-full border-4 border-black/20 flex items-center justify-center text-[10px] font-black text-black/40 mt-0.5">
         {num}
       </span>
-      <div className="flex-1 text-sm font-medium text-[#121212]/70 leading-relaxed">{children}</div>
+      <div className="flex-1 text-sm font-medium text-black/70 leading-relaxed">{children}</div>
     </div>
   )
 }
@@ -84,7 +84,7 @@ function DocLink({ href, children }: { href: string; children: React.ReactNode }
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-1 text-[#1040C0] font-bold text-xs hover:underline"
+      className="inline-flex items-center gap-1 text-[#FF6B6B] font-bold text-xs hover:underline"
     >
       {children}
       <ExternalLink className="w-3 h-3" />
@@ -94,8 +94,8 @@ function DocLink({ href, children }: { href: string; children: React.ReactNode }
 
 function CheckItem({ children }: { children: React.ReactNode }) {
   return (
-    <li className="flex gap-2 text-xs text-[#121212]/70 font-medium">
-      <ChevronRight className="w-3 h-3 shrink-0 mt-0.5 text-[#F0C020]" strokeWidth={2.5} />
+    <li className="flex gap-2 text-xs text-black/70 font-medium">
+      <ChevronRight className="w-3 h-3 shrink-0 mt-0.5 text-[#FFD93D]" strokeWidth={2.5} />
       {children}
     </li>
   )
@@ -164,13 +164,13 @@ const STEPS: Step[] = [
           In the left sidebar, go to <Pill>WhatsApp → Phone Numbers</Pill> → click <Pill>Add Phone Number</Pill>.
         </SubStep>
         <SubStep num={2}>
-          Enter your phone number with country code (e.g. <code className="bg-[#F0F0F0] px-1 text-xs font-mono">+91 98765 43210</code>). Choose to verify via <strong>SMS</strong> or <strong>Voice call</strong>.
+          Enter your phone number with country code (e.g. <code className="bg-[#FFFDF5] px-1 text-xs font-mono">+91 98765 43210</code>). Choose to verify via <strong>SMS</strong> or <strong>Voice call</strong>.
         </SubStep>
         <SubStep num={3}>
           Enter the 6-digit OTP you receive. Once verified, the phone number is registered and a <strong>Phone Number ID</strong> is generated.
         </SubStep>
         <SubStep num={4}>
-          Copy your <strong>Phone Number ID</strong> from <Pill>WhatsApp → API Setup</Pill> — it appears next to your phone number (e.g. <code className="bg-[#F0F0F0] px-1 text-xs font-mono">1234567890</code>).
+          Copy your <strong>Phone Number ID</strong> from <Pill>WhatsApp → API Setup</Pill> — it appears next to your phone number (e.g. <code className="bg-[#FFFDF5] px-1 text-xs font-mono">1234567890</code>).
         </SubStep>
         <Note>
           The test phone number Meta provides in the sandbox is free to use but can only send messages to numbers you&apos;ve manually added as testers. Use your own number for production.
@@ -189,7 +189,7 @@ const STEPS: Step[] = [
           Go to <DocLink href="https://business.facebook.com/settings/system-users">Business Manager → Business Settings → Users → System Users</DocLink> and click <Pill>Add</Pill>.
         </SubStep>
         <SubStep num={2}>
-          Give the system user a name (e.g. <code className="bg-[#F0F0F0] px-1 text-xs font-mono">whatsapp-bot</code>), set role to <Pill>Admin</Pill>, and click <Pill>Create system user</Pill>.
+          Give the system user a name (e.g. <code className="bg-[#FFFDF5] px-1 text-xs font-mono">whatsapp-bot</code>), set role to <Pill>Admin</Pill>, and click <Pill>Create system user</Pill>.
         </SubStep>
         <SubStep num={3}>
           Click <Pill>Assign Assets</Pill> → select <strong>Apps</strong> → find your Meta app → enable <Pill>Full control</Pill> → save.
@@ -200,8 +200,8 @@ const STEPS: Step[] = [
         <SubStep num={5}>
           Click <Pill>Generate New Token</Pill> → select your app → set expiry to <Pill>Never</Pill> → check both:
           <ul className="mt-2 space-y-1 pl-2">
-            <CheckItem><code className="bg-[#F0F0F0] px-1 text-xs font-mono">whatsapp_business_messaging</code></CheckItem>
-            <CheckItem><code className="bg-[#F0F0F0] px-1 text-xs font-mono">whatsapp_business_management</code></CheckItem>
+            <CheckItem><code className="bg-[#FFFDF5] px-1 text-xs font-mono">whatsapp_business_messaging</code></CheckItem>
+            <CheckItem><code className="bg-[#FFFDF5] px-1 text-xs font-mono">whatsapp_business_management</code></CheckItem>
           </ul>
         </SubStep>
         <SubStep num={6}>
@@ -224,11 +224,11 @@ const STEPS: Step[] = [
           In your Meta App, go to <Pill>WhatsApp → Configuration</Pill> and scroll to the <strong>Webhook</strong> section. Click <Pill>Edit</Pill>.
         </SubStep>
         <SubStep num={2}>
-          Set the <strong>Callback URL</strong> to your Zingbizz backend webhook endpoint — your backend URL + <code className="bg-[#F0F0F0] px-1 text-xs font-mono">/webhook/whatsapp</code>:
+          Set the <strong>Callback URL</strong> to your Zingbizz backend webhook endpoint — your backend URL + <code className="bg-[#FFFDF5] px-1 text-xs font-mono">/webhook/whatsapp</code>:
           <CodeBlock value="https://your-backend.vercel.app/webhook/whatsapp" label="Webhook Callback URL (replace with your backend URL)" />
         </SubStep>
         <SubStep num={3}>
-          Set the <strong>Verify Token</strong> to any secret string you choose (e.g. <code className="bg-[#F0F0F0] px-1 text-xs font-mono">zingbizz_wa_verify_123</code>). Paste this exact value into the <em>Webhook Verify Token</em> field in Zingbizz.
+          Set the <strong>Verify Token</strong> to any secret string you choose (e.g. <code className="bg-[#FFFDF5] px-1 text-xs font-mono">zingbizz_wa_verify_123</code>). Paste this exact value into the <em>Webhook Verify Token</em> field in Zingbizz.
         </SubStep>
         <SubStep num={4}>
           Click <Pill>Verify and save</Pill>. Meta will ping your backend to confirm it responds correctly.
@@ -281,7 +281,7 @@ const STEPS: Step[] = [
           <strong>Message Templates:</strong> For outbound messages (outside the 24-hour window), you must use pre-approved templates. Create them at <DocLink href="https://business.facebook.com/wa/manage/message-templates/">WhatsApp Manager → Message Templates</DocLink>.
           <ul className="mt-2 space-y-1 pl-2">
             <CheckItem>Category: <strong>Marketing</strong> (promotions), <strong>Utility</strong> (transactional), or <strong>Authentication</strong> (OTPs)</CheckItem>
-            <CheckItem>Use <code className="bg-[#F0F0F0] px-1 text-xs font-mono">{'{{1}}'}</code>, <code className="bg-[#F0F0F0] px-1 text-xs font-mono">{'{{2}}'}</code> for dynamic fields</CheckItem>
+            <CheckItem>Use <code className="bg-[#FFFDF5] px-1 text-xs font-mono">{'{{1}}'}</code>, <code className="bg-[#FFFDF5] px-1 text-xs font-mono">{'{{2}}'}</code> for dynamic fields</CheckItem>
             <CheckItem>Approval is usually instant with a verified business</CheckItem>
           </ul>
         </SubStep>
@@ -292,7 +292,7 @@ const STEPS: Step[] = [
             <CheckItem>Display name approved</CheckItem>
             <CheckItem>Billing method added</CheckItem>
             <CheckItem>Permanent access token generated (never-expiring)</CheckItem>
-            <CheckItem>Webhook live and subscribed to <code className="bg-[#F0F0F0] px-1 text-xs font-mono">messages</code></CheckItem>
+            <CheckItem>Webhook live and subscribed to <code className="bg-[#FFFDF5] px-1 text-xs font-mono">messages</code></CheckItem>
             <CheckItem>At least one approved message template</CheckItem>
           </ul>
         </SubStep>
@@ -311,34 +311,34 @@ function StepCard({ step, defaultOpen = false }: { step: Step; defaultOpen?: boo
   const Icon = step.icon
 
   return (
-    <div className={`border-2 transition-colors ${open ? 'border-[#121212]' : 'border-[#121212]/20 hover:border-[#121212]/50'}`}>
+    <div className={`border-2 transition-colors ${open ? 'border-black' : 'border-black/20 hover:border-black/50'}`}>
       <button
         type="button"
         onClick={() => setOpen(v => !v)}
         className="w-full flex items-center gap-3 px-4 py-3 text-left"
       >
-        <div className={`w-7 h-7 shrink-0 flex items-center justify-center border-2 font-black text-xs transition-colors ${open ? 'bg-[#F0C020] border-[#F0C020] text-[#121212]' : 'border-[#121212]/30 text-[#121212]/40'}`}>
+        <div className={`w-7 h-7 shrink-0 flex items-center justify-center border-2 font-black text-xs transition-colors ${open ? 'bg-[#FFD93D] border-[#FFD93D] text-black' : 'border-black/30 text-black/40'}`}>
           {step.id}
         </div>
         <div className="flex items-center gap-2 flex-1 min-w-0">
-          <Icon className={`w-4 h-4 shrink-0 transition-colors ${open ? 'text-[#121212]' : 'text-[#121212]/30'}`} strokeWidth={2} />
+          <Icon className={`w-4 h-4 shrink-0 transition-colors ${open ? 'text-black' : 'text-black/30'}`} strokeWidth={2} />
           <div className="min-w-0">
-            <p className={`text-xs font-black uppercase tracking-widest transition-colors ${open ? 'text-[#121212]' : 'text-[#121212]/60'}`}>
+            <p className={`text-xs font-black uppercase tracking-widest transition-colors ${open ? 'text-black' : 'text-black/60'}`}>
               {step.title}
             </p>
             {!open && (
-              <p className="text-[10px] font-medium text-[#121212]/40 truncate">{step.summary}</p>
+              <p className="text-[10px] font-medium text-black/40 truncate">{step.summary}</p>
             )}
           </div>
         </div>
-        <div className="shrink-0 text-[#121212]/30">
+        <div className="shrink-0 text-black/30">
           {open ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </div>
       </button>
 
       {open && (
-        <div className="px-4 pb-4 pt-1 border-t-2 border-[#121212]/10">
-          <p className="text-xs font-medium text-[#121212]/50 mb-3">{step.summary}</p>
+        <div className="px-4 pb-4 pt-1 border-t-2 border-black/10">
+          <p className="text-xs font-medium text-black/50 mb-3">{step.summary}</p>
           {step.content}
         </div>
       )}
@@ -350,14 +350,14 @@ function StepCard({ step, defaultOpen = false }: { step: Step; defaultOpen?: boo
 
 export function WhatsAppSetupSteps() {
   return (
-    <div className="border-4 border-[#121212] shadow-[8px_8px_0px_0px_#121212] bg-white overflow-hidden">
-      <div className="divide-y-2 divide-[#121212]/10">
+    <div className="border-4 border-black shadow-[8px_8px_0px_0px_#000] bg-white overflow-hidden">
+      <div className="divide-y-2 divide-[#000000]/10">
         {STEPS.map((step) => (
           <StepCard key={step.id} step={step} defaultOpen />
         ))}
       </div>
-      <div className="px-6 py-4 bg-[#F0F0F0] border-t-2 border-[#121212] flex items-center justify-between">
-        <p className="text-[10px] font-medium text-[#121212]/40">
+      <div className="px-6 py-4 bg-[#FFFDF5] border-t-2 border-black flex items-center justify-between">
+        <p className="text-[10px] font-medium text-black/40">
           Based on Meta WhatsApp Cloud API docs — v18.0
         </p>
         <DocLink href="https://developers.facebook.com/docs/whatsapp/cloud-api/get-started">
@@ -374,20 +374,20 @@ export default function WhatsAppSetupGuide({ botId }: { botId: string }) {
   return (
     <a
       href={`/dashboard/bots/${botId}/platforms/whatsapp-guide`}
-      className="flex items-center gap-3 px-4 py-3 border-2 border-[#121212]/20 hover:border-[#121212] hover:bg-[#F0F0F0] transition-colors group"
+      className="flex items-center gap-3 px-4 py-3 border-4 border-black/20 hover:border-black hover:bg-[#FFFDF5] transition-colors group"
     >
-      <div className="w-7 h-7 shrink-0 flex items-center justify-center bg-[#F0C020]/20 border border-[#F0C020]/50">
-        <BookOpen className="w-3.5 h-3.5 text-[#121212]" strokeWidth={2.5} />
+      <div className="w-7 h-7 shrink-0 flex items-center justify-center bg-[#FFD93D]/20 border border-[#FFD93D]/50">
+        <BookOpen className="w-3.5 h-3.5 text-black" strokeWidth={2.5} />
       </div>
       <div className="flex-1">
-        <p className="text-xs font-black uppercase tracking-widest text-[#121212]">
+        <p className="text-xs font-black uppercase tracking-widest text-black">
           How to set up WhatsApp
         </p>
-        <p className="text-[10px] font-medium text-[#121212]/40 mt-0.5">
+        <p className="text-[10px] font-medium text-black/40 mt-0.5">
           Step-by-step: Meta App → Phone Number → Token → Webhook → Production
         </p>
       </div>
-      <ChevronRight className="w-4 h-4 text-[#121212]/30 group-hover:text-[#121212] transition-colors" />
+      <ChevronRight className="w-4 h-4 text-black/30 group-hover:text-[#000000] transition-colors" />
     </a>
   )
 }

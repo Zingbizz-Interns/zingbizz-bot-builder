@@ -41,7 +41,7 @@ const VALIDATION_OPTIONS: { value: ValidationType; label: string }[] = [
   { value: 'date',   label: 'Date' },
 ]
 
-const inputClass = 'w-full px-3 py-2 border-2 border-[#121212] bg-[#F0F0F0] text-sm font-medium placeholder:text-[#121212]/30 focus:outline-none focus:bg-white transition-colors'
+const inputClass = 'w-full px-3 py-2 border-4 border-black bg-[#FFFDF5] text-sm font-medium placeholder:text-black/30 focus:outline-none focus:bg-white transition-colors'
 const selectClass = `${inputClass} cursor-pointer`
 
 export default function QuestionCard({
@@ -94,17 +94,17 @@ export default function QuestionCard({
   }
 
   return (
-    <div className="border-4 border-[#121212] bg-white shadow-[4px_4px_0px_0px_#121212]">
+    <div className="border-4 border-black bg-white shadow-[4px_4px_0px_0px_#000]">
       {/* Card header */}
-      <div className="bg-[#F0F0F0] border-b-4 border-[#121212] px-4 py-2.5 flex items-center justify-between">
-        <span className="text-xs font-black uppercase tracking-widest text-[#121212]">
+      <div className="bg-[#FFFDF5] border-b-4 border-black px-4 py-2.5 flex items-center justify-between">
+        <span className="text-xs font-black uppercase tracking-widest text-black">
           Question {index + 1}
         </span>
         {canEdit && (
           <div className="flex items-center gap-1">
-            <button onClick={onMoveUp}   disabled={index === 0}         className="p-1 text-[#121212]/30 hover:text-[#121212] disabled:opacity-20 transition-colors"><ChevronUp   className="w-3.5 h-3.5" strokeWidth={3} /></button>
-            <button onClick={onMoveDown} disabled={index === total - 1} className="p-1 text-[#121212]/30 hover:text-[#121212] disabled:opacity-20 transition-colors"><ChevronDown className="w-3.5 h-3.5" strokeWidth={3} /></button>
-            <button onClick={onDelete}                                  className="p-1 text-[#121212]/30 hover:text-[#D02020] transition-colors"><Trash2      className="w-3.5 h-3.5" strokeWidth={2} /></button>
+            <button onClick={onMoveUp}   disabled={index === 0}         className="p-1 text-black/30 hover:text-[#000000] disabled:opacity-20 transition-colors"><ChevronUp   className="w-3.5 h-3.5" strokeWidth={3} /></button>
+            <button onClick={onMoveDown} disabled={index === total - 1} className="p-1 text-black/30 hover:text-[#000000] disabled:opacity-20 transition-colors"><ChevronDown className="w-3.5 h-3.5" strokeWidth={3} /></button>
+            <button onClick={onDelete}                                  className="p-1 text-black/30 hover:text-[#FF6B6B] transition-colors"><Trash2      className="w-3.5 h-3.5" strokeWidth={2} /></button>
           </div>
         )}
       </div>
@@ -113,18 +113,18 @@ export default function QuestionCard({
         {/* Question text + token buttons */}
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <label className="text-xs font-bold uppercase tracking-widest text-[#121212]">
-              Question Text <span className="text-[#D02020]">*</span>
+            <label className="text-xs font-bold uppercase tracking-widest text-black">
+              Question Text <span className="text-[#FF6B6B]">*</span>
             </label>
             {canEdit && previousQuestions.length > 0 && (
               <div className="flex items-center gap-1">
-                <span className="text-xs font-medium text-[#121212]/40">Insert:</span>
+                <span className="text-xs font-medium text-black/40">Insert:</span>
                 {previousQuestions.map(pq => (
                   <button
                     key={pq.localId}
                     type="button"
                     onClick={() => insertToken(`{Q${pq.index + 1}}`)}
-                    className="text-[10px] font-bold border border-[#1040C0] text-[#1040C0] px-1.5 py-0.5 hover:bg-[#1040C0] hover:text-white transition-colors"
+                    className="text-[10px] font-bold border border-[#FF6B6B] text-[#FF6B6B] px-1.5 py-0.5 hover:bg-[#FF6B6B] hover:text-white transition-colors"
                   >
                     {`{Q${pq.index + 1}}`}
                   </button>
@@ -146,7 +146,7 @@ export default function QuestionCard({
         {/* Input type + validation + required row */}
         <div className="grid grid-cols-3 gap-3">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">Input Type</label>
+            <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">Input Type</label>
             <select
               value={question.input_type}
               onChange={e => onChange({ input_type: e.target.value as 'text' | 'choice', options: [] })}
@@ -158,7 +158,7 @@ export default function QuestionCard({
             </select>
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">Validation</label>
+            <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">Validation</label>
             <select
               value={question.validation_type}
               disabled={!canEdit || question.input_type === 'choice'}
@@ -171,17 +171,17 @@ export default function QuestionCard({
             </select>
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">Required</label>
+            <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">Required</label>
             <button
               type="button"
               onClick={() => canEdit && onChange({ is_required: !question.is_required })}
               disabled={!canEdit}
               className="flex items-center gap-2.5 mt-1.5 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              <div className={`relative w-10 h-5 border-2 border-[#121212] transition-colors ${question.is_required ? 'bg-[#121212]' : 'bg-[#F0F0F0]'}`}>
-                <div className={`absolute top-[2px] w-3 h-3 transition-all duration-150 ${question.is_required ? 'left-[18px] bg-white' : 'left-[2px] bg-[#121212]/30'}`} />
+              <div className={`relative w-10 h-5 border-4 border-black transition-colors ${question.is_required ? 'bg-black' : 'bg-[#FFFDF5]'}`}>
+                <div className={`absolute top-[2px] w-3 h-3 transition-all duration-150 ${question.is_required ? 'left-[18px] bg-white' : 'left-[2px] bg-black/30'}`} />
               </div>
-              <span className={`text-xs font-black uppercase tracking-widest ${question.is_required ? 'text-[#121212]' : 'text-[#121212]/40'}`}>
+              <span className={`text-xs font-black uppercase tracking-widest ${question.is_required ? 'text-black' : 'text-black/40'}`}>
                 {question.is_required ? 'Required' : 'Optional'}
               </span>
             </button>
@@ -192,20 +192,20 @@ export default function QuestionCard({
         {question.input_type === 'choice' && (
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-bold uppercase tracking-widest text-[#121212]">Options</label>
+              <label className="text-xs font-bold uppercase tracking-widest text-black">Options</label>
               {canEdit && (
-                <button type="button" onClick={addOption} className="flex items-center gap-1 text-xs font-bold text-[#1040C0] hover:underline">
+                <button type="button" onClick={addOption} className="flex items-center gap-1 text-xs font-bold text-[#FF6B6B] hover:underline">
                   <Plus className="w-3 h-3" strokeWidth={3} /> Add Option
                 </button>
               )}
             </div>
             <div className="space-y-2">
               {question.options.length === 0 && (
-                <p className="text-xs text-[#121212]/40 italic">No options yet.</p>
+                <p className="text-xs text-black/40 italic">No options yet.</p>
               )}
               {question.options.map((opt, i) => (
                 <div key={opt.localId} className="flex gap-2 items-center">
-                  <span className="text-xs font-bold text-[#121212]/40 w-5 shrink-0">{i + 1}.</span>
+                  <span className="text-xs font-bold text-black/40 w-5 shrink-0">{i + 1}.</span>
                   <input
                     value={opt.label}
                     onChange={e => updateOption(opt.localId, e.target.value)}
@@ -214,7 +214,7 @@ export default function QuestionCard({
                     className={`${inputClass} flex-1 read-only:opacity-60 read-only:cursor-not-allowed`}
                   />
                   {canEdit && (
-                    <button type="button" onClick={() => removeOption(opt.localId)} className="text-[#121212]/30 hover:text-[#D02020] transition-colors">
+                    <button type="button" onClick={() => removeOption(opt.localId)} className="text-black/30 hover:text-[#FF6B6B] transition-colors">
                       <X className="w-4 h-4" strokeWidth={2.5} />
                     </button>
                   )}
@@ -227,20 +227,20 @@ export default function QuestionCard({
         {/* Conditional logic */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className="text-xs font-bold uppercase tracking-widest text-[#121212]">
-              Show if <span className="font-medium normal-case text-[#121212]/40">(optional)</span>
+            <label className="text-xs font-bold uppercase tracking-widest text-black">
+              Show if <span className="font-medium normal-case text-black/40">(optional)</span>
             </label>
             {canEdit && previousQuestions.length > 0 && (
-              <button type="button" onClick={addCondition} className="flex items-center gap-1 text-xs font-bold text-[#1040C0] hover:underline">
+              <button type="button" onClick={addCondition} className="flex items-center gap-1 text-xs font-bold text-[#FF6B6B] hover:underline">
                 <Plus className="w-3 h-3" strokeWidth={3} /> Add Condition
               </button>
             )}
           </div>
 
           {previousQuestions.length === 0 ? (
-            <p className="text-xs text-[#121212]/30 italic">No previous questions to condition on.</p>
+            <p className="text-xs text-black/30 italic">No previous questions to condition on.</p>
           ) : question.conditions.length === 0 ? (
-            <p className="text-xs text-[#121212]/30 italic">Always shown. Add a condition to make it conditional.</p>
+            <p className="text-xs text-black/30 italic">Always shown. Add a condition to make it conditional.</p>
           ) : (
             <div className="space-y-2">
               {question.conditions.map(cond => (
@@ -248,7 +248,7 @@ export default function QuestionCard({
                   <select
                     value={cond.conditionQuestionLocalId}
                     onChange={e => updateCondition(cond.localId, { conditionQuestionLocalId: e.target.value })}
-                    className="px-2 py-1.5 border-2 border-[#121212] bg-[#F0F0F0] text-xs font-medium focus:outline-none focus:bg-white cursor-pointer"
+                    className="px-2 py-1.5 border-4 border-black bg-[#FFFDF5] text-xs font-medium focus:outline-none focus:bg-white cursor-pointer"
                   >
                     {previousQuestions.map(pq => (
                       <option key={pq.localId} value={pq.localId}>Q{pq.index + 1}</option>
@@ -257,7 +257,7 @@ export default function QuestionCard({
                   <select
                     value={cond.operator}
                     onChange={e => updateCondition(cond.localId, { operator: e.target.value as ConditionOperator })}
-                    className="px-2 py-1.5 border-2 border-[#121212] bg-[#F0F0F0] text-xs font-medium focus:outline-none focus:bg-white cursor-pointer"
+                    className="px-2 py-1.5 border-4 border-black bg-[#FFFDF5] text-xs font-medium focus:outline-none focus:bg-white cursor-pointer"
                   >
                     <option value="eq">equals</option>
                     <option value="neq">not equals</option>
@@ -267,10 +267,10 @@ export default function QuestionCard({
                     value={cond.value}
                     onChange={e => updateCondition(cond.localId, { value: e.target.value })}
                     placeholder="value"
-                    className="flex-1 min-w-[80px] px-2 py-1.5 border-2 border-[#121212] bg-[#F0F0F0] text-xs font-medium focus:outline-none focus:bg-white"
+                    className="flex-1 min-w-[80px] px-2 py-1.5 border-4 border-black bg-[#FFFDF5] text-xs font-medium focus:outline-none focus:bg-white"
                   />
                   {canEdit && (
-                    <button type="button" onClick={() => removeCondition(cond.localId)} className="text-[#121212]/30 hover:text-[#D02020] transition-colors">
+                    <button type="button" onClick={() => removeCondition(cond.localId)} className="text-black/30 hover:text-[#FF6B6B] transition-colors">
                       <X className="w-4 h-4" strokeWidth={2.5} />
                     </button>
                   )}

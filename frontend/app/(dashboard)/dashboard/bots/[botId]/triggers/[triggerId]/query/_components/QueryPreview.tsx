@@ -28,11 +28,11 @@ export default function QueryPreview({ platforms, botName, categories }: QueryPr
   return (
     <PhoneMockup platforms={platforms} botName={botName} label="Live Preview · Click to interact">
       {(isWA) => {
-        const bubbleCls = isWA ? 'bg-white text-[#121212] shadow-sm' : 'bg-[#F0F0F0] text-[#121212]'
+        const bubbleCls = isWA ? 'bg-white text-[#000000] shadow-sm' : 'bg-[#FFFDF5] text-black'
         const btnCls    = isWA ? 'bg-white border-[#128C7E] text-[#128C7E]' : 'bg-white border-[#0095F6] text-[#0095F6]'
 
         return categories.length === 0 ? (
-          <p className="text-center text-xs text-gray-400 italic py-8">Add categories to preview</p>
+          <p className="text-center text-xs text-black/400 italic py-8">Add categories to preview</p>
         ) : (
           <div className="flex flex-col gap-2">
             {/* Bot message bubble */}
@@ -41,7 +41,7 @@ export default function QueryPreview({ platforms, botName, categories }: QueryPr
                 {state.stage === 'categories' && 'What would you like to know about?'}
                 {state.stage === 'questions' && currentCat && `Here are questions about ${currentCat.category_name}:`}
                 {state.stage === 'answer' && currentQ && currentQ.answer_text}
-                <span className="block text-right text-[9px] mt-0.5 text-gray-400">
+                <span className="block text-right text-[9px] mt-0.5 text-black/400">
                   {isWA ? '9:41 ✓✓' : '9:41 AM'}
                 </span>
               </div>
@@ -66,7 +66,7 @@ export default function QueryPreview({ platforms, botName, categories }: QueryPr
             {state.stage === 'questions' && currentCat && (
               <div className="flex flex-col gap-1.5 mt-1">
                 {currentCat.questions.length === 0 ? (
-                  <p className="text-xs text-gray-400 italic text-center">No questions in this category</p>
+                  <p className="text-xs text-black/400 italic text-center">No questions in this category</p>
                 ) : currentCat.questions.map((q, i) => (
                   <button
                     key={i}

@@ -31,7 +31,7 @@ const navItems: {
 
 export default function SuperAdminNav({ current }: { current: Section }) {
   return (
-    <div className="border-b-4 border-[#121212] bg-white px-6 py-4 md:px-10">
+    <div className="border-b-4 border-black bg-white px-6 py-4 md:px-10">
       <div className="flex flex-wrap gap-3">
         {navItems.map((item) => {
           const Icon = item.icon
@@ -43,8 +43,8 @@ export default function SuperAdminNav({ current }: { current: Section }) {
               href={item.href}
               className={`inline-flex items-center gap-2 border-2 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] transition-colors ${
                 isActive
-                  ? 'border-[#121212] bg-[#121212] text-white'
-                  : 'border-[#121212] bg-[#F5F5F0] text-[#121212] hover:bg-[#F0C020]'
+                  ? 'border-black bg-black text-white'
+                  : 'border-black bg-[#F5F5F0] text-[#000000] hover:bg-[#FFD93D]'
               }`}
             >
               <Icon className="h-4 w-4" strokeWidth={2.5} />

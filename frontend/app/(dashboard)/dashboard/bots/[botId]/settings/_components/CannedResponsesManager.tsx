@@ -111,54 +111,54 @@ export default function CannedResponsesManager({ botId }: Props) {
 
   return (
     <div className="space-y-5">
-      <form onSubmit={handleSubmit} className="space-y-4 border-2 border-[#121212] bg-[#F5F5F0] p-4">
+      <form onSubmit={handleSubmit} className="space-y-4 border-4 border-black bg-[#F5F5F0] p-4">
         <div className="flex items-center gap-2">
-          <Zap className="w-4 h-4 text-[#1040C0]" strokeWidth={2.5} />
-          <p className="text-xs font-black uppercase tracking-widest text-[#121212]">
+          <Zap className="w-4 h-4 text-[#FF6B6B]" strokeWidth={2.5} />
+          <p className="text-xs font-black uppercase tracking-widest text-black">
             {editingId ? 'Edit Quick Reply' : 'Add Quick Reply'}
           </p>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">Title</label>
+            <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">Title</label>
             <input
               value={form.title}
               onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
               readOnly={!canEdit}
               required
-              className="w-full px-3 py-2.5 border-2 border-[#121212] bg-white text-sm font-medium read-only:opacity-60 read-only:cursor-not-allowed"
+              className="w-full px-3 py-2.5 border-4 border-black bg-white text-sm font-medium read-only:opacity-60 read-only:cursor-not-allowed"
               placeholder="Refund policy"
             />
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">Shortcut</label>
+            <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">Shortcut</label>
             <input
               value={form.shortcut}
               onChange={(e) => setForm((prev) => ({ ...prev, shortcut: e.target.value }))}
               readOnly={!canEdit}
-              className="w-full px-3 py-2.5 border-2 border-[#121212] bg-white text-sm font-medium read-only:opacity-60 read-only:cursor-not-allowed"
+              className="w-full px-3 py-2.5 border-4 border-black bg-white text-sm font-medium read-only:opacity-60 read-only:cursor-not-allowed"
               placeholder="/refund"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">Reply Content</label>
+          <label className="block text-xs font-bold uppercase tracking-widest text-[#000000] mb-1.5">Reply Content</label>
           <textarea
             value={form.content}
             onChange={(e) => setForm((prev) => ({ ...prev, content: e.target.value }))}
             readOnly={!canEdit}
             required
             rows={4}
-            className="w-full px-3 py-2.5 border-2 border-[#121212] bg-white text-sm font-medium resize-none read-only:opacity-60 read-only:cursor-not-allowed"
+            className="w-full px-3 py-2.5 border-4 border-black bg-white text-sm font-medium resize-none read-only:opacity-60 read-only:cursor-not-allowed"
             placeholder="Thanks for reaching out. Here's how refunds work..."
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
           {canEdit && (
-            <Button type="submit" variant="blue" disabled={saving}>
+            <Button type="submit" variant="yellow" disabled={saving}>
               {saving ? 'Saving...' : editingId ? 'Update Quick Reply' : 'Create Quick Reply'}
             </Button>
           )}
@@ -166,7 +166,7 @@ export default function CannedResponsesManager({ botId }: Props) {
             <button
               type="button"
               onClick={resetForm}
-              className="text-xs font-bold uppercase tracking-widest text-[#121212]/50 hover:text-[#121212]"
+              className="text-xs font-bold uppercase tracking-widest text-black/50 hover:text-black"
             >
               Cancel Edit
             </button>
@@ -175,49 +175,49 @@ export default function CannedResponsesManager({ botId }: Props) {
       </form>
 
       <div className="flex items-center justify-between gap-3">
-        <p className="text-xs font-bold uppercase tracking-widest text-[#121212]/50">
+        <p className="text-xs font-bold uppercase tracking-widest text-black/50">
           {responses.length} quick repl{responses.length === 1 ? 'y' : 'ies'} saved
         </p>
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search quick replies..."
-          className="w-full max-w-xs px-3 py-2 border-2 border-[#121212]/20 bg-[#F5F5F0] text-xs font-medium focus:outline-none focus:border-[#121212]/50"
+          className="w-full max-w-xs px-3 py-2 border-4 border-black/20 bg-[#F5F5F0] text-xs font-medium focus:outline-none focus:border-black/50"
         />
       </div>
 
       {error && (
-        <div className="border-2 border-[#D02020] bg-[#D02020]/10 px-3 py-2">
-          <p className="text-sm font-medium text-[#D02020]">{error}</p>
+        <div className="border-2 border-[#FF6B6B] bg-[#FF6B6B]/10 px-3 py-2">
+          <p className="text-sm font-medium text-[#FF6B6B]">{error}</p>
         </div>
       )}
       {success && (
-        <div className="border-2 border-[#1040C0] bg-[#1040C0]/10 px-3 py-2">
-          <p className="text-sm font-bold uppercase tracking-widest text-[#121212]">{success}</p>
+        <div className="border-2 border-[#FF6B6B] bg-[#FF6B6B]/10 px-3 py-2">
+          <p className="text-sm font-bold uppercase tracking-widest text-black">{success}</p>
         </div>
       )}
 
       {loading ? (
-        <p className="text-sm font-medium text-[#121212]/40">Loading quick replies...</p>
+        <p className="text-sm font-medium text-black/40">Loading quick replies...</p>
       ) : filtered.length === 0 ? (
-        <div className="border-2 border-dashed border-[#121212]/30 px-4 py-8 text-center text-sm font-medium text-[#121212]/40">
+        <div className="border-2 border-dashed border-black/30 px-4 py-8 text-center text-sm font-medium text-black/40">
           No quick replies yet.
         </div>
       ) : (
         <div className="space-y-3">
           {filtered.map((response) => (
-            <div key={response.id} className="border-2 border-[#121212] bg-white p-4">
+            <div key={response.id} className="border-4 border-black bg-white p-4">
               <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-sm font-black uppercase tracking-tight text-[#121212]">{response.title}</p>
+                    <p className="text-sm font-black uppercase tracking-tight text-black">{response.title}</p>
                     {response.shortcut && (
-                      <span className="border border-[#1040C0]/30 bg-[#1040C0]/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-[#1040C0]">
+                      <span className="border border-[#FF6B6B]/30 bg-[#FF6B6B]/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-[#FF6B6B]">
                         {response.shortcut}
                       </span>
                     )}
                   </div>
-                  <p className="mt-2 text-sm font-medium leading-relaxed text-[#121212]/70 whitespace-pre-wrap">
+                  <p className="mt-2 text-sm font-medium leading-relaxed text-black/70 whitespace-pre-wrap">
                     {response.content}
                   </p>
                 </div>
@@ -226,7 +226,7 @@ export default function CannedResponsesManager({ botId }: Props) {
                     type="button"
                     onClick={() => startEdit(response)}
                     disabled={!canEdit}
-                    className="inline-flex items-center gap-1 border-2 border-[#121212] px-2 py-1 text-xs font-bold uppercase tracking-widest text-[#121212] hover:bg-[#121212] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-1 border-4 border-black px-2 py-1 text-xs font-bold uppercase tracking-widest text-[#000000] hover:bg-black hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Pencil className="w-3 h-3" strokeWidth={2.5} />
                     Edit
@@ -235,7 +235,7 @@ export default function CannedResponsesManager({ botId }: Props) {
                     type="button"
                     onClick={() => handleDelete(response.id)}
                     disabled={!canEdit}
-                    className="inline-flex items-center gap-1 border-2 border-[#D02020] px-2 py-1 text-xs font-bold uppercase tracking-widest text-[#D02020] hover:bg-[#D02020] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-1 border-2 border-[#FF6B6B] px-2 py-1 text-xs font-bold uppercase tracking-widest text-[#FF6B6B] hover:bg-[#FF6B6B] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Trash2 className="w-3 h-3" strokeWidth={2.5} />
                     Delete

@@ -15,23 +15,23 @@ export default async function InstagramGuidePage({
       <div className="mb-8">
         <Link
           href={`/dashboard/bots/${botId}/platforms`}
-          className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#121212]/40 hover:text-[#121212] transition-colors mb-4"
+          className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-black/40 hover:text-[#000000] transition-colors mb-4"
         >
           <ArrowLeft className="w-3.5 h-3.5" strokeWidth={2.5} />
           Back to Platforms
         </Link>
 
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 flex items-center justify-center bg-gradient-to-br from-[#833AB4] via-[#E1306C] to-[#F56040] border-4 border-[#121212] shadow-[4px_4px_0px_0px_#121212]">
+          <div className="w-10 h-10 flex items-center justify-center bg-gradient-to-br from-[#833AB4] via-[#E1306C] to-[#F56040] border-4 border-black shadow-[4px_4px_0px_0px_#000]">
             <Instagram className="w-5 h-5 text-white" strokeWidth={2.5} />
           </div>
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-[#121212]/40">Instagram</p>
-            <h1 className="text-3xl font-black uppercase tracking-tighter text-[#121212]">Setup Guide</h1>
+            <p className="text-xs font-bold uppercase tracking-widest text-black/40">Instagram</p>
+            <h1 className="text-3xl font-black uppercase tracking-tighter text-black">Setup Guide</h1>
           </div>
         </div>
 
-        <p className="text-sm font-medium text-[#121212]/50 mt-2">
+        <p className="text-sm font-medium text-black/50 mt-2">
           Follow these steps to create your Meta App, configure OAuth, set up webhooks, and go live.
           Each step can be expanded for detailed instructions.
         </p>
@@ -47,11 +47,11 @@ export default async function InstagramGuidePage({
             'Set Up Webhook',
             'App Review',
           ].map((label, i) => (
-            <div key={i} className="flex items-center gap-1.5 border-2 border-[#121212]/20 px-2.5 py-1">
-              <span className="w-4 h-4 flex items-center justify-center bg-[#D02020] text-white text-[9px] font-black">
+            <div key={i} className="flex items-center gap-1.5 border-4 border-black/20 px-2.5 py-1">
+              <span className="w-4 h-4 flex items-center justify-center bg-[#FF6B6B] text-white text-[9px] font-black">
                 {i + 1}
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#121212]/60">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-black/60">
                 {label}
               </span>
             </div>
@@ -66,12 +66,12 @@ export default async function InstagramGuidePage({
       <div className="mt-6 flex items-center gap-3">
         <Link
           href={`/dashboard/bots/${botId}/platforms`}
-          className="inline-flex items-center gap-2 bg-[#D02020] text-white border-2 border-[#121212] shadow-[4px_4px_0px_0px_#121212] hover:shadow-[2px_2px_0px_0px_#121212] hover:translate-x-[2px] hover:translate-y-[2px] transition-all px-5 py-2.5 text-sm font-bold uppercase tracking-wider"
+          className="inline-flex items-center gap-2 bg-[#FF6B6B] text-white border-4 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all px-5 py-2.5 text-sm font-bold uppercase tracking-wider"
         >
           <Instagram className="w-4 h-4" strokeWidth={2.5} />
           Go Connect Instagram
         </Link>
-        <span className="text-xs font-medium text-[#121212]/40">
+        <span className="text-xs font-medium text-black/40">
           Ready? Head back and click &quot;Connect with Instagram&quot;.
         </span>
       </div>

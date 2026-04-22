@@ -27,11 +27,11 @@ export default function RangeFilter({ range }: { range: DateRange }) {
           key={opt.value}
           onClick={() => pick(opt.value)}
           className={[
-            'text-xs font-black uppercase tracking-widest px-4 py-2 border-2 border-[#121212] transition-colors',
+            'text-xs font-black uppercase tracking-widest px-4 py-2 border-4 border-black transition-colors',
             i > 0 ? 'border-l-0' : '',
             range === opt.value
-              ? 'bg-[#121212] text-white'
-              : 'bg-white text-[#121212] hover:bg-[#F0F0F0]',
+              ? 'bg-black text-white'
+              : 'bg-white text-[#000000] hover:bg-[#FFFDF5]',
           ].join(' ')}
         >
           {opt.label}

@@ -37,13 +37,13 @@ export default async function TeamPage() {
     <div className="p-8">
       <div className="flex items-end justify-between mb-8">
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-[#121212]/40 mb-1">Account</p>
-          <h2 className="text-3xl font-black uppercase tracking-tighter text-[#121212]">Team</h2>
-          <p className="text-sm font-medium text-[#121212]/50 mt-1">
+          <p className="text-xs font-bold uppercase tracking-widest text-black/40 mb-1">Account</p>
+          <h2 className="text-3xl font-black uppercase tracking-tighter text-black">Team</h2>
+          <p className="text-sm font-medium text-black/50 mt-1">
             Create sub-accounts and control which bots they can view or modify.
           </p>
         </div>
-        <div className="border-4 border-[#121212] shadow-[4px_4px_0px_0px_#121212] bg-[#1040C0] px-5 py-3">
+        <div className="border-4 border-black shadow-[4px_4px_0px_0px_#000] bg-[#FF6B6B] px-5 py-3">
           <p className="text-xs font-bold uppercase tracking-widest text-white/60">Members</p>
           <p className="text-3xl font-black tracking-tighter text-white">{subAccounts.length}</p>
         </div>

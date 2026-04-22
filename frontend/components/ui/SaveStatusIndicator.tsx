@@ -1,10 +1,10 @@
 import type { SaveStatus } from '@/hooks/useAutoSave'
 
 const CONFIG: Record<Exclude<SaveStatus, 'idle'>, { text: string; cls: string }> = {
-  unsaved: { text: 'Unsaved changes', cls: 'text-[#F0C020]' },
-  saving:  { text: 'Saving...',       cls: 'text-[#1040C0]' },
-  saved:   { text: 'Saved',           cls: 'text-[#1040C0]' },
-  error:   { text: 'Save failed',     cls: 'text-[#D02020]' },
+  unsaved: { text: 'Unsaved changes', cls: 'text-[#FF6B6B] font-black' },
+  saving:  { text: 'Saving...',       cls: 'text-black/50 font-black' },
+  saved:   { text: '✓ Saved',         cls: 'text-black font-black' },
+  error:   { text: 'Save failed',     cls: 'text-[#FF6B6B] font-black' },
 }
 
 export default function SaveStatusIndicator({ status }: { status: SaveStatus }) {

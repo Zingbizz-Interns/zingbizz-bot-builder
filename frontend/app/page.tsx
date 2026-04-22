@@ -14,8 +14,8 @@ import ClickSpark from './components/ClickSpark';
 
 export default function LandingPage() {
   return (
-    <ClickSpark sparkColor="#D02020" sparkSize={12} sparkRadius={25} sparkCount={12} duration={500} className="w-full">
-      <div className="min-h-screen overflow-x-hidden bg-bauhaus-white pb-20 text-bauhaus-black selection:bg-bauhaus-blue selection:text-white">
+    <ClickSpark sparkColor="#FF6B6B" sparkSize={12} sparkRadius={25} sparkCount={12} duration={500} className="w-full">
+      <div className="min-h-screen overflow-x-hidden bg-[#FFFDF5] pb-20 text-black selection:bg-[#FFD93D] selection:text-black">
         <Navigation />
         <HeroSection />
         <FeaturesSection />

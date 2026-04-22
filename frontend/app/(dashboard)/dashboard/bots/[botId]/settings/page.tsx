@@ -26,16 +26,16 @@ export default async function SettingsPage({ params }: { params: Promise<{ botId
   return (
     <div className="p-8 max-w-xl space-y-8">
       <div>
-        <p className="text-xs font-bold uppercase tracking-widest text-[#121212]/40 mb-1">Bot Config</p>
-        <h2 className="text-3xl font-black uppercase tracking-tighter text-[#121212]">Settings</h2>
-        <p className="text-sm font-medium text-[#121212]/50 mt-1">
+        <p className="text-xs font-bold uppercase tracking-widest text-black/40 mb-1">Bot Config</p>
+        <h2 className="text-3xl font-black uppercase tracking-tighter text-black">Settings</h2>
+        <p className="text-sm font-medium text-black/50 mt-1">
           Edit bot name, fallback message and business hours.
         </p>
       </div>
 
       {/* General */}
-      <div className="border-4 border-[#121212] shadow-[8px_8px_0px_0px_#121212] bg-white">
-        <div className="bg-[#1040C0] border-b-4 border-[#121212] px-6 py-4">
+      <div className="border-4 border-black shadow-[8px_8px_0px_0px_#000] bg-white">
+        <div className="bg-[#FF6B6B] border-b-4 border-black px-6 py-4">
           <h3 className="text-base font-black uppercase tracking-tighter text-white">General</h3>
         </div>
         <div className="p-6">
@@ -48,8 +48,8 @@ export default async function SettingsPage({ params }: { params: Promise<{ botId
       </div>
 
       {/* Business Hours */}
-      <div className="border-4 border-[#121212] shadow-[8px_8px_0px_0px_#121212] bg-white">
-        <div className="bg-[#D02020] border-b-4 border-[#121212] px-6 py-4">
+      <div className="border-4 border-black shadow-[8px_8px_0px_0px_#000] bg-white">
+        <div className="bg-[#FF6B6B] border-b-4 border-black px-6 py-4">
           <h3 className="text-base font-black uppercase tracking-tighter text-white">Business Hours</h3>
           <p className="text-xs font-medium text-white/60 mt-0.5">
             Messages outside these hours receive the offline message instead of being processed.
@@ -61,10 +61,10 @@ export default async function SettingsPage({ params }: { params: Promise<{ botId
       </div>
 
       {/* Live Chat Alerts */}
-      <div className="border-4 border-[#121212] shadow-[8px_8px_0px_0px_#121212] bg-white">
-        <div className="bg-[#F0C020] border-b-4 border-[#121212] px-6 py-4">
-          <h3 className="text-base font-black uppercase tracking-tighter text-[#121212]">Live Chat Alerts</h3>
-          <p className="text-xs font-medium text-[#121212]/60 mt-0.5">
+      <div className="border-4 border-black shadow-[8px_8px_0px_0px_#000] bg-white">
+        <div className="bg-[#FFD93D] border-b-4 border-black px-6 py-4">
+          <h3 className="text-base font-black uppercase tracking-tighter text-black">Live Chat Alerts</h3>
+          <p className="text-xs font-medium text-black/60 mt-0.5">
             Get notified when conversations need attention or the WhatsApp window is closing.
           </p>
         </div>
@@ -84,8 +84,8 @@ export default async function SettingsPage({ params }: { params: Promise<{ botId
       </div>
 
       {/* Live Chat */}
-      <div className="border-4 border-[#121212] shadow-[8px_8px_0px_0px_#121212] bg-white">
-        <div className="bg-[#107040] border-b-4 border-[#121212] px-6 py-4">
+      <div className="border-4 border-black shadow-[8px_8px_0px_0px_#000] bg-white">
+        <div className="bg-[#107040] border-b-4 border-black px-6 py-4">
           <h3 className="text-base font-black uppercase tracking-tighter text-white">Live Chat</h3>
           <p className="text-xs font-medium text-white/70 mt-0.5">
             Tune escalation keywords and the message customers see when your team takes over.
@@ -104,8 +104,8 @@ export default async function SettingsPage({ params }: { params: Promise<{ botId
       </div>
 
       {/* Quick Replies */}
-      <div className="border-4 border-[#121212] shadow-[8px_8px_0px_0px_#121212] bg-white">
-        <div className="bg-[#1040C0] border-b-4 border-[#121212] px-6 py-4">
+      <div className="border-4 border-black shadow-[8px_8px_0px_0px_#000] bg-white">
+        <div className="bg-[#FF6B6B] border-b-4 border-black px-6 py-4">
           <h3 className="text-base font-black uppercase tracking-tighter text-white">Quick Replies</h3>
           <p className="text-xs font-medium text-white/70 mt-0.5">
             Save reusable replies for common questions and insert them from the inbox with one click.

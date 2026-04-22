@@ -21,17 +21,18 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="border-4 border-[#121212] shadow-[8px_8px_0px_0px_#121212] bg-white">
+    <div className="border-4 border-black shadow-[8px_8px_0px_0px_#000] bg-[#FFFDF5]">
       {/* Header band */}
-      <div className="bg-[#121212] px-7 py-5 flex items-center justify-between">
+      <div className="bg-black px-7 py-5 flex items-center justify-between border-b-4 border-black">
         <h2 className="text-xl font-black uppercase tracking-tighter text-white">Sign In</h2>
-        <div className="w-3 h-3 rounded-full bg-[#F0C020]" />
+        <div className="w-4 h-4 bg-[#FFD93D] border-2 border-white" />
       </div>
 
       <div className="p-7 space-y-5">
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Email */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">
+            <label className="block text-xs font-black uppercase tracking-widest text-black mb-2">
               Email
             </label>
             <input
@@ -39,12 +40,13 @@ export default function LoginPage() {
               type="email"
               required
               placeholder="you@example.com"
-              className="w-full px-3 py-2.5 border-2 border-[#121212] bg-[#F0F0F0] text-sm font-medium text-[#121212] placeholder:text-[#121212]/40 focus:outline-none focus:bg-white transition-colors"
+              className="w-full px-4 py-3 border-4 border-black bg-white text-sm font-bold text-black placeholder:text-black/30 focus:outline-none focus:bg-[#FFD93D] transition-colors duration-100 h-14"
             />
           </div>
 
+          {/* Password */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-[#121212] mb-1.5">
+            <label className="block text-xs font-black uppercase tracking-widest text-black mb-2">
               Password
             </label>
             <input
@@ -52,26 +54,30 @@ export default function LoginPage() {
               type="password"
               required
               placeholder="Your password"
-              className="w-full px-3 py-2.5 border-2 border-[#121212] bg-[#F0F0F0] text-sm font-medium text-[#121212] placeholder:text-[#121212]/40 focus:outline-none focus:bg-white transition-colors"
+              className="w-full px-4 py-3 border-4 border-black bg-white text-sm font-bold text-black placeholder:text-black/30 focus:outline-none focus:bg-[#FFD93D] transition-colors duration-100 h-14"
             />
           </div>
 
+          {/* Error */}
           {error && (
-            <div className="border-2 border-[#D02020] bg-[#D02020]/10 px-3 py-2.5">
-              <p className="text-sm font-medium text-[#D02020]">{error}</p>
+            <div className="border-4 border-[#FF6B6B] bg-[#FF6B6B]/10 px-4 py-3">
+              <p className="text-sm font-bold text-black">{error}</p>
             </div>
           )}
 
-          <Button variant="blue" fullWidth disabled={loading} type="submit">
-            {loading ? 'Signing in...' : 'Sign In'}
+          <Button variant="red" fullWidth disabled={loading} type="submit" className="h-14 text-base">
+            {loading ? 'Signing in...' : 'Sign In →'}
           </Button>
         </form>
 
-        <div className="border-t-2 border-[#E0E0E0] pt-4">
-          <p className="text-sm font-medium text-[#121212]/60 text-center">
+        <div className="border-t-4 border-black pt-5">
+          <p className="text-sm font-bold text-black/60 text-center uppercase tracking-wide">
             No account?{' '}
-            <Link href="/signup" className="font-bold text-[#1040C0] hover:text-[#D02020] transition-colors uppercase tracking-wide text-xs">
-              Create one →
+            <Link
+              href="/signup"
+              className="text-black underline underline-offset-4 hover:text-[#FF6B6B] transition-colors font-black"
+            >
+              Create one
             </Link>
           </p>
         </div>
